@@ -16,12 +16,15 @@ Compatibility: Rails 3.x
 ### Bundler
 
 Add the following in your Gemfile:
+
 ```
 # Gemfile
 
 gem 'mailjet'
 ```
+
 and let the bundler magic happen
+
 ```
 $ bundle install
 ```
@@ -303,6 +306,14 @@ Notice: This should be integrated to `Contact.all`
 
 *All parameters and attributes on https://eu.mailjet.com/docs/api/report/geoip*
 
+#### User-Agents used to open emails
+```
+> Mailjet::Reporting.agents(start: 3, limit: 6)
+=> [{cnt_clicked: 123, part: 30, platform: "Windows", user_agent: "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0"}, ...]
+```
+
+*All parameters and attributes on https://eu.mailjet.com/docs/api/report/useragents*
+
 ## Track email delivery
 
 You can setup your Rails application in order to receive feedback on email you sent.
@@ -324,10 +335,11 @@ Any model can subscribe Mailjet events. A typical example is the User model:
 # user.rb
 
 class User < ActiveRecord::Base
+  include Mailjet::Hook
   mailjet_hook :process_email_callback, email_field: :email
 
   private
-  def process_email_callback(event, options, error = nil)
+  def process_email_callback(event, options)
     # process the callback here
   end
 end
