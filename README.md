@@ -1,7 +1,23 @@
-# Mailjet Gem
+# Mailjet
+
+[Maijet][mailjet]'s official Ruby wrapper!
+
+<!-- [![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis] 
+[![Dependency Status](https://gemnasium.com/jbescoyez/mailjet.png)][gemnasium]
+[![Maintainance status](http://stillmaintained.com/jbescoyez/mailjet.png)][stillmaintained]
+-->
+[travis]: http://travis-ci.org/jbescoyez/mailjet
+[gemnasium]: https://gemnasium.com/jbescoyez/mailjet
+[stillmaintained]: http://stillmaintained.com/jbescoyez/mailjet 
+[mailjet]: http://www.mailjet.com
+[rubinius]: http://rubini.us/
+[ree]: http://www.rubyenterpriseedition.com/
+[jruby]:http://jruby.org/
 
 <!-- You can read this readme file in other languages:
 english | [french](./README.fr.md) -->
+
+This gem is tested against:
 
 This gem helps you to:
 
@@ -11,13 +27,25 @@ This gem helps you to:
 
 Compatibility: Rails 3.x
 
+Supported Ruby Versions:
+
+This library aims to support<!-- and is [tested against][travis]--> the following Ruby
+implementations:
+
+* Ruby 1.8.7
+* Ruby 1.9.2
+* Ruby 1.9.3
+* [Rubinius][]
+* [Ruby Enterprise Edition][ree]
+* [JRuby][jruby]
+
 ## Install
 
 ### Bundler
 
 Add the following in your Gemfile:
 
-```
+```ruby
 # Gemfile
 
 gem 'mailjet'
@@ -25,20 +53,21 @@ gem 'mailjet'
 
 and let the bundler magic happen
 
-```
+```bash
 $ bundle install
 ```
 
 ### Rubygems
 
-```
+```bash
 $ gem install mailjet
 ```
 
 ## Send an email via ActionMailer
 
 It is as easy as:
-```
+
+```ruby
 config.action_mailer.delivery_method = :mailjet
 Mailjet.settings = { api_key: "your-api-key", secret_key: "your-secret-key" }
 ```
@@ -54,7 +83,7 @@ And you can start sending emails through Mailjet.
 
 #### Filter your contacts
 
-```
+```ruby
 > contacts = Mailjet::Contact.all(status: 'active', start: 100, limit: 2)
 => [#<Mailjet::Contact>, #<Mailjet::Contact>]
 ```
@@ -63,7 +92,7 @@ And you can start sending emails through Mailjet.
 
 #### Contacts opening your messages
 
-```
+```ruby
 > Mailjet::Contact.openers(status: 'active', start: 100, limit: 50)
 => [#<Mailjet::Contact>, #<Mailjet::Contact>]
 ```
@@ -74,7 +103,7 @@ Notice: This should be integrated to `Contact.all`
 
 #### More info about your contacts
 
-```
+```ruby
 > contacts[0].info
 => {blocked: 12, click: 1, email: 'test@mailjet.com'}
 ```
@@ -84,14 +113,16 @@ Notice: This should be integrated to `Contact.all`
 ### Lists
 
 #### Create a new list
-```
+
+```ruby
 > list = Mailjet::List.create(label: 'my_mailjet_list', name: "My Mailjet list")
 ```
 
 *All parameters and attributes on https://eu.mailjet.com/docs/api/lists/create*
 
 #### Update a list
-```
+
+```ruby
 > list = Mailjet::List.update(label: 'my_updated_mailjet_list', name: "My updated Mailjet list")
 ```
 
@@ -99,7 +130,7 @@ Notice: This should be integrated to `Contact.all`
 
 #### List your lists
 
-```
+```ruby
 > Mailjet::List.all(limit: 10, start: 0, orderby: 'id ASC')
 ```
 
@@ -107,7 +138,7 @@ Notice: This should be integrated to `Contact.all`
 
 #### Add contacts to your list
 
-```
+```ruby
 > list.add_contacts("test@mailjet.com", "test2@mailjet.com", force: true  )
 => 200
 ```
@@ -116,7 +147,7 @@ Notice: This should be integrated to `Contact.all`
 
 #### Show all contacts within a list
 
-```
+```ruby
 > list.contacts
 => [#<Mailjet::Contact>, #<Mailjet::Contact>]
 ```
@@ -124,7 +155,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/lists/contacts*
 
 #### Delete a list
-```
+
+```ruby
 > list.delete
 => 200
 ```
@@ -132,7 +164,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/lists/delete*
 
 #### Direct list email
-```
+
+```ruby
 > list.email
 => "jk324jlO3N32203@lists.mailjet.com"
 ```
@@ -140,7 +173,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/lists/email*
 
 #### Remove contacts from a list
-```
+
+```ruby
 > list.remove_contacts("test@mailjet.com", "test2@mailjet.com")
 => 200
 ```
@@ -148,7 +182,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/lists/removemanycontacts*
 
 #### Get statistics
-```
+
+```ruby
 > list.statistics
 => {active: 20, bounce: 1, click: 14, created_at: "2012-02-02 21:59:59", ...}
 ```
@@ -158,14 +193,16 @@ Notice: This should be integrated to `Contact.all`
 ### Campaigns
 
 #### Create a new campaign:
-```
+
+```ruby
 > campaign = MailJet::Campaign.create(title: "My Mailjet Campaign")
 ```
 
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/createcampaign*
 
 #### List your campaigns:
-```
+
+```ruby
 > campaigns = MailJet::Campaign.all(start: 10, limit: 20)
 => [#<Mailjet::Campaign>, #<Mailjet::Campaign>, ...]
 ```
@@ -173,7 +210,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/campaigns*
 
 #### Find one campaign:
-```
+
+```ruby
 > campaigns = MailJet::Campaign.find(19)
 => #<Mailjet::Campaign>
 ```
@@ -181,14 +219,16 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/campaigns*
 
 #### Update your campaign:
-```
+
+```ruby
 > campaign.update(title: "My *new* Mailjet Campaign")
 ```
 
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/updatecampaign*
 
 #### Get all the subscribers in your campaign:
-```
+
+```ruby
 > campaign.subscribers(limit: 2, start: 0, status: 'queued')
 => [#<Mailjet::Subscriber id: 123, email: 'test@mailjet.com', sent_at: "2012-02-02 21:59:59", status: 'queued'>, #<Mailjet::Subscriber id: 456, email: 'test2@mailjet.com', sent_at: "2012-02-02 23:13:02", status: 'queued'>]
 ```
@@ -196,7 +236,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/contacts*
 
 #### Send the campaign the the associated contacts:
-```
+
+```ruby
 > campaign.send!
 => 200
 ```
@@ -204,7 +245,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/sendcampaign*
 
 #### Send a test email to specified email address:
-```
+
+```ruby
 > campaign.test('test@mailjet.com')
 => 200 # response status
 ```
@@ -212,7 +254,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/testcampaign*
 
 #### Get statistics:
-```
+
+```ruby
 > campaign.statistics
 => { total: 200, bounce: 1, bounce_pct: 0.5, click: 10, click_pct: 5, open: 20, open_pct: 10, sent: 200, sent_pct: 100, spam: 1, spam_pct: 0.5, total: 200 }
 ```
@@ -220,7 +263,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/statistics*
 
 #### Template categories:
-```
+
+```ruby
 > Mailjet::TemplateCategory.all
 => [#<Mailjet::TemplateCategory id: 2, label: "basic", value: "Basic">, #<Mailjet::TemplateCategory id: 6, label: "design", value: "Design">]
 ```
@@ -228,7 +272,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/tplcategories*
 
 #### Template models:
-```
+
+```ruby
 > Mailjet::TemplateModel.all(category: 2, custom: true, locale: 'fr_FR')
 => [<#Mailjet::TemplateModel id: 4, name: "Text", header_link: "http:\/\/" ... ]
 ```
@@ -236,7 +281,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/tplmodels*
 
 #### Get the raw HTML form a campaign:
-```
+
+```ruby
 > campaign.html
 => "<html><head></head><body>Test</body></html>"
 ```
@@ -244,7 +290,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/message/htmlcampaign*
 
 #### Duplicate a campaign:
-```
+
+```ruby
 > new_campaign = campaign.duplicate(title: "Another Mailjet Campaign")
 => #<Mailjet::Campaign title: "Another Mailjet Campaign" ... >
 ```
@@ -254,7 +301,8 @@ Notice: This should be integrated to `Contact.all`
 ### Reporting
 
 #### Get the list of all your clicks
-```
+
+```ruby
 > clicks = Mailjet::Reporting.clicks(from: "test@domain.com")
 => [<#Mailjet::Click id: 4, click_delay: 1234, date: "2012-02-08", link: "", user_agent: "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0"} ]
 > clicks.first.contact
@@ -266,7 +314,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/report/click*
 
 #### Info about domains your emails are sent to
-```
+
+```ruby
 > Mailjet::Reporting.domains(start: 3, limit: 6)
 => [{bounce_rate: 0.1, clicked_rate: 0.2, ...}, {bounce_rate: 0.8, clicked_rate: 0.1, ...}]
 ```
@@ -274,7 +323,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/report/domain*
 
 #### Clients used to open emails
-```
+
+```ruby
 > Mailjet::Reporting.clients(start: 3, limit: 6)
 => [{client: "Gmail", open_rate: 0.1, platform: "Windows", ...}, {client: "Outlook", open_rate: 0.3, platform: "Windows", ...}]
 ```
@@ -282,7 +332,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/report/emailclients*
 
 #### Info about email sent
-```
+
+```ruby
 > Mailjet::Reporting.emails(from_domain: "domain.com", limit: 10)
 => [#<Mailjet::Email>, #<Mailjet::Email>, #<Mailjet::Email>, ...]
 ```
@@ -290,7 +341,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/report/emailsent*
 
 #### Global stats about a set of emails
-```
+
+```ruby
 > Mailjet::Reporting.statistics(from_domain: "domain.com", limit: 10)
 => { avg_clicked_delay: 123, avg_opened_rate: 0.432, blocked: 13, ...}
 ```
@@ -299,7 +351,8 @@ Notice: This should be integrated to `Contact.all`
 
 
 #### Opened email Geolocation
-```
+
+```ruby
 > Mailjet::Reporting.geolocation(from_domain: "domain.com", limit: 10)
 => [{click: 123, country: "France", open: 234}, {click: 9876, country: "US", open: 12345}]
 ```
@@ -307,7 +360,8 @@ Notice: This should be integrated to `Contact.all`
 *All parameters and attributes on https://eu.mailjet.com/docs/api/report/geoip*
 
 #### User-Agents used to open emails
-```
+
+```ruby
 > Mailjet::Reporting.agents(start: 3, limit: 6)
 => [{cnt_clicked: 123, part: 30, platform: "Windows", user_agent: "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0"}, ...]
 ```
@@ -321,7 +375,7 @@ You have to install the Mailjet Engine (available in this gem) which will create
 
 ### Install
 
-```
+```ruby
 # routes.rb
 
 mount Mailjet::Engine => "/mailjet"

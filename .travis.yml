@@ -1,0 +1,6 @@
+script: bundle exec rake
+rvm:
+  - ree
+  - 1.9.3
+  - rbx
+  - jruby
