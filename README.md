@@ -1,6 +1,8 @@
 # Mailjet
 
-[Maijet][mailjet]'s official Ruby wrapper!
+[Maijet][mailjet]'s official Ruby wrapper.
+
+Bootstraped with [Mailjetter][mailjetter].
 
 <!-- [![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis] 
 [![Dependency Status](https://gemnasium.com/jbescoyez/mailjet.png)][gemnasium]
@@ -13,6 +15,7 @@
 [rubinius]: http://rubini.us/
 [ree]: http://www.rubyenterpriseedition.com/
 [jruby]:http://jruby.org/
+[mailjetter]:https://github.com/holinnn/mailjetter/
 
 <!-- You can read this readme file in other languages:
 english | [french](./README.fr.md) -->

@@ -2,12 +2,26 @@ PATH
   remote: .
   specs:
     mailjet (0.0.1)
+      activesupport (>= 3.0.9)
 
 GEM
   remote: http://rubygems.org/
   specs:
+    activesupport (3.2.2)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
+    ansi (1.4.2)
+    i18n (0.6.0)
+    metaclass (0.0.1)
     minitest (2.11.3)
+    minitest-matchers (1.2.0)
+      minitest (>= 2.5.0)
+    mocha (0.10.5)
+      metaclass (~> 0.0.1)
+    multi_json (1.1.0)
     rake (0.9.2.2)
+    turn (0.9.3)
+      ansi
 
 PLATFORMS
   ruby
@@ -15,4 +29,7 @@ PLATFORMS
 DEPENDENCIES
   mailjet!
   minitest
+  minitest-matchers
+  mocha
   rake
+  turn
