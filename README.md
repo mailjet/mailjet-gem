@@ -71,8 +71,15 @@ $ gem install mailjet
 It is as easy as:
 
 ```ruby
+# application.rb
 config.action_mailer.delivery_method = :mailjet
-Mailjet.settings = { api_key: "your-api-key", secret_key: "your-secret-key" }
+
+# initializers/mailjet.rb
+Mailjet.configure do |config|
+  config.api_key = 'your-api-key'
+  config.secret_key = 'your-secret-key'
+  config.domain = 'my_domain.com' # optional
+end
 ```
 
 And you can start sending emails through Mailjet.
@@ -373,8 +380,30 @@ Notice: This should be integrated to `Contact.all`
 
 ## Track email delivery
 
-You can setup your Rails application in order to receive feedback on email you sent.
-You have to install the Mailjet Engine (available in this gem) which will create a hook url and setup your Mailjet account to use it.
+You can setup your Rack application in order to receive feedback on email you sent (clicks, etc.)
+
+First notify Mailjet of your desired endpoint (say: 'http://www.my_domain.com/mailjet/callback') at https://www.mailjet.com/account/triggers
+
+Then configure Mailjet's Rack application to catch these callbacks.
+
+A typical Rails installation would look like that:
+
+```ruby
+# application.rb
+
+
+# using the same URL you just set up in Mailjet's administration
+config.middleware.use Mailjet::Rack::Endpoint, '/mailjet/callback' do |events| 
+
+  if user = User.find_by_email(event[:email])
+    user.process_email_callback(event)
+  else
+    Rails.logger.fatal "[Mailjet] User not found: '#{event[:email]}'"
+  end
+end
+```
+
+Note that since it's a Rack application, any Ruby Rack framework (say: Sinatra, Padrino, etc.) is compatible.
 
 ### Install
 
