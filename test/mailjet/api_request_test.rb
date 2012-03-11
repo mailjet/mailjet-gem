@@ -46,11 +46,10 @@ describe Mailjet::ApiRequest do
     end
 
     it "should return a Hash with response values if request is ok" do
-      skip "Integration test with configuration hash needed"
       request = Mailjet::ApiRequest.new('user_infos', {}, 'Get')
       response = request.response
       response.must_be_kind_of(Hash)
-      response['infos']['username'].must_be_kind_of(String)
+      response['infos']['username'].must_equaal 'benoit.benezech@gmail.com'
     end
   end
 
