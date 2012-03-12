@@ -49,7 +49,7 @@ describe Mailjet::ApiRequest do
       request = Mailjet::ApiRequest.new('user_infos', {}, 'Get')
       response = request.response
       response.must_be_kind_of(Hash)
-      response['infos']['username'].must_equaal 'benoit.benezech@gmail.com'
+      response['infos']['username'].must_equal 'benoit.benezech@gmail.com'
     end
   end
 
