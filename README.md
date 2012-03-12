@@ -391,46 +391,41 @@ A typical Rails installation would look like that:
 ```ruby
 # application.rb
 
-
-# using the same URL you just set up in Mailjet's administration
-config.middleware.use Mailjet::Rack::Endpoint, '/mailjet/callback' do |events| 
-
-  if user = User.find_by_email(event[:email])
-    user.process_email_callback(event)
+config.middleware.use Mailjet::Rack::Endpoint, '/mailjet/callback' do |params|  # using the same URL you just set in Mailjet's administration
+  
+  email = params['email'].presence || params['original_address'] # original_address is for typofix events
+  
+  if user = User.find_by_email(email) 
+    user.process_email_callback(params)
   else
-    Rails.logger.fatal "[Mailjet] User not found: '#{event[:email]}'"
+    Rails.logger.fatal "[Mailjet] User not found: #{email} -- DUMP #{params.inspect}"
   end
 end
+
+# user.rb
+class User < ActiveRecord::Base
+
+  def process_email_callback(params)
+  
+    # Returned events and options are described at https://eu.mailjet.com/docs/event_tracking
+    case params['event']
+    when 'open'
+      # Mailjet's invisible pixel was downloaded: user allowed for images to be seen
+    when 'click'
+      # a link (tracked by Mailjet) was clicked
+    when 'bounce'
+      # is user's email valid? Recipient not found
+    when 'spam'
+      # gateway or user flagged you
+    when 'blocked'
+      # gateway or user blocked you
+    when 'typofix'
+      # email routed from params['original_address'] to params['new_address']
+    else
+      Rails.logger.fatal "[Mailjet] Unknown event #{params['event']} for User #{self.inspect} -- DUMP #{params.inspect}"
+    end
+  end
 ```
 
 Note that since it's a Rack application, any Ruby Rack framework (say: Sinatra, Padrino, etc.) is compatible.
-
-### Install
-
-```ruby
-# routes.rb
-
-mount Mailjet::Engine => "/mailjet"
-```
-
-This will create the route `/mailjet/feedback` and will follow the events to the subscribed model.
-
-Any model can subscribe Mailjet events. A typical example is the User model:
-
-```ruby
-# user.rb
-
-class User < ActiveRecord::Base
-  include Mailjet::Hook
-  mailjet_hook :process_email_callback, email_field: :email
-
-  private
-  def process_email_callback(event, options)
-    # process the callback here
-  end
-end
-```
-
-Returned events and options are described at https://eu.mailjet.com/docs/event_tracking
-
 
