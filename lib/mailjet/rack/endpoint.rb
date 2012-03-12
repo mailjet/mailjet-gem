@@ -12,10 +12,8 @@ module Mailjet
       end
 
       def call(env)
-        if env['PATH_INFO'] == @path && (request = ::Rack::Request.new(env)).post?
-          Rails.logger.debug "request.POST == #{request.POST.inspect}"
-          
-          @block.call(ActiveSupport::JSON.decode(request.POST))
+        if env['PATH_INFO'] == @path && (content = env['rack.input'].read)
+          @block.call(ActiveSupport::JSON.decode(content))
           [200, { 'Content-Type' => 'text/html', 'Content-Length' => '0' }, []]
         else
           @app.call(env)
