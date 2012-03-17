@@ -10,5 +10,11 @@ module Mailjet
       request = ApiRequest.new(method_name, params, request_type, @api_key, @secret_key)
       request.response
     end
+    
+    class << self
+      def singleton
+        @@singleton ||= self.new
+      end
+    end
   end
 end

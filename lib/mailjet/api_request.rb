@@ -26,8 +26,10 @@ module Mailjet
         case res
           when Net::HTTPSuccess
             JSON.parse(res.body || '{}')
+          when Net::HTTPNotModified
+            {"status" => "NotModified"}
           else
-            raise ApiError.new(res.code)
+            raise ApiError.new(res.code, JSON.parse(res.body || '{}'))
         end
       end
     end
@@ -35,6 +37,7 @@ module Mailjet
     private
     def request
       @request ||= begin
+        puts "request == #{request_path.inspect}"
         req = "Net::HTTP::#{@request_type}".constantize.new(request_path)
         Net::HTTP::Get
         req.basic_auth @auth_user, @auth_password

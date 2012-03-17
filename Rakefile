@@ -3,8 +3,6 @@ require 'rake/testtask'
 
 $:.push File.expand_path("../lib", __FILE__)
 
-require 'mailjet/tasks'
-
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
