@@ -3,6 +3,7 @@ require 'mail'
 
 class Mailjet::Mailer < ::Mail::SMTP
   def initialize options = {}
+    ActionMailer::Base.default(:from => Mailjet.config.default_from) if Mailjet.config.default_from.present?
     super({
       :address  => "in.mailjet.com",
       :port  => 587,

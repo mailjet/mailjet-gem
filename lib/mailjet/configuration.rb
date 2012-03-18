@@ -7,6 +7,7 @@ module Mailjet
     mattr_accessor :secret_key
     mattr_accessor :use_https
     mattr_accessor :domain
+    mattr_accessor :default_from
     
     @@use_https = true
     @@api_version = 0.1

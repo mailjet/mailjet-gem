@@ -6,11 +6,11 @@ module Mailjet
   class Campaign < OpenStruct
     
     def update(options = {})
-      (options.delete(:api) || Mailjet::Api.singleton).messageUpdatecampaign(options.reverse_merge(:id => self.id))["status"]
+      (options.delete(:api) || Mailjet::Api.singleton).messageUpdatecampaign(options.reverse_merge(:id => self.id), 'Post')["status"]
     end
     
     def contacts(options = {})
-      (options.delete(:api) || Mailjet::Api.singleton).messageContacts(options.reverse_merge(:id => self.id))["result"].map do |contact|
+      ((options.delete(:api) || Mailjet::Api.singleton).messageContacts(options.reverse_merge(:id => self.id))["result"] || []).map do |contact|
         Mailjet::Contact.new(contact)
       end
     end

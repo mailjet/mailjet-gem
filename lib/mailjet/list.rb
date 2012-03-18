@@ -4,7 +4,7 @@ require 'mailjet/contact'
 module Mailjet
   class List < OpenStruct
     def update(options = {})
-      (options.delete(:api) || Mailjet::Api.singleton).listsUpdate(options.reverse_merge(:id => self.id))["status"]
+      (options.delete(:api) || Mailjet::Api.singleton).listsUpdate(options.reverse_merge(:id => self.id), 'Post')["status"]
     end
     
     def add_contacts(*params)
@@ -39,11 +39,11 @@ module Mailjet
         
     class << self
       def create(options = {})
-        self.new(options.merge(:id => (options.delete(:api) || Mailjet::Api.singleton).listsCreate(options)["list_id"]))
+        self.new(options.merge(:id => (options.delete(:api) || Mailjet::Api.singleton).listsCreate(options)["list_id"].to_s))
       end
       
       def all(options = {})
-        (options.delete(:api) || Mailjet::Api.singleton).listsAll(options)["lists"].map do |result_hash|
+        ((options.delete(:api) || Mailjet::Api.singleton).listsAll(options)["lists"] || []).map do |result_hash|
           self.new(result_hash)
         end
       end

@@ -68,10 +68,12 @@ Mailjet.configure do |config|
   config.api_key = 'your-api-key'
   config.secret_key = 'your-secret-key'
   config.domain = 'my_domain.com'
+  config.default_from = 'my_regitered_mailjet_email@domain.com'
 end
+```
 
 `domain` is needed if you send emails with :mailjet's SMTP (below)
-```
+`default_from` is optional if you send emails with :mailjet's SMTP (below) 
 
 ### Send emails with ActionMailer
 
@@ -99,8 +101,6 @@ config.action_mailer.delivery_method = :mailjet
 *All parameters and attributes at https://eu.mailjet.com/docs/api/contact/list*
 *All parameters and attributes for the openers option at https://eu.mailjet.com/docs/api/contact/openers*
 
-** api.mailjet.com/0.1/contactOpeners times out for now --- 03/17/12 **
-
 #### More info about your contacts
 
 ```ruby
@@ -115,18 +115,10 @@ config.action_mailer.delivery_method = :mailjet
 #### Create a new list
 
 ```ruby
-> list = Mailjet::List.create(label: 'my_mailjet_list', name: "My Mailjet list")
+> list = Mailjet::List.create(label: 'My Mailjet list', name: "mymailjetlist")
 ```
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/lists/create*
-
-#### Update a list
-
-```ruby
-> list = Mailjet::List.update(label: 'my_updated_mailjet_list', name: "My updated Mailjet list")
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/update*
 
 #### List your lists
 
@@ -136,14 +128,14 @@ config.action_mailer.delivery_method = :mailjet
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/lists/all*
 
-#### Add contacts to your list
+#### Update a list
 
 ```ruby
-> list.add_contacts("test@mailjet.com", "test2@mailjet.com", force: true  )
-=> 200
+> list = Mailjet::List.all.find{|l| l.name == 'mymailjetlist' }
+> list = list.update(label: 'My updated Mailjet list', name: "myupdatedmailjetlist")
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/addmanycontacts*
+*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/update*
 
 #### Show all contacts within a list
 
@@ -154,14 +146,23 @@ config.action_mailer.delivery_method = :mailjet
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/lists/contacts*
 
-#### Delete a list
+#### Add contacts to your list
 
 ```ruby
-> list.delete
-=> 200
+> list.add_contacts("test@mailjet.com", "test2@mailjet.com", force: true  )
+=> OK
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/delete*
+*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/addmanycontacts*
+
+#### Remove contacts from a list
+
+```ruby
+> list.remove_contacts("test@mailjet.com", "test2@mailjet.com")
+=> OK
+```
+
+*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/removemanycontacts*
 
 #### Direct list email
 
@@ -172,14 +173,6 @@ config.action_mailer.delivery_method = :mailjet
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/lists/email*
 
-#### Remove contacts from a list
-
-```ruby
-> list.remove_contacts("test@mailjet.com", "test2@mailjet.com")
-=> 200
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/removemanycontacts*
 
 #### Get statistics
 
@@ -190,12 +183,21 @@ config.action_mailer.delivery_method = :mailjet
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/lists/statistics*
 
+#### Delete a list
+
+```ruby
+> list.delete
+=> OK
+```
+
+*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/delete*
+
 ### Campaigns
 
 #### Create a new campaign:
 
 ```ruby
-> campaign = MailJet::Campaign.create(title: "My Mailjet Campaign")
+> campaign = Mailjet::Campaign.create(title: "My Mailjet Campaign", list_id: Mailjet::List.all.first.id, from: "mailjet-registered-email@domain.com", from_name: "Sender Name", subject: "Our new product", lang: "en", footer: "default")
 ```
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/message/createcampaign*
@@ -203,7 +205,7 @@ config.action_mailer.delivery_method = :mailjet
 #### List your campaigns:
 
 ```ruby
-> campaigns = MailJet::Campaign.all(start: 10, limit: 20)
+> campaigns = Mailjet::Campaign.all(start: 10, limit: 20)
 => [#<Mailjet::Campaign>, #<Mailjet::Campaign>, ...]
 ```
 
@@ -212,7 +214,7 @@ config.action_mailer.delivery_method = :mailjet
 #### Find one campaign:
 
 ```ruby
-> campaigns = MailJet::Campaign.find(19)
+> campaigns = Mailjet::Campaign.find(19)
 => #<Mailjet::Campaign>
 ```
 
@@ -239,7 +241,7 @@ config.action_mailer.delivery_method = :mailjet
 
 ```ruby
 > campaign.send!
-=> 200
+=> OK
 ```
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/message/sendcampaign*
@@ -248,7 +250,7 @@ config.action_mailer.delivery_method = :mailjet
 
 ```ruby
 > campaign.test('test@mailjet.com')
-=> 200 # response status
+=> OK # response status
 ```
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/message/testcampaign*
@@ -417,3 +419,31 @@ class User < ActiveRecord::Base
 
 Note that since it's a Rack application, any Ruby Rack framework (say: Sinatra, Padrino, etc.) is compatible.
 
+## Testing
+
+For maximum reliability, the gem is tested against Mailjet's server for some parts, which means that valid credentials are needed.
+Do NOT use your production account (create a new one if needed), because some tests are destructive.
+
+```yml
+# GEM_ROOT/config.yml
+mailjet:
+  api_key: YOUR_API_KEY
+  secret_key: YOUR_SECRET_KEY
+  default_from: YOUR_REGISTERED_SENDER_EMAIL # the email you used to create the account should do it
+```
+
+Then at the root of the gem, simply run:
+
+```bash
+bundle
+rake
+```
+## Send a pull request
+
+ - Fork the project.
+ - Create a topic branch.
+ - Implement your feature or bug fix.
+ - Add documentation for your feature or bug fix.
+ - Add specs for your feature or bug fix.
+ - Commit and push your changes.
+ - Submit a pull request. Please do not include changes to the gemspec, or version file.

@@ -29,7 +29,7 @@ module Mailjet
           when Net::HTTPNotModified
             {"status" => "NotModified"}
           else
-            raise ApiError.new(res.code, JSON.parse(res.body || '{}'))
+            raise ApiError.new(res.code, JSON.parse(res.body.presence || '{}'), request, request_path, @params)
         end
       end
     end

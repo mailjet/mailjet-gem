@@ -1,5 +1,5 @@
 # encoding: utf-8
-require "minitest_helper"
+require 'minitest_helper'
 
 describe Mailjet::Api do
   describe "#method_missing" do
