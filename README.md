@@ -28,7 +28,13 @@ This gem helps you to:
 * Manage your lists, contacts and campaigns
 * Track email delivery through event API
 
-Compatibility: Rails 3.x
+Compatibility: 
+ - Ruby 1.8.7
+ - Ruby 1.9.X
+ - [jRuby][jruby]
+ - [Rubinius][rubinius]
+  
+Rails ActionMailer integration designed for Rails 3.X
 
 ## Install
 
@@ -73,6 +79,7 @@ end
 ```
 
 `domain` is needed if you send emails with :mailjet's SMTP (below)
+
 `default_from` is optional if you send emails with :mailjet's SMTP (below) 
 
 ### Send emails with ActionMailer
