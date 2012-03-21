@@ -1,6 +1,5 @@
 # encoding: utf-8
-
-require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/string'
 require 'net/http'
 require "net/https"
 require 'json'
@@ -38,7 +37,6 @@ module Mailjet
     private
     def request
       @request ||= begin
-        puts "request == #{request_path.inspect}"
         req = "Net::HTTP::#{@request_type}".constantize.new(request_path)
         Net::HTTP::Get
         req.basic_auth @auth_user, @auth_password

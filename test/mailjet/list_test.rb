@@ -33,7 +33,7 @@ describe Mailjet::List do
     list.add_contacts.must_equal "NotModified"
     list.add_contacts("c1@contacts.com").must_equal "OK"
     list.add_contacts("c1@contacts.com").must_equal "NotModified"
-    list.add_contacts(["c2@contacts.com", "c3@contacts.com"]).must_equal "OK"
+    list.add_contacts("c2@contacts.com", "c3@contacts.com").must_equal "OK"
     list.add_contacts("c4@contacts.com", "c5@contacts.com").must_equal "OK"
     
     # Mailjet::List#contacts and validate results of add_contacts

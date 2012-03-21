@@ -1,5 +1,6 @@
 require 'active_support'
 require 'ostruct'
+require 'mailjet/core_extensions/ostruct'
 require 'mailjet/api'
 require 'mailjet/api_request'
 require 'mailjet/api_error'
