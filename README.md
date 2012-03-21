@@ -28,7 +28,8 @@ This gem helps you to:
 * Manage your lists, contacts and campaigns
 * Track email delivery through event API
 
-Compatibility: 
+Compatibility:
+
  - Ruby 1.8.7
  - Ruby 1.9.X
  - [jRuby][jruby]
