@@ -8,7 +8,7 @@ describe Mailjet::List do
     end
     
     # Mailjet::List.all for no lists
-    Mailjet::List.all.must_be :empty?
+    Mailjet::List.all.must_be_empty
     
     # Mailjet::List#create
     list = Mailjet::List.create(:label => 'My Mailjet list', :name => "mymailjetlist")
@@ -55,7 +55,7 @@ describe Mailjet::List do
     
     # Mailjet::List#delete
     list.delete.must_equal 'OK'
-    Mailjet::List.all.must_be :empty?
+    Mailjet::List.all.must_be_empty
     exception = proc { list.delete }.must_raise(Mailjet::ApiError)
     exception.to_s.must_match /This ID not appears to be an active list on your account/
   end

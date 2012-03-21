@@ -11,11 +11,11 @@ describe Mailjet::Contact do
     
     # Mailjet::Contact.all
     contacts = Mailjet::Contact.all
-    contacts.wont_be :empty?  # we can't empty the whole contact list...
+    contacts.wont_be_empty  # we can't empty the whole contact list...
     contacts.first.must_be_instance_of Mailjet::Contact
     
     # Mailjet::Contact.all(:openers => true)
-    # Mailjet::Contact.all(:openers => true).must_be :empty?
+    # Mailjet::Contact.all(:openers => true).must_be_empty
     # TODO :openers does not work, times out
     
     # Mailjet::Contact#infos

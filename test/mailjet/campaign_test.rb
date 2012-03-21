@@ -25,7 +25,7 @@ describe Mailjet::Campaign do
     
     # Mailjet::Campaign.all
     campaigns = Mailjet::Campaign.all
-    campaigns.wont_be :empty? # we can't empty the whole campaign list...
+    campaigns.wont_be_empty # we can't empty the whole campaign list...
     campaigns.first.must_be_instance_of Mailjet::Campaign
     
     # Mailjet::Campaign.find
@@ -42,7 +42,7 @@ describe Mailjet::Campaign do
     dup.id.wont_be_same_as campaign.id
         
     # Mailjet::Campaign#contacts
-    # campaign.contacts.wont_be :empty?
+    # campaign.contacts.wont_be_empty
     # TODO does not work, always returns {}, even when list_id is passed with a list that contains emails.
     
     # Mailjet::Campaign#send!

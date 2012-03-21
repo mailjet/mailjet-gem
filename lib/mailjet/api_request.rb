@@ -2,6 +2,7 @@
 
 require 'active_support/core_ext/string/inflections'
 require 'net/http'
+require "net/https"
 require 'json'
 require 'cgi'
 

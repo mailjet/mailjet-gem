@@ -17,9 +17,12 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "activesupport", ">= 3.0.9"
+  s.add_development_dependency "actionmailer", ">= 3.0.9"
   s.add_development_dependency "minitest"
   s.add_development_dependency "minitest-matchers"
-  s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
   s.add_development_dependency "rake"
+  s.add_development_dependency "json"
+  s.add_development_dependency "rack"
+  s.add_development_dependency "mocha"
 end
