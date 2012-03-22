@@ -2,9 +2,9 @@
 
 [Maijet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
 
-<!-- 
+<!--
 
-[![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis] 
+[![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis]
 [![Dependency Status](https://gemnasium.com/jbescoyez/mailjet.png)][gemnasium]
 [![Maintainance status](http://stillmaintained.com/jbescoyez/mailjet.png)][stillmaintained]
 
@@ -12,7 +12,7 @@
 
 [travis]: http://travis-ci.org/jbescoyez/mailjet
 [gemnasium]: https://gemnasium.com/jbescoyez/mailjet
-[stillmaintained]: http://stillmaintained.com/jbescoyez/mailjet 
+[stillmaintained]: http://stillmaintained.com/jbescoyez/mailjet
 [mailjet]: http://www.mailjet.com
 [rubinius]: http://rubini.us/
 [ree]: http://www.rubyenterpriseedition.com/
@@ -34,7 +34,7 @@ Compatibility:
  - Ruby 1.9.X
  - [jRuby][jruby]
  - [Rubinius][rubinius]
-  
+
 Rails ActionMailer integration designed for Rails 3.X
 
 ## Install
@@ -81,7 +81,7 @@ end
 
 `domain` is needed if you send emails with :mailjet's SMTP (below)
 
-`default_from` is optional if you send emails with :mailjet's SMTP (below) 
+`default_from` is optional if you send emails with :mailjet's SMTP (below)
 
 ### Send emails with ActionMailer
 
@@ -112,7 +112,7 @@ config.action_mailer.delivery_method = :mailjet
 #### More info about your contacts
 
 ```ruby
-> contacts[0].info
+> contacts[0].infos
 => {blocked: 12, click: 1, email: 'test@mailjet.com'}
 ```
 
@@ -390,10 +390,10 @@ A typical Rails/ActiveRecord installation would look like that:
 # application.rb
 
 config.middleware.use Mailjet::Rack::Endpoint, '/mailjet/callback' do |params|  # using the same URL you just set in Mailjet's administration
-  
+
   email = params['email'].presence || params['original_address'] # original_address is for typofix events
-  
-  if user = User.find_by_email(email) 
+
+  if user = User.find_by_email(email)
     user.process_email_callback(params)
   else
     Rails.logger.fatal "[Mailjet] User not found: #{email} -- DUMP #{params.inspect}"
@@ -404,7 +404,7 @@ end
 class User < ActiveRecord::Base
 
   def process_email_callback(params)
-  
+
     # Returned events and options are described at https://eu.mailjet.com/docs/event_tracking
     case params['event']
     when 'open'
