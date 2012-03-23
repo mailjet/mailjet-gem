@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Cloud Emailing for easy delivery."
   s.description = "Cloud Emailing for easy delivery."
 
-  s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md", "README.fr.md"]
+  s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "activesupport", ">= 3.0.9"
