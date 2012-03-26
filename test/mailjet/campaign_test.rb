@@ -33,34 +33,29 @@ describe Mailjet::Campaign do
     Mailjet::Campaign.find(0).must_be_nil
 
     # Mailjet::Campaign#update
-    # campaign.update(:title => "My *new* Mailjet Campaign")
-    # TODO does not work, asks for an id even if present.
+    campaign.update(:title => "My *new* Mailjet Campaign")
 
     # Mailjet::Campaign#duplicate
     dup = campaign.duplicate(:title => "My *new* Mailjet Campaign")
     dup.must_be_instance_of Mailjet::Campaign
     dup.id.wont_be_same_as campaign.id
 
-    # Mailjet::Campaign#contacts
-    # campaign.contacts.wont_be_empty
-    # TODO does not work, always returns {}, even when list_id is passed with a list that contains emails.
-
     # Mailjet::Campaign#send!
     campaign.send!.must_equal 'OK'
-    # TODO does not work, 500 server side.
 
     # Mailjet::Campaign#test
     campaign.test('benoit.benezech@gmail.com').must_equal 'OK'
-    # TODO does not work, 500 server side.
-
-    # Mailjet::Campaign#statistics
-    campaign.statistics.keys.must_include "blocked"
 
     # Mailjet::Campaign#html
     campaign.html.must_be_nil
-    # TODO how to get content in the campaign template?
 
+    sleep 10 # wait for the campaign to be send
+    campaign = Mailjet::Campaign.find(campaign.id)
 
+    # Mailjet::Campaign#contacts
+    campaign.contacts.wont_be_empty
 
+    # Mailjet::Campaign#statistics
+    campaign.statistics.keys.must_include "blocked"
   end
 end

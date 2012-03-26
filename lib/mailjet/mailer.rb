@@ -10,7 +10,6 @@ class Mailjet::Mailer < ::Mail::SMTP
       :authentication  => 'plain',
       :user_name => Mailjet.config.api_key,
       :password  => Mailjet.config.secret_key,
-      :domain => Mailjet.config.domain,
       :enable_starttls_auto => true
     }.merge(options))
   end

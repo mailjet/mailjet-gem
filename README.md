@@ -74,7 +74,6 @@ Add the keys to an initializer:
 Mailjet.configure do |config|
   config.api_key = 'your-api-key'
   config.secret_key = 'your-secret-key'
-  config.domain = 'my_domain.com'
   config.default_from = 'my_regitered_mailjet_email@domain.com'
 end
 ```
