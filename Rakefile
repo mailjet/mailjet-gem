@@ -1,5 +1,7 @@
 #!/usr/bin/env rake
 require 'rake/testtask'
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
 $:.push File.expand_path("../lib", __FILE__)
 
