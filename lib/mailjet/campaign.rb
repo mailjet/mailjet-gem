@@ -55,7 +55,7 @@ module Mailjet
       def find(*params)
         options = params.last.is_a?(Hash) ? params.pop : {}
         ids = params.flatten.map(&:to_s).reject(&:blank?)
-        self.all(options).find{|c| c.id.to_s.in?(ids)}
+        self.all(options).find{|c| ids.include?(c.id.to_s)}
       end
     end
   end
