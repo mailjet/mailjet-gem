@@ -49,6 +49,11 @@ describe Mailjet::Campaign do
     # Mailjet::Campaign#html
     campaign.html.must_be_nil
 
+    # Mailjet::Campaign#set_html
+    html_test = "<html><head><title>Test</title></head><body>Test <a href=\"[[UNSUB_LINK_EN]]\">[[UNSUB_LINK_EN]]</a></body></html>"
+    dup.set(html: html_test).must_equal 'OK'
+    dup.html.must_equal html_test
+
     sleep 10 # wait for the campaign to be send
     campaign = Mailjet::Campaign.find(campaign.id)
 

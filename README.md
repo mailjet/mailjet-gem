@@ -298,6 +298,15 @@ config.action_mailer.delivery_method = :mailjet
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/message/htmlcampaign*
 
+#### Set the raw HTML for a campaign:
+
+```ruby
+> campaign.set(html: "<html><head><title>Test</title></head><body>Test <a href=\"[[UNSUB_LINK_EN]]\">[[UNSUB_LINK_EN]]</a></body></html>") 
+=> OK # response status
+```
+
+*All parameters and attributes at https://eu.mailjet.com/docs/api/message/sethtmlcampaign* 
+
 #### Duplicate a campaign:
 
 ```ruby
