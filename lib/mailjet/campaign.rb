@@ -33,9 +33,10 @@ module Mailjet
       (options.delete(:api) || Mailjet::Api.singleton).messageHtmlcampaign(options.reverse_merge(:id => self.id))["html"]
     end
 
-    def set(*params)
-      options = params.last.is_a?(Hash) ? params.pop : {}
-      (options.delete(:api) || Mailjet::Api.singleton).messageSethtmlcampaign(options.reverse_merge(:id => self.id), 'Post')["status"]
+    def set_html(*params)
+      options = params.extract_options!
+      html = params.first
+      (options.delete(:api) || Mailjet::Api.singleton).messageSethtmlcampaign(options.reverse_merge(:id => self.id, :html => html), 'Post')["status"]
     end
 
     def duplicate(options = {})

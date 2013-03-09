@@ -301,7 +301,7 @@ config.action_mailer.delivery_method = :mailjet
 #### Set the raw HTML for a campaign:
 
 ```ruby
-> campaign.set(html: "<html><head><title>Test</title></head><body>Test <a href=\"[[UNSUB_LINK_EN]]\">[[UNSUB_LINK_EN]]</a></body></html>") 
+> campaign.set_html("<html><head><title>Test</title></head><body>Test <a href=\"[[UNSUB_LINK_EN]]\">[[UNSUB_LINK_EN]]</a></body></html>") 
 => OK # response status
 ```
 
