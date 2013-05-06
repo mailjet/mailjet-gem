@@ -33,6 +33,12 @@ module Mailjet
       (options.delete(:api) || Mailjet::Api.singleton).messageHtmlcampaign(options.reverse_merge(:id => self.id))["html"]
     end
 
+    def set_html(*params)
+      options = params.extract_options!
+      html = params.first
+      (options.delete(:api) || Mailjet::Api.singleton).messageSethtmlcampaign(options.reverse_merge(:id => self.id, :html => html), 'Post')["status"]
+    end
+
     def duplicate(options = {})
       new_id = (options.delete(:api) || Mailjet::Api.singleton).messageDuplicatecampaign(options.reverse_merge(:id => self.id), 'Post')['new_id']
       self.class.new(:id => new_id)
