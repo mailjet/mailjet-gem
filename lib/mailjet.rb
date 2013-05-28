@@ -27,7 +27,7 @@ end
 
 if defined?(ActionMailer)
   require 'action_mailer/version'
-  require 'mailjet/mailer' if 3 == ActionMailer::VERSION::MAJOR
+  require 'mailjet/mailer' if ActionMailer::Base.respond_to?(:add_delivery_method)
 end
 
 require 'mailjet/rack/endpoint'

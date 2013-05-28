@@ -1,6 +1,6 @@
 # Mailjet
 
-[Maijet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
+[Mailjet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
 
 <!--
 
@@ -65,7 +65,7 @@ $ gem install mailjet
 
 ### Api key
 
-You need a proper account with [Maijet][mailjet]. You can get the API key through the [Maijet][mailjet] interface in _Account/Master API key_
+You need a proper account with [Mailjet][mailjet]. You can get the API key through the [Mailjet][mailjet] interface in _Account/Master API key_
 
 Add the keys to an initializer:
 
