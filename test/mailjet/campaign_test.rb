@@ -54,7 +54,7 @@ describe Mailjet::Campaign do
     dup.set_html(html_test).must_equal 'OK'
     dup.html.must_equal html_test
 
-    sleep 10 # wait for the campaign to be send
+    sleep 20 # wait for the campaign to be send
     campaign = Mailjet::Campaign.find(campaign.id)
 
     # Mailjet::Campaign#contacts
