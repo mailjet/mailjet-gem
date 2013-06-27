@@ -40,7 +40,12 @@ describe Mailjet::List do
     contacts = list.contacts
     contacts.first.must_be_instance_of Mailjet::Contact
     contacts.map(&:email).sort.must_equal ["c1@contacts.com", "c2@contacts.com", "c3@contacts.com", "c4@contacts.com", "c5@contacts.com"]
-    
+
+    # Mailjet::List#unsubscribe_contact
+    list.unsubscribe_contact("c1@contacts.com").must_equal "OK"
+    exception = proc {list.unsubscribe_contact("c1@contacts.com")}.must_raise(Mailjet::ApiError)
+    exception.to_s.must_match /This contact is already unsub./
+
     # Mailjet::List#remove_contacts
     list.remove_contacts.must_equal "NotModified"
     list.remove_contacts("does-not-exist@nowhere.com").must_equal "NotModified"
