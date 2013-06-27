@@ -18,7 +18,7 @@ describe Mailjet::Reporting do
     Mailjet::Reporting.statistics["cnt_messages"].wont_be_nil
 
     # Mailjet::Reporting.geolocation
-    Mailjet::Reporting.geolocation.must_be_instance_of Hash
+    Mailjet::Reporting.geolocation.must_be_instance_of Array
 
     # Mailjet::Reporting.agents
     Mailjet::Reporting.agents.must_be_instance_of Array

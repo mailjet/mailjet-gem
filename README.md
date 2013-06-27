@@ -162,6 +162,15 @@ config.action_mailer.delivery_method = :mailjet
 
 *All parameters and attributes at https://eu.mailjet.com/docs/api/lists/addmanycontacts*
 
+#### Unsubscribe contact from a list
+
+```ruby
+> list.unsubscribe_contact("test@mailjet.com")
+=> OK
+```
+
+*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/unsubcontact*
+
 #### Remove contacts from a list
 
 ```ruby

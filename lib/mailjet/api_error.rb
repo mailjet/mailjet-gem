@@ -7,7 +7,7 @@ module Mailjet
       # code is ugly, output is pretty
       super("error #{code} while sending #{request.inspect} to #{request_path} with #{params.inspect}\n\n" + 
         (res['errors'].present? ? 
-          (res['errors'] || []).map do |param, text|
+          [(res['errors'] || [])].flatten.map do |param, text|
             [param, text].map(&:to_s).reject(&:blank?).join(': ')
           end.join("\n") : 
           res.inspect
