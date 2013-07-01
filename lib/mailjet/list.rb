@@ -12,7 +12,13 @@ module Mailjet
       contacts = params.map{|p| p.is_a?(Mailjet::Contact) ? p.email.to_s : p.to_s }.reject(&:blank?)
       (options.delete(:api) || Mailjet::Api.singleton).listsAddmanycontacts(options.reverse_merge(:contacts => contacts.to_json, :id => self.id), 'Post')["status"]
     end
-    
+
+    def unsubscribe_contact(*params)
+      options = params.last.is_a?(Hash) ? params.pop : {}
+      contact = params.map{|p| p.is_a?(Mailjet::Contact) ? p.email.to_s : p.to_s }.reject(&:blank?).first
+      (options.delete(:api) || Mailjet::Api.singleton).listsUnsubcontact(options.reverse_merge(:contact => contact, :id => self.id), 'Post')["status"]
+    end
+
     def remove_contacts(*params)
       options = params.last.is_a?(Hash) ? params.pop : {}
       contacts = params.map{|p| p.is_a?(Mailjet::Contact) ? p.email.to_s : p.to_s }.reject(&:blank?)
@@ -32,7 +38,7 @@ module Mailjet
     def statistics(options = {})
       (options.delete(:api) || Mailjet::Api.singleton).listsStatistics(options.reverse_merge(:id => self.id))["statistics"]
     end
-    
+
     def delete(options = {})
       (options.delete(:api) || Mailjet::Api.singleton).listsDelete(options.reverse_merge(:id => self.id))["status"]
     end
