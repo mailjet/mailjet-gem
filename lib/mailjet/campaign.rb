@@ -48,7 +48,6 @@ module Mailjet
       def create(options = {})
         campaign_attr = (options.delete(:api) || Mailjet::Api.singleton).messageCreatecampaign(options, 'Post')["campaign"]
         campaign = find(campaign_attr["id"]).tap{ |c| campaign_attr.each{ |k, v| c.send("#{k}=", v) } }
-        puts campaign.inspect
         campaign
       end
 
