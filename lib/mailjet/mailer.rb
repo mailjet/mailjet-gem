@@ -5,7 +5,7 @@ class Mailjet::Mailer < ::Mail::SMTP
   def initialize options = {}
     ActionMailer::Base.default(:from => Mailjet.config.default_from) if Mailjet.config.default_from.present?
     super({
-      :address  => "in.mailjet.com",
+      :address  => Mailjet.config.server || "in.mailjet.com",
       :port  => 587,
       :authentication  => 'plain',
       :user_name => Mailjet.config.api_key,
