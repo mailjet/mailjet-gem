@@ -8,7 +8,8 @@ module Mailjet
     mattr_accessor :use_https
     mattr_accessor :domain
     mattr_accessor :default_from
-    
+    mattr_accessor :server
+
     @@use_https = true
     @@api_version = 0.1
     @@domain = ''
