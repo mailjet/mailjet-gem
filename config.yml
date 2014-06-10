@@ -1,5 +1,0 @@
-mailjet: # benoit.benezech@gmail.com dummy account
-  api_key: eb9e14c48e0f753f1a45dd46856c5bbf
-  secret_key: f406c28e8355b7811ecfaed88d72c79a
-  domain: test_domain.com
-  default_from: benoit.benezech@gmail.com

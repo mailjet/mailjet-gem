@@ -5,12 +5,13 @@ Bundler::GemHelper.install_tasks
 
 $:.push File.expand_path("../lib", __FILE__)
 
-Rake::TestTask.new(:test) do |t|
+Rake::TestTask.new(:spec) do |t|
   t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
+  t.libs << 'spec'
+  # t.pattern = 'spec/**/*_spec.rb'
   t.verbose = true
+  t.test_files = Dir['spec/**/*_spec.rb']
 end
 
 
-task :default => :test
+task :default => :spec

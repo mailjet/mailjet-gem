@@ -1,19 +1,15 @@
 require 'active_support'
 require 'ostruct'
 require 'mailjet/core_extensions/ostruct'
-require 'mailjet/api'
-require 'mailjet/api_request'
-require 'mailjet/api_error'
 require 'mailjet/configuration'
-require 'mailjet/contact'
-require 'mailjet/list'
-require 'mailjet/campaign'
-require 'mailjet/template_category'
-require 'mailjet/template_model'
-require 'mailjet/reporting'
-require 'mailjet/click'
-require 'mailjet/email'
+require 'mailjet/api_error'
 
+require 'mailjet/resource'
+require 'mailjet/message_delivery'
+
+Dir[File.expand_path("../mailjet/resources/*.rb", __FILE__)].each do |file|
+  require file
+end
 
 module Mailjet
   def self.configure

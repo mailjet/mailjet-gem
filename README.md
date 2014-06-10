@@ -16,26 +16,31 @@
 [mailjet]: http://www.mailjet.com
 [rubinius]: http://rubini.us/
 [ree]: http://www.rubyenterpriseedition.com/
-[jruby]:http://jruby.org/
-[mailjetter]:https://github.com/holinnn/mailjetter/
+[jruby]: http://jruby.org/
+[mailjetter]: https://github.com/holinnn/mailjetter/
+[activeresource]: https://github.com/rails/activeresource
+[apidoc]: http://dev.mailjet.com/guides
+[apidoc-recipient]: http://mjdemo.poxx.net/~shubham/listrecipient.html?utm_source=github&utm_medium=link&utm_content=readme&utm_campaign=mailjet-gem
+[camelcase-api]: http://api.rubyonrails.org/classes/String.html#method-i-camelcase
+[underscore-api]: http://api.rubyonrails.org/classes/String.html#method-i-underscore
+[actionmailerdoc]: http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options
+[send-api-doc]: http://dev.mailjet.com/guides/send-api-guide/
 
 <!-- You can read this readme file in other languages:
 english | [french](./README.fr.md) -->
 
 This gem helps you to:
 
-* Send transactional emails through Mailjet API in Rails 3
-* Manage your lists, contacts and campaigns
+* Send transactional emails through Mailjet API in Rails 3/4
+* Manage your lists, contacts and campaigns, and much more...
 * Track email delivery through event API
 
 Compatibility:
 
- - Ruby 1.8.7
  - Ruby 1.9.X
- - [jRuby][jruby]
- - [Rubinius][rubinius]
+ - Ruby 2.0.0
 
-Rails ActionMailer integration designed for Rails 3.X
+Rails ActionMailer integration designed for Rails 3.X and 4.X
 
 ## Install
 
@@ -88,310 +93,124 @@ As easy as:
 
 ```ruby
 # application.rb
-config.action_mailer.delivery_method = :mailjet
+config.action_mailer.delivery_method = :mailjet_smtp
 
 ```
+
+Or if you prefer sending messages through mailjet REST API:
+
+```ruby
+# application.rb
+config.action_mailer.delivery_method = :mailjet_api
+```
+
+You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc][actionmailerdoc]
 
 ## Manage your campaigns
 
-### Contacts
+This gem provide a convenient wrapper for consuming the mailjet API. The wrapper is highly inspired by [ActiveResource][activeresource] even though it does not depend on it.
 
-#### Filter your contacts
+You can find out all the resources you can access to in the [Official API docs][apidocs].
 
-```ruby
-> contacts = Mailjet::Contact.all(status: 'active', start: 100, limit: 2)
-=> [#<Mailjet::Contact>, #<Mailjet::Contact>]
-> contacts = Mailjet::Contact.all(openers: true, start: 100, limit: 2)
-=> [#<Mailjet::Contact>, #<Mailjet::Contact>]
-```
+Let's have a look at the power of this thin wrapper
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/contact/list*
-*All parameters and attributes for the openers option at https://eu.mailjet.com/docs/api/contact/openers*
+### Wrapper REST API
 
-#### More info about your contacts
+Let's say we want to manage list recipients.
+
+#### GET all the recipients in one query:
 
 ```ruby
-> contacts[0].infos
-=> {blocked: 12, click: 1, email: 'test@mailjet.com'}
+> recipients = Mailjet::Listrecipient.all(limit: 0)
+=> [#<Mailjet::Listrecipient>, #<Mailjet::Listrecipient>]
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/contact/infos*
+By default, `.all` will retrieve only 10 resources, so, you have to specify `limit: 0` if you want to GET them all.
 
-### Lists
+You can refine queries using [API Filters][apidoc-recipient]`*` as well as the following parameters:
 
-#### Create a new list
+* format: `:json, :xml, :rawxml, :html, :csv` or `:phpserialized` (default: `:json`)
+* limit: int (default: 10)
+* offset: int (default: 0)
+* sort: `[[:property, :asc], [:property, :desc]]`
+
+`*` See below for [naming conventions](#naming-conventions)
+
+#### GET the resources count
 
 ```ruby
-> list = Mailjet::List.create(label: 'My Mailjet list', name: "mymailjetlist")
+> Mailjet::Listrecipient.count
+=> 83
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/create*
-
-#### List your lists
+#### GET the first resource matching a query
 
 ```ruby
-> Mailjet::List.all(limit: 10, start: 0, orderby: 'id ASC')
+> Mailjet::Listrecipient.first
+=> #<Mailjet::Listrecipient>
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/all*
-
-#### Update a list
+#### GET a resource from its id
 
 ```ruby
-> list = Mailjet::List.all.find{|l| l.name == 'mymailjetlist' }
-> list = list.update(label: 'My updated Mailjet list', name: "myupdatedmailjetlist")
+> recipient = Mailjet::Listrecipient.find(id)
+=> #<Mailjet::Listrecipient>
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/update*
-
-#### Show all contacts within a list
+#### Updating a resource
 
 ```ruby
-> list.contacts
-=> [#<Mailjet::Contact>, #<Mailjet::Contact>]
+> recipient = Mailjet::Listrecipient.first
+=> #<Mailjet::Listrecipient>
+> recipient.is_active = false
+=> false
+> recipient.attributes
+=> {...} # attributes hash
+> recipient.save
+=> true
+> recipient.update_attributes(is_active: true)
+=> true
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/contacts*
+#### Deleting a resource
+ ```ruby
+> recipient = Mailjet::Listrecipient.first
+=> #<Mailjet::Listrecipient>
+> recipient.delete
+> Mailjet::Listrecipient.delete(123)
+=> #<Mailjet::Listrecipient>
+ ```
 
-#### Add contacts to your list
+### Naming conventions
+
+* Classes names are the [camelcased][camelcase-api] version of resource names (e.g. class name for `listrecipient` resource will be `Listrecipient` - notice the "r" of "recipient" is downcase since the "listrecipient" resource has no dash or underscore between "list" and "recipient")
+* Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
+* If you do not like the name of the resource, you can easily rename them. For instance, if you want a capital R to ListRecipient, you can define the following class:
 
 ```ruby
-> list.add_contacts("test@mailjet.com", "test2@mailjet.com", force: true  )
-=> OK
+class ListRecipient
+  include Mailjet::Resource
+  self.resource_path = 'listrecipient'
+  self.public_operations = [:get, :put, :post, :delete] # optional
+end
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/addmanycontacts*
+## Send emails through API
 
-#### Unsubscribe contact from a list
+In order to send emails through the API, you just have to `create` a new `MessageDelivery` resource.
 
-```ruby
-> list.unsubscribe_contact("test@mailjet.com")
-=> OK
+```
+Mailjet::MessageDelivery.create(from: "me@example.com", to: "you@example.com", subject: "Mailjet is awesome", text: "Yes, it is!")
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/unsubcontact*
-
-#### Remove contacts from a list
-
-```ruby
-> list.remove_contacts("test@mailjet.com", "test2@mailjet.com")
-=> OK
+If you want to send it to multiple recipients, just use an array:
+```
+Mailjet::MessageDelivery.create(from: "me@example.com", to: ["you@example.com", "someone-else@example.com"], subject: "Mailjet is awesome", text: "Yes, it is!")
 ```
 
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/removemanycontacts*
+In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
 
-#### Direct list email
-
-```ruby
-> list.email
-=> "jk324jlO3N32203@lists.mailjet.com"
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/email*
-
-
-#### Get statistics
-
-```ruby
-> list.statistics
-=> {active: 20, bounce: 1, click: 14, created_at: "2012-02-02 21:59:59", ...}
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/statistics*
-
-#### Delete a list
-
-```ruby
-> list.delete
-=> OK
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/lists/delete*
-
-### Campaigns
-
-#### Create a new campaign:
-
-```ruby
-> campaign = Mailjet::Campaign.create(title: "My Mailjet Campaign", list_id: Mailjet::List.all.first.id, from: "mailjet-registered-email@domain.com", from_name: "Sender Name", subject: "Our new product", lang: "en", footer: "default")
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/createcampaign*
-
-#### List your campaigns:
-
-```ruby
-> campaigns = Mailjet::Campaign.all(start: 10, limit: 20)
-=> [#<Mailjet::Campaign>, #<Mailjet::Campaign>, ...]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/campaigns*
-
-#### Find one campaign:
-
-```ruby
-> campaigns = Mailjet::Campaign.find(19)
-=> #<Mailjet::Campaign>
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/campaigns*
-
-#### Update your campaign:
-
-```ruby
-> campaign.update(title: "My *new* Mailjet Campaign")
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/updatecampaign*
-
-#### Get all the subscribers to your campaign:
-
-```ruby
-> campaign.contacts(limit: 2, start: 0, status: 'queued')
-=> [#<Mailjet::Contact id: 123, email: 'test@mailjet.com', sent_at: "2012-02-02 21:59:59", status: 'queued'>, #<Mailjet::Contact id: 456, email: 'test2@mailjet.com', sent_at: "2012-02-02 23:13:02", status: 'queued'>]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/contacts*
-
-#### Send the campaign the associated contacts:
-
-```ruby
-> campaign.send!
-=> OK
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/sendcampaign*
-
-#### Send a test email to specified email address:
-
-```ruby
-> campaign.test('test@mailjet.com')
-=> OK # response status
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/testcampaign*
-
-#### Get statistics:
-
-```ruby
-> campaign.statistics
-=> { total: 200, bounce: 1, bounce_pct: 0.5, click: 10, click_pct: 5, open: 20, open_pct: 10, sent: 200, sent_pct: 100, spam: 1, spam_pct: 0.5, total: 200 }
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/statistics*
-
-#### Template categories:
-
-```ruby
-> Mailjet::TemplateCategory.all
-=> [#<Mailjet::TemplateCategory id: 2, label: "basic", value: "Basic">, #<Mailjet::TemplateCategory id: 6, label: "design", value: "Design">]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/tplcategories*
-
-#### Template models:
-
-```ruby
-> Mailjet::TemplateModel.all(category: 2, custom: true, locale: 'fr_FR')
-=> [<#Mailjet::TemplateModel id: 4, name: "Text", header_link: "http:\/\/" ... ]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/tplmodels*
-
-#### Get the raw HTML form a campaign:
-
-```ruby
-> campaign.html
-=> "<html><head></head><body>Test</body></html>"
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/htmlcampaign*
-
-#### Set the raw HTML for a campaign:
-
-```ruby
-> campaign.set_html("<html><head><title>Test</title></head><body>Test <a href=\"[[UNSUB_LINK_EN]]\">[[UNSUB_LINK_EN]]</a></body></html>") 
-=> OK # response status
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/sethtmlcampaign* 
-
-#### Duplicate a campaign:
-
-```ruby
-> new_campaign = campaign.duplicate(title: "Another Mailjet Campaign")
-=> #<Mailjet::Campaign title: "Another Mailjet Campaign" ... >
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/message/duplicatecampaign*
-
-### Reporting
-
-#### Get the list of all your clicks
-
-```ruby
-> clicks = Mailjet::Reporting.clicks(from: "test@domain.com")
-=> [<#Mailjet::Click id: 4, click_delay: 1234, date: "2012-02-08", link: "", user_agent: "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0"} ]
-> clicks.first.contact
-=> #<Mailjet::Contact id: 123, email: "test@mailjet.com">
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/click*
-
-#### Info about domains your emails are sent to
-
-```ruby
-> Mailjet::Reporting.domains(start: 3, limit: 6)
-=> [{bounce_rate: 0.1, clicked_rate: 0.2, ...}, {bounce_rate: 0.8, clicked_rate: 0.1, ...}]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/domain*
-
-#### Clients used to open emails
-
-```ruby
-> Mailjet::Reporting.clients(start: 3, limit: 6)
-=> [{client: "Gmail", open_rate: 0.1, platform: "Windows", ...}, {client: "Outlook", open_rate: 0.3, platform: "Windows", ...}]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/emailclients*
-
-#### Info about email sent
-
-```ruby
-> Mailjet::Reporting.emails(from_domain: "domain.com", limit: 10)
-=> [#<Mailjet::Email>, #<Mailjet::Email>, #<Mailjet::Email>, ...]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/emailsent*
-
-#### Global stats about a set of emails
-
-```ruby
-> Mailjet::Reporting.statistics(from_domain: "domain.com", limit: 10)
-=> { avg_clicked_delay: 123, avg_opened_rate: 0.432, blocked: 13, ...}
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/emailstatistics*
-
-
-#### Opened email Geolocation
-
-```ruby
-> Mailjet::Reporting.geolocation(from_domain: "domain.com", limit: 10)
-=> [{click: 123, country: "France", open: 234}, {click: 9876, country: "US", open: 12345}]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/geoip*
-
-#### User-Agents used to open emails
-
-```ruby
-> Mailjet::Reporting.agents(start: 3, limit: 6)
-=> [{cnt_clicked: 123, part: 30, platform: "Windows", user_agent: "Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0"}, ...]
-```
-
-*All parameters and attributes at https://eu.mailjet.com/docs/api/report/useragents*
+You can check available params in the [official doc][send-api-doc].
 
 ## Track email delivery
 
@@ -461,7 +280,7 @@ Then at the root of the gem, simply run:
 
 ```bash
 bundle
-rake
+bundle exec rake
 ```
 ## Send a pull request
 
