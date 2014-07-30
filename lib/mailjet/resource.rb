@@ -1,6 +1,7 @@
 require 'mailjet/connection'
 require 'mailjet/resource'
 require 'active_support/hash_with_indifferent_access'
+require 'active_support/core_ext/hash/reverse_merge'
 require 'active_support/core_ext/class'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
