@@ -49,7 +49,7 @@ module Mailjet
         @adapter.send(method, payload, additional_headers, &block)
       end
     rescue RestClient::Exception => e
-      handle_exeception(e, additional_headers, payload)
+      handle_exception(e, additional_headers, payload)
     end
 
     def method_allowed(method)
@@ -57,7 +57,7 @@ module Mailjet
       public_operations.include?(method) && (method == :get || !read_only?)
     end
 
-    def handle_exeception(e, additional_headers, payload = {})
+    def handle_exception(e, additional_headers, payload = {})
       params = additional_headers[:params] || {}
       params = params.merge(payload)
 
