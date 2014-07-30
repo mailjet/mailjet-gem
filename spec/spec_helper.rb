@@ -5,7 +5,6 @@ require 'minitest-spec-context'
 require 'mocha/setup'
 require 'mailjet'
 require 'mailjet/resource'
-require 'turn/autorun'
 
 require File.expand_path './support/vcr_setup.rb', __dir__
 
@@ -33,5 +32,3 @@ if config_file_exists?
     end
   end
 end
-
-Turn.config.format = :outline

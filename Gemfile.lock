@@ -118,8 +118,6 @@ GEM
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
-    turn (0.9.3)
-      ansi
     vcr (2.7.0)
     webmock (1.15.2)
       addressable (>= 2.2.7)
@@ -142,6 +140,5 @@ DEPENDENCIES
   minitest-spec-context
   mocha
   rake
-  turn
   vcr
   webmock
