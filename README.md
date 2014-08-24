@@ -96,7 +96,7 @@ As easy as:
 
 ```ruby
 # application.rb
-config.action_mailer.delivery_method = :mailjet_smtp
+config.action_mailer.delivery_method = :mailjet
 
 ```
 
