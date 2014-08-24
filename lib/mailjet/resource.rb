@@ -55,8 +55,12 @@ module Mailjet
       def find(id)
         attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
-      rescue RestClient::ResourceNotFound
-        nil
+      rescue Mailjet::ApiError => e
+        if e.code == 404
+          nil
+        else
+          raise e
+        end
       end
 
       def create(attributes = {})
