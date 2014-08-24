@@ -29,6 +29,10 @@ module Mailjet
           public_operations: public_operations,
           read_only: read_only)
       end
+
+      def self.default_headers
+        { accept: :json, accept_encoding: :deflate }
+      end
     end
 
     module ClassMethods
@@ -38,18 +42,18 @@ module Mailjet
 
       def all(params = {})
         params = format_params(params)
-        attribute_array = parse_api_json(connection.get(params: params))
+        attribute_array = parse_api_json(connection.get(default_headers.merge(params: params)))
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
       def count
-        response_json = connection.get(params: {limit: 1, countrecords: 1})
+        response_json = connection.get(default_headers.merge(params: {limit: 1, countrecords: 1}))
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
       end
 
       def find(id)
-        attributes = parse_api_json(connection[id].get).first
+        attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
       rescue RestClient::ResourceNotFound
         nil
@@ -63,7 +67,7 @@ module Mailjet
       end
 
       def delete(id)
-        connection[id].delete
+        connection[id].delete(default_headers)
       end
 
       def instanciate_from_api(attributes = {})
@@ -116,9 +120,9 @@ module Mailjet
 
     def save
       if persisted?
-        response = connection[id].put(formatted_payload)
+        response = connection[id].put(formatted_payload, default_headers)
       else
-        response = connection.post(formatted_payload)
+        response = connection.post(formatted_payload, default_headers)
       end
 
       self.attributes = parse_api_json(response).first
@@ -154,6 +158,10 @@ module Mailjet
 
     def connection
       self.class.connection
+    end
+
+    def default_headers
+      self.class.default_headers
     end
 
     def formatted_payload
