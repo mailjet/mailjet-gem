@@ -117,6 +117,11 @@ You can find out all the resources you can access to in the [Official API docs][
 
 Let's have a look at the power of this thin wrapper
 
+### Naming conventions
+
+* Class names' first letter is capitalized followed by the rest of the resource name in lowercase (e.g. `listrecipient` will be `Listrecipient` in ruby)
+* Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
+
 ### Wrapper REST API
 
 Let's say we want to manage list recipients.
@@ -136,8 +141,6 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 * limit: int (default: 10)
 * offset: int (default: 0)
 * sort: `[[:property, :asc], [:property, :desc]]`
-
-`*` See below for [naming conventions](#naming-conventions)
 
 #### GET the resources count
 
@@ -183,11 +186,6 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 > Mailjet::Listrecipient.delete(123)
 => #<Mailjet::Listrecipient>
  ```
-
-### Naming conventions
-
-* Class names' first letter is capitalized followed by the rest of the resource name in lowercase (e.g. `listrecipient` will be `Listrecipient` in ruby)
-* Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
 
 ## Send emails through API
 
