@@ -96,7 +96,7 @@ As easy as:
 
 ```ruby
 # application.rb
-config.action_mailer.delivery_method = :mailjet
+config.action_mailer.delivery_method = :mailjet_smtp
 
 ```
 
@@ -186,7 +186,7 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 
 ### Naming conventions
 
-* Classes names are the [camelcased][camelcase-api] version of resource names (e.g. class name for `listrecipient` resource will be `Listrecipient` - notice the "r" of "recipient" is downcase since the "listrecipient" resource has no dash or underscore between "list" and "recipient")
+* Classes names are the [camelcased][camelcase-api] version of resource names
 * Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
 * If you do not like the name of the resource, you can easily rename them. For instance, if you want a capital R to ListRecipient, you can define the following class:
 
