@@ -117,6 +117,11 @@ You can find out all the resources you can access to in the [Official API docs][
 
 Let's have a look at the power of this thin wrapper
 
+### Naming conventions
+
+* Class names' first letter is capitalized followed by the rest of the resource name in lowercase (e.g. `listrecipient` will be `Listrecipient` in ruby)
+* Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
+
 ### Wrapper REST API
 
 Let's say we want to manage list recipients.
@@ -136,8 +141,6 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 * limit: int (default: 10)
 * offset: int (default: 0)
 * sort: `[[:property, :asc], [:property, :desc]]`
-
-`*` See below for [naming conventions](#naming-conventions)
 
 #### GET the resources count
 
@@ -183,20 +186,6 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 > Mailjet::Listrecipient.delete(123)
 => #<Mailjet::Listrecipient>
  ```
-
-### Naming conventions
-
-* Classes names are the [camelcased][camelcase-api] version of resource names (e.g. class name for `listrecipient` resource will be `Listrecipient` - notice the "r" of "recipient" is downcase since the "listrecipient" resource has no dash or underscore between "list" and "recipient")
-* Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
-* If you do not like the name of the resource, you can easily rename them. For instance, if you want a capital R to ListRecipient, you can define the following class:
-
-```ruby
-class ListRecipient
-  include Mailjet::Resource
-  self.resource_path = 'listrecipient'
-  self.public_operations = [:get, :put, :post, :delete] # optional
-end
-```
 
 ## Send emails through API
 
