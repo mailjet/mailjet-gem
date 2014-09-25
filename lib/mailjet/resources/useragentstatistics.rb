@@ -3,7 +3,7 @@ require 'mailjet/resource'
 module Mailjet
   class Useragentstatistics
     include Mailjet::Resource
-    self.resource_path = '/v3/REST/useragentstatistics'
+    self.resource_path = 'v3/REST/useragentstatistics'
     self.public_operations = [:get]
     self.filters = [:campaign_id, :campaign_status, :contacts_list, :custom_campaign, :event, :exclude_platform, :from, :from_domain, :from_id, :from_ts, :from_type, :is_deleted, :is_newsletter_tool, :is_starred, :period, :platform, :to_ts]
     self.properties = [:count, :distinct_count, :platform, :user_agent]
