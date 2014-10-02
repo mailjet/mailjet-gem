@@ -7,7 +7,7 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
 
-ActiveSupport.parse_json_times = false
+ActiveSupport.parse_json_times = true
 
 module Mailjet
   module Resource
