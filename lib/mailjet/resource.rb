@@ -7,7 +7,7 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
 
-ActiveSupport.parse_json_times = true
+# ActiveSupport.parse_json_times = false
 
 module Mailjet
   module Resource
@@ -80,9 +80,36 @@ module Mailjet
 
       def parse_api_json(response_json)
         response_hash = ActiveSupport::JSON.decode(response_json)
+        #transform in convert_dates_from
+        #my code
+        response_hash = convert_dates_from(response_hash)
+        #end my code
         response_data_array = response_hash['Data']
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
+
+      #my code!
+      def convert_dates_from(data)
+        case data
+        when nil
+          nil
+       when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
+          begin
+            DateTime.parse(data)
+          rescue ArgumentError
+            data
+          end
+        when Array
+          data.map! { |d| convert_dates_from(d) }
+        when Hash
+          data.each do |key, value|
+            data[key] = convert_dates_from(value)
+          end
+        else
+          data
+        end
+      end
+      #end my code
 
       def format_params(params)
         if params[:sort]
@@ -189,6 +216,12 @@ module Mailjet
     def parse_api_json(response_json)
       self.class.parse_api_json(response_json)
     end
+
+    #my code!
+    def convert_dates_from(data)
+      self.class.convert_dates_from(data)
+    end
+    #end my code
 
     def method_missing(method_symbol, *arguments) #:nodoc:
       method_name = method_symbol.to_s
