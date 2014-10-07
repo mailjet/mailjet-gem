@@ -7,6 +7,11 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
 
+
+# This option automatically transforms the date output by the API into something a bit more readable.
+# Setting this option to 'true' -- or having it at all -- may effect a users app by globally implementing this
+# date transformation feature which may not be desired by the developer for whatever reason.
+#
 # ActiveSupport.parse_json_times = false
 
 module Mailjet
@@ -80,15 +85,18 @@ module Mailjet
 
       def parse_api_json(response_json)
         response_hash = ActiveSupport::JSON.decode(response_json)
-        #transform in convert_dates_from
-        #my code
+        #Take the response from the API and put it through a method -- taken from the ActiveSupport library -- which converts
+        #the date-time from "2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
         response_hash = convert_dates_from(response_hash)
-        #end my code
+        #
+        #
         response_data_array = response_hash['Data']
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
 
-      #my code!
+      # Method -- taken from the ActiveSupport library -- which converts the date-time from
+      #"2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
+      #We may have to change this in the future if ActiveSupport's JSON implementation changes
       def convert_dates_from(data)
         case data
         when nil
@@ -109,7 +117,7 @@ module Mailjet
           data
         end
       end
-      #end my code
+
 
       def format_params(params)
         if params[:sort]
