@@ -7,6 +7,6 @@ module Mailjet
     self.public_operations = [:get]
     self.filters = [:locale]
     self.properties = [:description, :id, :locale, :parent_category, :value]
-    
+
   end
 end

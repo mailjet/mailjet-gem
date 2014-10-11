@@ -7,7 +7,12 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
 
-ActiveSupport.parse_json_times = true
+
+# This option automatically transforms the date output by the API into something a bit more readable.
+# Setting this option to 'true' -- or having it at all -- may effect a users app by globally implementing this
+# date transformation feature which may not be desired by the developer for whatever reason.
+#
+# ActiveSupport.parse_json_times = false
 
 module Mailjet
   module Resource
@@ -80,9 +85,39 @@ module Mailjet
 
       def parse_api_json(response_json)
         response_hash = ActiveSupport::JSON.decode(response_json)
+        #Take the response from the API and put it through a method -- taken from the ActiveSupport library -- which converts
+        #the date-time from "2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
+        response_hash = convert_dates_from(response_hash)
+        #
+        #
         response_data_array = response_hash['Data']
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
+
+      # Method -- taken from the ActiveSupport library -- which converts the date-time from
+      #"2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
+      #We may have to change this in the future if ActiveSupport's JSON implementation changes
+      def convert_dates_from(data)
+        case data
+        when nil
+          nil
+       when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
+          begin
+            DateTime.parse(data)
+          rescue ArgumentError
+            data
+          end
+        when Array
+          data.map! { |d| convert_dates_from(d) }
+        when Hash
+          data.each do |key, value|
+            data[key] = convert_dates_from(value)
+          end
+        else
+          data
+        end
+      end
+
 
       def format_params(params)
         if params[:sort]
@@ -189,6 +224,12 @@ module Mailjet
     def parse_api_json(response_json)
       self.class.parse_api_json(response_json)
     end
+
+    #my code!
+    def convert_dates_from(data)
+      self.class.convert_dates_from(data)
+    end
+    #end my code
 
     def method_missing(method_symbol, *arguments) #:nodoc:
       method_name = method_symbol.to_s

@@ -7,6 +7,6 @@ module Mailjet
     self.public_operations = [:get, :put, :post]
     self.filters = [:dns, :user]
     self.properties = [:created_at, :description, :email, :filename, :id, :is_enabled]
-    
+
   end
 end

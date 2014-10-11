@@ -7,6 +7,6 @@ module Mailjet
     self.public_operations = [:post]
     self.filters = []
     self.properties = [:action, :addresses, :errors, :force, :list, :recipients]
-    
+
   end
 end
