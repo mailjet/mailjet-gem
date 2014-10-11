@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport", ">= 3.1.0"
   s.add_dependency "rack", ">= 1.4.0"
   s.add_dependency "rest-client"
+
   s.add_development_dependency "actionmailer", ">= 3.0.9"
   s.add_development_dependency "minitest"
   s.add_development_dependency "minitest-matchers"
@@ -33,9 +34,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "vcr"
   s.add_development_dependency 'guard'
   s.add_development_dependency 'guard-minitest'
-  s.add_development_dependency 'debugger'
+  s.add_development_dependency 'byebug'
   s.add_development_dependency "rspec" #added this
   s.add_development_dependency "rspec-expectations" #added this
   s.add_development_dependency "dotenv" #added this
-
 end
