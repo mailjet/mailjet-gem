@@ -1,0 +1,13 @@
+require 'mailjet/resource'
+
+module Mailjet
+  class Newsletter_detailcontent
+    include Mailjet::Resource
+    self.action = "detailcontent"
+    self.resource_path = "v3/REST/newsletter/id/#{self.action}"
+    self.public_operations = [:get, :put, :post, :delete]
+    self.filters = [:campaign, :contacts_list, :delivered_at, :edit_mode, :is_archived, :is_campaign, :is_deleted, :is_handled, :is_starred, :modified, :news_letter_template, :segmentation, :status, :subject]
+    self.properties = [:callback, :campaign, :contacts_list, :created_at, :delivered_at, :edit_mode, :edit_type, :footer, :footer_address, :footer_wysiwyg_type, :header_filename, :header_link, :header_text, :header_url, :id, :ip, :is_handled, :is_starred, :is_text_part_included, :locale, :modified_at, :permalink, :permalink_host, :permalink_wysiwyg_type, :politeness_mode, :reply_email, :segmentation, :sender, :sender_email, :sender_name, :status, :subject, :template, :test_address, :title, :url]
+
+  end
+end

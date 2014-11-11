@@ -19,7 +19,7 @@ module Mailjet
     extend ActiveSupport::Concern
 
     included do
-      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :properties
+      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :properties, :action
       cattr_writer :connection
 
       def self.connection
@@ -58,6 +58,11 @@ module Mailjet
       end
 
       def find(id)
+         #
+         self.resource_path = create_action_resource_path(id) if self.action
+         puts self.action
+         puts self.resource_path
+         #
         attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
       rescue Mailjet::ApiError => e
@@ -69,6 +74,11 @@ module Mailjet
       end
 
       def create(attributes = {})
+         #
+         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
+         puts self.action
+         puts self.resource_path
+         #
         self.new(attributes).tap do |resource|
           resource.save!
           resource.persisted = true
@@ -76,6 +86,11 @@ module Mailjet
       end
 
       def delete(id)
+         #
+         self.resource_path = create_action_resource_path(id) if self.action
+         puts self.action
+         puts self.resource_path
+         #
         connection[id].delete(default_headers)
       end
 
@@ -93,6 +108,13 @@ module Mailjet
         response_data_array = response_hash['Data']
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
+
+      def create_action_resource_path(id)
+         url_elements = self.resource_path.split("/")
+         url_elements[3] = id.to_s
+         return url_elements.join("/")
+      end
+
 
       # Method -- taken from the ActiveSupport library -- which converts the date-time from
       #"2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
