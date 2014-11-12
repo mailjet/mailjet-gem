@@ -58,10 +58,8 @@ module Mailjet
       end
 
       def find(id)
-         #
+         # if action method, ammend url to appropriate id
          self.resource_path = create_action_resource_path(id) if self.action
-         puts self.action
-         puts self.resource_path
          #
         attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
@@ -74,10 +72,8 @@ module Mailjet
       end
 
       def create(attributes = {})
-         #
+         # if action method, ammend url to appropriate id
          self.resource_path = create_action_resource_path(attributes[:id]) if self.action
-         puts self.action
-         puts self.resource_path
          #
         self.new(attributes).tap do |resource|
           resource.save!
@@ -86,10 +82,8 @@ module Mailjet
       end
 
       def delete(id)
-         #
+         # if action method, ammend url to appropriate id
          self.resource_path = create_action_resource_path(id) if self.action
-         puts self.action
-         puts self.resource_path
          #
         connection[id].delete(default_headers)
       end
