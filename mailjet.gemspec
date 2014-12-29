@@ -9,11 +9,11 @@ require "mailjet/version"
 Gem::Specification.new do |s|
   s.name        = "mailjet"
   s.version     = Mailjet::VERSION
-  s.authors     = ["Jean-Baptiste Escoyez", "Aurélien AMILIN", "Benoit Bénézech"]
-  s.email       = ["jbescoyez@gmail.com"]
+  s.authors     = ["Tyler Nappy", "Jean-Baptiste Escoyez", "Aurélien AMILIN", "Benoit Bénézech"]
+  s.email       = ["tyler@mailjet.com", "devrel-team@mailjet.com", "jbescoyez@gmail.com"]
   s.homepage    = "http://www.mailjet.com"
-  s.summary     = "Cloud Emailing for easy delivery."
-  s.description = "Cloud Emailing for easy delivery."
+  s.summary     = "Mailjet a powerful all-in-one email service provider clients can use to get maximum insight and deliverability results from both their marketing and transactional emails. Our analytics tools and intelligent APIs give senders the best understanding of how to maximize benefits for each individual contact, with each email sent."
+  s.description = "Ruby wrapper for Mailjet's v3 API"
 
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
