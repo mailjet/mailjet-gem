@@ -39,7 +39,7 @@ This gem helps you to:
 Compatibility:
 
  - Ruby 1.9.X
- - Ruby 2.0.0
+ - Ruby 2.X.X
 
 Rails ActionMailer integration designed for Rails 3.X and 4.X
 
@@ -53,10 +53,15 @@ Add the following in your Gemfile:
 
 ```ruby
 # Gemfile
-
 gem 'mailjet'
 ```
 
+If you wish to use the most up to date version from Github, add the following in your Gemfile instead:
+
+```ruby
+#Gemfile
+gem 'mailjet', :git => 'https://github.com/mailjet/mailjet-gem.git'
+```
 and let the bundler magic happen
 
 ```bash
