@@ -14,6 +14,5 @@ module Mailjet
     else
       @@end_point = 'https://api.mailjet.com'
     end
-    puts @@end_point
   end
 end
