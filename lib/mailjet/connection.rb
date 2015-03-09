@@ -18,8 +18,12 @@ module Mailjet
       adapter_class = options[:adapter_class] || RestClient::Resource
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
-      ## add path to crt here after 'ssl_ca_file =>'
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/Users/tylernappy/Mailjet/mailjet_software/mailjet-gem/gd_bundle-g2.crt"))
+      ## If .crt file exists, use in API call.  If not, do not because you are using the production API
+      if File.exists?(Mailjet::Configuration.path_to_crt)
+        self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  Mailjet::Configuration.path_to_crt))
+      else
+        self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key))
+      end
       ##
     end
 

@@ -1,10 +1,14 @@
 # Use of Preprod
 * Add the correct `.crt` file to communicate with preprod API in root directory
-* Open `lib/mailjet/connection.rb`
-* On line `22` add the path to the `.crt` file after `:ssl_ca_file =>`
-
+* Open `lib/mailjet/configuration.rb`
+* On line `11` add the path to the `.crt` file
 ```
-self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/path/to/crt/file/the_crt_file.crt"))
+Mailjet::Configuration.path_to_crt = "path/to/crt/file.crt"
+```
+* If the file exists, the wrapper will use the preprod API.  If not, it will use the production API
+* NOTE: If you wish to use the production API instead of the preprod API, leave the the path to the blank on line `11`
+```
+Mailjet::Configuration.path_to_crt = ""
 ```
 
 # Mailjet
