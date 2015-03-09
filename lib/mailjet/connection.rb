@@ -16,10 +16,11 @@ module Mailjet
 
     def initialize(end_point, api_key, secret_key, options = {})
       adapter_class = options[:adapter_class] || RestClient::Resource
-
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key))
+      ## add path to crt here after 'ssl_ca_file =>'
+      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/Users/tylernappy/Mailjet/mailjet_software/mailjet-gem/gd_bundle-g2.crt"))
+      ##
     end
 
     def get(additional_headers = {}, &block)

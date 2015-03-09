@@ -26,3 +26,4 @@ pkg
 /config.yml
 
 .env
+gd_bundle-g2.crt
