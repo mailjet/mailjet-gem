@@ -15,11 +15,20 @@ module Mailjet
     end
 
     def initialize(end_point, api_key, secret_key, options = {})
+      ##charles proxy
+      # RestClient.proxy = "http://127.0.0.1:8888"
+      ##
+      RestClient.log =
+      Object.new.tap do |proxy|
+        def proxy.<<(message)
+          Rails.logger.info message
+        end
+      end
       adapter_class = options[:adapter_class] || RestClient::Resource
-
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key))
+      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :verify_ssl => false, content_type: 'application/json'))
+      # self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key))
     end
 
     def get(additional_headers = {}, &block)
@@ -41,6 +50,7 @@ module Mailjet
     private
 
     def handle_api_call(method, additional_headers = {}, payload = {}, &block)
+      payload = payload.to_json
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
       if [:get, :delete].include?(method)

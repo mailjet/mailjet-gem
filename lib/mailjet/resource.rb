@@ -36,7 +36,7 @@ module Mailjet
       end
 
       def self.default_headers
-        { accept: :json, accept_encoding: :deflate }
+        { accept: :json, accept_encoding: :deflate, content_type: :json}
       end
     end
 
