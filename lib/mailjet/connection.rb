@@ -1,6 +1,7 @@
 require 'rest_client'
 require 'mailjet/gem_extensions/rest_client'
 require 'active_support/core_ext/module/delegation'
+require 'mailjet/version'
 
 module Mailjet
   class Connection
@@ -51,7 +52,11 @@ module Mailjet
 
     private
 
-    def handle_api_call(method, additional_headers = {}, payload = {}, &block)
+    user_agent = Mailjet::VERSION
+
+    def handle_api_call(method, additional_headers_with_agent = {}, payload = {}, &block)
+      additional_headers = {:user_agent => user_agent}.merge(additional_headers_with_agent)
+
       payload = payload.to_json
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
