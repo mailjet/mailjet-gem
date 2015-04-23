@@ -57,9 +57,9 @@ module Mailjet
         response_hash['Total']
       end
 
-      def find(id)
+      def find(id, job_id = nil)
          # if action method, ammend url to appropriate id
-         self.resource_path = create_action_resource_path(id) if self.action
+         self.resource_path = create_action_resource_path(id, job_id) if self.action
          #
         attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
@@ -103,11 +103,12 @@ module Mailjet
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
 
-      def create_action_resource_path(id)
+      def create_action_resource_path(id, job_id)
         debugger
         debugger
          url_elements = self.resource_path.split("/")
          url_elements[3] = id.to_s
+         url_elements << job_id.to_s if job_id
          return url_elements.join("/")
       end
 
