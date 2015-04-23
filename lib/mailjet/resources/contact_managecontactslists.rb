@@ -1,9 +1,9 @@
 require 'mailjet/resource'
 
 module Mailjet
-  class Contact_managecontactlists
+  class Contact_managecontactslists
     include Mailjet::Resource
-    self.action = "managecontactlists"
+    self.action = "managecontactslists"
     self.resource_path = "v3/REST/contact/id/#{self.action}"
     self.public_operations = [:post]
     self.filters = []
