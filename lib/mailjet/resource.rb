@@ -103,7 +103,7 @@ module Mailjet
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
 
-      def create_action_resource_path(id, job_id)
+      def create_action_resource_path(id, job_id = nil)
          url_elements = self.resource_path.split("/")
          url_elements[3] = id.to_s
          url_elements << job_id.to_s if job_id
