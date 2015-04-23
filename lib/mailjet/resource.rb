@@ -104,8 +104,6 @@ module Mailjet
       end
 
       def create_action_resource_path(id, job_id)
-        debugger
-        debugger
          url_elements = self.resource_path.split("/")
          url_elements[3] = id.to_s
          url_elements << job_id.to_s if job_id
