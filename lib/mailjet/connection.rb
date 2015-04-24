@@ -19,7 +19,7 @@ module Mailjet
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
       ## add path to crt here after 'ssl_ca_file =>'
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/Users/tylernappy/Mailjet/mailjet_software/mailjet-gem/gd_bundle-g2.crt"))
+      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/Users/tylernappy/Mailjet/mailjet_software/mailjet-gem/gd_bundle-g2.crt", content_type: 'application/json'))
       ##
     end
 
@@ -42,6 +42,7 @@ module Mailjet
     private
 
     def handle_api_call(method, additional_headers = {}, payload = {}, &block)
+      payload = payload.to_json
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
       if [:get, :delete].include?(method)
