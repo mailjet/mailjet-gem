@@ -107,10 +107,13 @@ module Mailjet
 
       def create_action_resource_path(id, job_id = nil)
          url_elements = self.resource_path.split("/")
-         url_elements[3] = id.to_s if self.action != "managemanycontacts"
+         url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
+         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[2] == "contactslist")
+           url_elements[3] = id.to_s
+        end
          url_elements << job_id.to_s if job_id #if job_id exists, ammend it to end of the URI
-         asdf = url_elements.join("/")
-         return asdf
+         url = url_elements.join("/")
+         return url
       end
 
 
