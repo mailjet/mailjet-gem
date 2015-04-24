@@ -106,20 +106,10 @@ module Mailjet
       end
 
       def create_action_resource_path(id, job_id = nil)
-        debugger
-        debugger
          url_elements = self.resource_path.split("/")
-         debugger
-         debugger
-         url_elements[3] = id.to_s
-         debugger
-         debugger
-         url_elements << job_id.to_s if job_id
-         debugger
-         debugger
+         url_elements[3] = id.to_s if self.action != "managemanycontacts"
+         url_elements << job_id.to_s if job_id #if job_id exists, ammend it to end of the URI
          asdf = url_elements.join("/")
-         debugger
-         debugger
          return asdf
       end
 

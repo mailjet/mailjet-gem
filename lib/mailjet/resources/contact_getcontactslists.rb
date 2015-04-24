@@ -7,6 +7,6 @@ module Mailjet
     self.resource_path = "v3/REST/contact/id/#{self.action}"
     self.public_operations = [:get]
     self.filters = []
-    self.properties = ['ListID', :is_unsub, :is_active]
+    self.properties = []
   end
 end
