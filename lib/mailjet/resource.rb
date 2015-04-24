@@ -59,6 +59,8 @@ module Mailjet
 
       def find(id, job_id = nil)
          # if action method, ammend url to appropriate id
+         debugger
+         debugger
          self.resource_path = create_action_resource_path(id, job_id) if self.action
          #
         attributes = parse_api_json(connection[id].get(default_headers)).first
@@ -104,10 +106,21 @@ module Mailjet
       end
 
       def create_action_resource_path(id, job_id = nil)
+        debugger
+        debugger
          url_elements = self.resource_path.split("/")
+         debugger
+         debugger
          url_elements[3] = id.to_s
+         debugger
+         debugger
          url_elements << job_id.to_s if job_id
-         return url_elements.join("/")
+         debugger
+         debugger
+         asdf = url_elements.join("/")
+         debugger
+         debugger
+         return asdf
       end
 
 
