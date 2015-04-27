@@ -36,7 +36,7 @@ module Mailjet
       end
 
       def self.default_headers
-        { accept: :json, accept_encoding: :deflate, content_type: :json }
+        { accept: :json, accept_encoding: :deflate, content_type: :json, user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}"  }
       end
     end
 

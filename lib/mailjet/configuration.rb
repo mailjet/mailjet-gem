@@ -7,8 +7,8 @@ module Mailjet
     mattr_accessor :end_point
     mattr_accessor :default_from
 
-    @@end_point = 'https://api.preprod.mailjet.com'
-    # @@end_point = 'https://api.mailjet.com'
+    # @@end_point = 'https://api.preprod.mailjet.com'
+    @@end_point = 'https://api.mailjet.com'
 
   end
 end
