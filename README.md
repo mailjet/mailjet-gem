@@ -192,6 +192,39 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 => #<Mailjet::Listrecipient>
  ```
 
+### Action Endpoints
+
+Some APIs allow the use of action endpoints:
+* /newsletter
+* /contact
+* /contactslist
+
+To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.  The following performs `managemanycontacts` on the `contactslist` endpoint:
+```
+Mailjet::Contactslist_managemanycontacts.find(1, 34062)
+```
+
+Each action endpoint requires the ID of the object you are changing.  To 'create' (POST), pass the ID as a variable like such:
+```
+Mailjet::Contactslist_managecontact.create(id: 1, action: "unsub", email: "example@me.com", name: "tyler")
+```
+
+To 'find' (GET), pass the ID as a variable like such:
+```
+Mailjet::Contact_getcontactslists.find(1)
+```
+
+To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the object; second, the job ID:
+```
+Mailjet::Contactslist_managemanycontacts.find(1, 34062)
+```
+
+If there is a job ID but no ID for the object when 'find'ing, pass `nil` as the first parameter:
+```
+Mailjet::Contact_managemanycontacts.find(nil, 34062)
+```
+
+
 ## Send emails through API
 
 In order to send emails through the API, you just have to `create` a new `MessageDelivery` resource.
@@ -208,6 +241,8 @@ Mailjet::MessageDelivery.create(from: "me@example.com", to: ["you@example.com", 
 In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
 
 You can check available params in the [official doc][send-api-doc].
+
+##
 
 ## Track email delivery
 
