@@ -30,7 +30,7 @@ module Mailjet
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
       # self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :verify_ssl => false, content_type: 'application/json'))
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key))
+      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json'))
     end
 
     def get(additional_headers = {}, &block)

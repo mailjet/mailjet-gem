@@ -21,7 +21,7 @@ describe Mailjet do
       #needs to be changed
       it 'should look like -- Mon, 19 May 2014 15:31:09 +0000' do
          date = Mailjet::Apikey.first.created_at
-         expect(date).to match(/^[a-zA-z][a-zA-z][a-zA-z],\s\d{1,2}\s[a-zA-z][a-zA-z][a-zA-z]\s\d{4}\s\d{1,2}:\d{1,2}:\d{1,2}\s\W\d{1,4}$/)
+         expect(date.is_a?(DateTime)).to match(true)
       end
 
   end
