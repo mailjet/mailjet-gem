@@ -195,9 +195,9 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 ### Action Endpoints
 
 Some APIs allow the use of action endpoints:
-* /newsletter
-* /contact
-* /contactslist
+* [/newsletter](http://dev.mailjet.com/email-api/v3/newsletter/)
+* [/contact](http://dev.mailjet.com/email-api/v3/contact/)
+* [/contactslist](http://dev.mailjet.com/email-api/v3/contactslist/)
 
 To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.  The following performs `managemanycontacts` on the `contactslist` endpoint:
 ```
@@ -219,7 +219,7 @@ To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the o
 Mailjet::Contactslist_managemanycontacts.find(1, 34062)
 ```
 
-If there is a job ID but no ID for the object when 'find'ing, pass `nil` as the first parameter:
+Some actions are not attached to a specific resource, like /contact/managemanycontacts. In these cases when there is a job ID but no ID for the object when 'find'ing, pass `nil` as the first parameter:
 ```
 Mailjet::Contact_managemanycontacts.find(nil, 34062)
 ```
