@@ -36,7 +36,13 @@ module Mailjet
       end
 
       def self.default_headers
-        { accept: :json, accept_encoding: :deflate, content_type: :json}
+        if self.resource_path == "v3/send/message" #don't use JSON if Send API
+          { accept: :json, accept_encoding: :deflate }
+        else
+          debugger
+          debugger
+          { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
+        end
       end
     end
 
