@@ -52,9 +52,7 @@ module Mailjet
     private
 
     def handle_api_call(method, additional_headers = {}, payload = {}, &block)
-      unless payload.include?("From") && payload.include?("To") && payload.include?("Subject") #if NOT the Send API, change to JSON formatting
-        payload = payload.to_json
-      end
+      payload = payload.to_json if url != "https://api.mailjet.com/v3/send/message" #if NOT the Send API, change to JSON formatting
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
       if [:get, :delete].include?(method)
