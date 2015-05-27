@@ -52,13 +52,13 @@ module Mailjet
     private
 
     def handle_api_call(method, additional_headers = {}, payload = {}, &block)
-      payload = payload.to_json if additional_headers[:content_type] == :json #if NOT the Send API, change to JSON formatting (checks to see it content-type json is set in payload)
+      format_payload = (additional_headers[:content_type] == :json) ? payload.to_json : payload  
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
       if [:get, :delete].include?(method)
         @adapter.send(method, additional_headers, &block)
       else
-        @adapter.send(method, payload, additional_headers, &block)
+        @adapter.send(method, format_payload, additional_headers, &block)
       end
     rescue RestClient::Exception => e
       handle_exeception(e, additional_headers, payload)
