@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "vcr"
   s.add_development_dependency 'guard'
   s.add_development_dependency 'guard-minitest'
-  s.add_development_dependency 'debugger'
+  # s.add_development_dependency 'debugger' #removed for compatability reasons
   s.add_development_dependency "rspec" #added this
   s.add_development_dependency "rspec-expectations" #added this
   s.add_development_dependency "dotenv" #added this

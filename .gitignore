@@ -10,6 +10,7 @@ tmtags
 \#*
 .\#*
 
+
 ## VIM
 *.swp
 
@@ -26,3 +27,4 @@ pkg
 /config.yml
 
 .env
+.ruby-version
