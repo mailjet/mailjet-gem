@@ -43,7 +43,9 @@ class Mailjet::APIMailer
       to: mail.to,
       cc: mail.cc,
       bcc: mail.bcc,
-      subject: mail.subject
+      subject: mail.subject,
+      'mj-customid': mail['X-MJ-CustomID'] && mail['X-MJ-CustomID'].value,
+      'mj-eventpayload': mail['X-MJ-EventPayload'] && mail['X-MJ-EventPayload'].value
     }.merge(content).merge(@delivery_method_options)
 
     Mailjet::MessageDelivery.create(payload)
