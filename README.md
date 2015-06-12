@@ -91,16 +91,17 @@ Mailjet.configure do |config|
 end
 ```
 
-`domain` is needed if you send emails with :mailjet's SMTP (below)
+<!-- `domain` is needed if you send emails with :mailjet's SMTP (below) -->
 
 `default_from` is optional if you send emails with :mailjet's SMTP (below)
 
 ### Send emails with ActionMailer
+A quick walkthrough to using Action Mailer from the documentation [HERE](http://guides.rubyonrails.org/action_mailer_basics.html)
 
-As easy as:
+First set your delivery method:
 
 ```ruby
-# application.rb
+# application.rb or config/environments specific settings, which take precedence
 config.action_mailer.delivery_method = :mailjet
 
 ```
@@ -113,6 +114,53 @@ config.action_mailer.delivery_method = :mailjet_api
 ```
 
 You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc][actionmailerdoc]
+
+Creating a Mailer:
+```ruby
+$ rails generate mailer UserMailer
+
+create  app/mailers/user_mailer.rb
+create  app/mailers/application_mailer.rb
+invoke  erb
+create    app/views/user_mailer
+create    app/views/layouts/mailer.text.erb
+create    app/views/layouts/mailer.html.erb
+invoke  test_unit
+create    test/mailers/user_mailer_test.rb
+create    test/mailers/previews/user_mailer_preview.rb
+```
+
+In the UserMailer class you can set up your email method:
+```ruby
+#app/mailers/user_mailer.rb
+class UserMailer < ApplicationMailer
+  def welcome_email()
+     mail(from: "me@mailjet.com", to: "you@mailjet.com",
+          subject: "This is a nice welcome email")
+   end
+end
+
+```
+There's also the ability to set [Mailjet custom headers](https://dev.mailjet.com/guides/send-api-guide/)
+```ruby
+#app/mailers/user_mailer.rb
+class UserMailer < ApplicationMailer
+  def welcome_email()
+      mail.header['X-MJ-CustomID'] = 'custom value'
+      mail.header['X-MJ-EventPayload'] = 'custom payload'
+    mail(from: "me@mailjet.com", to: "you@mailjet.com",
+          subject: "This is a nice welcome email")
+  end
+end
+```
+For sending email, you can call the method with a variety of MessageDelivery priorities:
+```ruby
+#In this example, we are sending immediately
+UserMailer.welcome_email.deliver_now!
+```
+For more information on ActionMailer::MessageDeilvery, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
+
+
 
 ## Manage your campaigns
 
