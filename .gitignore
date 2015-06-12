@@ -26,3 +26,4 @@ pkg
 /config.yml
 
 .env
+.ruby-version
