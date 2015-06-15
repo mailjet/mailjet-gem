@@ -255,7 +255,13 @@ Mailjet::MessageDelivery.create(from: "me@example.com", to: ["you@example.com", 
 
 In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
 
-You can check available params in the [official doc][send-api-doc].
+In these modifiers, there is now the ability to add a Mailjet custom-id or Mailjet Custom payload using the following:
+```ruby
+'mj-customid' => "A useful custom ID"
+'mj-eventpayload' => '{"message": "hello world"}'
+```
+
+For more information on custom properties and available params, see the [official doc][send-api-doc].
 
 ## Track email delivery
 
