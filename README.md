@@ -91,7 +91,6 @@ Mailjet.configure do |config|
 end
 ```
 
-<!-- `domain` is needed if you send emails with :mailjet's SMTP (below) -->
 
 `default_from` is optional if you send emails with :mailjet's SMTP (below)
 
