@@ -22,7 +22,7 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 class Mailjet::APIMailer
   def initialize(options = {})
     ActionMailer::Base.default(:from => Mailjet.config.default_from) if Mailjet.config.default_from.present?
-    @delivery_method_options = options.slice(:'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign', :'mj-trackopen', :'mj-trackclick', :'header')
+    @delivery_method_options = options.slice(:'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign', :'mj-trackopen', :'mj-trackclick', :'mj-customid', :'mj-eventpayload', :'header')
   end
 
   def deliver!(mail)
@@ -43,7 +43,9 @@ class Mailjet::APIMailer
       to: mail.to,
       cc: mail.cc,
       bcc: mail.bcc,
-      subject: mail.subject
+      subject: mail.subject,
+      'mj-customid': mail['X-MJ-CustomID'] && mail['X-MJ-CustomID'].value,
+      'mj-eventpayload': mail['X-MJ-EventPayload'] && mail['X-MJ-EventPayload'].value
     }.merge(content).merge(@delivery_method_options)
 
     Mailjet::MessageDelivery.create(payload)
