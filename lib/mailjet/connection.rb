@@ -20,24 +20,24 @@ module Mailjet
     end
 
     def initialize(end_point, api_key, secret_key, options = {})
-      #charles proxy
-      RestClient.proxy = "http://127.0.0.1:8888"
-      #
-      #Output for debugging
-      RestClient.log =
-      Object.new.tap do |proxy|
-        def proxy.<<(message)
-          Rails.logger.info message
-        end
-      end
+      # #charles proxy
+      # RestClient.proxy = "http://127.0.0.1:8888"
+      # #
+      # #Output for debugging
+      # RestClient.log =
+      # Object.new.tap do |proxy|
+      #   def proxy.<<(message)
+      #     Rails.logger.info message
+      #   end
+      # end
       #
       adapter_class = options[:adapter_class] || RestClient::Resource
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
       ## add path to crt here after ':ssl_ca_file =>' for preprod
       ## add ':verify_ssl => false' for charles proxy
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/Users/tylernappy/Mailjet/mailjet_software/mailjet-gem/gd_bundle-g2.crt", :verify_ssl => false, content_type: 'application/json'))
-      # self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json'))
+      # self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :ssl_ca_file  =>  "/Users/tylernappy/Mailjet/mailjet_software/mailjet-gem/gd_bundle-g2.crt", :verify_ssl => false, content_type: 'application/json'))
+      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json'))
       ##
     end
 
