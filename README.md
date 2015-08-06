@@ -239,6 +239,39 @@ You can refine queries using [API Filters][apidoc-recipient]`*` as well as the f
 => #<Mailjet::Listrecipient>
  ```
 
+### Action Endpoints
+
+Some APIs allow the use of action endpoints:
+* [/newsletter](http://dev.mailjet.com/email-api/v3/newsletter/)
+* [/contact](http://dev.mailjet.com/email-api/v3/contact/)
+* [/contactslist](http://dev.mailjet.com/email-api/v3/contactslist/)
+
+To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.  The following performs `managemanycontacts` on the `contactslist` endpoint:
+```
+Mailjet::Contactslist_managemanycontacts.find(1, 34062)
+```
+
+Each action endpoint requires the ID of the object you are changing.  To 'create' (POST), pass the ID as a variable like such:
+```
+Mailjet::Contactslist_managecontact.create(id: 1, action: "unsub", email: "example@me.com", name: "tyler")
+```
+
+To 'find' (GET), pass the ID as a variable like such:
+```
+Mailjet::Contact_getcontactslists.find(1)
+```
+
+To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the object; second, the job ID:
+```
+Mailjet::Contactslist_managemanycontacts.find(1, 34062)
+```
+
+Some actions are not attached to a specific resource, like /contact/managemanycontacts. In these cases when there is a job ID but no ID for the object when 'find'ing, pass `nil` as the first parameter:
+```
+Mailjet::Contact_managemanycontacts.find(nil, 34062)
+```
+
+
 ## Send emails through API
 
 In order to send emails through the API, you just have to `create` a new `MessageDelivery` resource.
@@ -261,6 +294,8 @@ In these modifiers, there is now the ability to add a Mailjet custom-id or Mailj
 ```
 
 For more information on custom properties and available params, see the [official doc][send-api-doc].
+
+##
 
 ## Track email delivery
 

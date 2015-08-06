@@ -38,10 +38,11 @@ module Mailjet
 
       def self.default_headers
         if @non_json_urls.include?(self.resource_path)#don't use JSON if Send API
-          { accept: :json, accept_encoding: :deflate }
+          default_headers = { accept: :json, accept_encoding: :deflate }
         else
-          { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
+          default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
         end
+        return default_headers.merge(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
       end
     end
 
@@ -62,9 +63,9 @@ module Mailjet
         response_hash['Total']
       end
 
-      def find(id)
+      def find(id, job_id = nil)
          # if action method, ammend url to appropriate id
-         self.resource_path = create_action_resource_path(id) if self.action
+         self.resource_path = create_action_resource_path(id, job_id) if self.action
          #
         attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
@@ -108,10 +109,15 @@ module Mailjet
         response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
 
-      def create_action_resource_path(id)
+      def create_action_resource_path(id, job_id = nil)
          url_elements = self.resource_path.split("/")
-         url_elements[3] = id.to_s
-         return url_elements.join("/")
+         url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
+         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[2] == "contactslist")
+           url_elements[3] = id.to_s
+        end
+         url_elements << job_id.to_s if job_id #if job_id exists, ammend it to end of the URI
+         url = url_elements.join("/")
+         return url
       end
 
 
