@@ -261,6 +261,11 @@ To 'find' (GET), pass the ID as a variable like such:
 Mailjet::Contact_getcontactslists.find(1)
 ```
 
+Manage many contacts asyncronously
+```
+managecontactslists = Mailjet::Contact_managemanycontacts.create(:id => 422, contacts_lists: [{:ListID => 234, :action => "addnoforce"}])
+```
+
 To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the object; second, the job ID:
 ```
 Mailjet::Contactslist_managemanycontacts.find(1, 34062)
@@ -270,7 +275,6 @@ Some actions are not attached to a specific resource, like /contact/managemanyco
 ```
 Mailjet::Contact_managemanycontacts.find(nil, 34062)
 ```
-
 
 ## Send emails through API
 
