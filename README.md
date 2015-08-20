@@ -92,7 +92,7 @@ end
 ```
 
 
-`default_from` is optional if you send emails with :mailjet's SMTP (below)
+`default_from` is optional if you send emails with `:mailjet`'s SMTP (below)
 
 ### Send emails with ActionMailer
 A quick walkthrough to using Action Mailer from the documentation [HERE](http://guides.rubyonrails.org/action_mailer_basics.html)
@@ -152,12 +152,12 @@ class UserMailer < ApplicationMailer
   end
 end
 ```
-For sending email, you can call the method with a variety of MessageDelivery priorities:
+For sending email, you can call the method with a variety of `MessageDelivery` priorities:
 ```ruby
 #In this example, we are sending immediately
 UserMailer.welcome_email.deliver_now!
 ```
-For more information on ActionMailer::MessageDeilvery, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
+For more information on `ActionMailer::MessageDeilvery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
 
 
 
@@ -246,10 +246,12 @@ Some APIs allow the use of action endpoints:
 * [/contact](http://dev.mailjet.com/email-api/v3/contact/)
 * [/contactslist](http://dev.mailjet.com/email-api/v3/contactslist/)
 
-To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.  The following performs `managemanycontacts` on the `contactslist` endpoint:
+To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.
+
+For example, the following performs `managemanycontacts` on the `contactslist` endpoint:
+where 4 is the `listid` and 3025 is the `jobid`
 ``` ruby
 Mailjet::Contactslist_managemanycontacts.find(4, 3025)
-# where 4 is the contactlist id and 3025 is the jobid
 ```
 
 Each action endpoint requires the ID of the object you are changing.  To 'create' (POST), pass the ID as a variable like such:
@@ -259,10 +261,11 @@ Mailjet::Contactslist_managecontact.create(id: 1, action: "unsub", email: "examp
 
 To 'find' (GET), pass the ID as a variable like such:
 ``` ruby
-Mailjet::Contact_getcontactslists.find(1) # will return the first contacts list
+Mailjet::Contact_getcontactslists.find(1)
+# will return all the lists containing the contact with id 1
 ```
 
-Managing large amount of contacts asyncronously, uploading many contacts and returns a job_id
+Managing large amount of contacts asyncronously, uploading many contacts and returns a `job_id`
 ``` ruby
 managecontactslists = Mailjet::Contact_managemanycontacts.create(contacts_lists: [{:ListID => 234, :action => "addnoforce"}])
 ```
