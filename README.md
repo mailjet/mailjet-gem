@@ -247,32 +247,34 @@ Some APIs allow the use of action endpoints:
 * [/contactslist](http://dev.mailjet.com/email-api/v3/contactslist/)
 
 To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.  The following performs `managemanycontacts` on the `contactslist` endpoint:
-```
-Mailjet::Contactslist_managemanycontacts.find(1, 34062)
+``` ruby
+Mailjet::Contactslist_managemanycontacts.find(4, 3025)
+# where 4 is the contactlist id and 3025 is the jobid
 ```
 
 Each action endpoint requires the ID of the object you are changing.  To 'create' (POST), pass the ID as a variable like such:
-```
+``` ruby
 Mailjet::Contactslist_managecontact.create(id: 1, action: "unsub", email: "example@me.com", name: "tyler")
 ```
 
 To 'find' (GET), pass the ID as a variable like such:
-```
-Mailjet::Contact_getcontactslists.find(1)
+``` ruby
+Mailjet::Contact_getcontactslists.find(1) # will return the first contacts list
 ```
 
-Manage many contacts asyncronously
-```
-managecontactslists = Mailjet::Contact_managemanycontacts.create(:id => 422, contacts_lists: [{:ListID => 234, :action => "addnoforce"}])
+Managing large amount of contacts asyncronously, uploading many contacts and returns a job_id
+``` ruby
+managecontactslists = Mailjet::Contact_managemanycontacts.create(contacts_lists: [{:ListID => 234, :action => "addnoforce"}])
 ```
 
 To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the object; second, the job ID:
-```
+``` ruby
 Mailjet::Contactslist_managemanycontacts.find(1, 34062)
+# where 1 is the contactlist id and 34062 is the job id
 ```
 
 Some actions are not attached to a specific resource, like /contact/managemanycontacts. In these cases when there is a job ID but no ID for the object when 'find'ing, pass `nil` as the first parameter:
-```
+``` ruby
 Mailjet::Contact_managemanycontacts.find(nil, 34062)
 ```
 
@@ -280,12 +282,12 @@ Mailjet::Contact_managemanycontacts.find(nil, 34062)
 
 In order to send emails through the API, you just have to `create` a new `MessageDelivery` resource.
 
-```
+``` ruby
 Mailjet::MessageDelivery.create(from: "me@example.com", to: "you@example.com", subject: "Mailjet is awesome", text: "Yes, it is!")
 ```
 
 If you want to send it to multiple recipients, just use an array:
-```
+``` ruby
 Mailjet::MessageDelivery.create(from: "me@example.com", to: ["you@example.com", "someone-else@example.com"], subject: "Mailjet is awesome", text: "Yes, it is!")
 ```
 
