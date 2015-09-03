@@ -105,8 +105,8 @@ module Mailjet
         response_hash = convert_dates_from(response_hash)
         #
         #
-        response_data_array = response_hash['Data']
-        response_data_array.map{ |response_data| underscore_keys(response_data) }
+        # response_data_array = response_hash['Data']
+        # response_data_array.map{ |response_data| underscore_keys(response_data) }
       end
 
       def create_action_resource_path(id, job_id = nil)
@@ -167,7 +167,16 @@ module Mailjet
 
       def map_keys(hash, method)
         hash.inject({}) do |_hash, (key, value)|
-          new_key = key.to_s.send(method)
+          # new_key = key.to_s.send(method)
+          p key
+          new_key =
+            if key == "text_part"
+              'Text-part'
+            elsif key == "html_part"
+              'Html-part'
+            else
+              key.to_s.send(method)
+            end
           _hash[new_key] = value
           _hash
         end
@@ -249,6 +258,7 @@ module Mailjet
     end
 
     def parse_api_json(response_json)
+      p response_json
       self.class.parse_api_json(response_json)
     end
 
