@@ -267,7 +267,8 @@ Mailjet::Contact_getcontactslists.find(1)
 
 Managing large amount of contacts asyncronously, uploading many contacts and returns a `job_id`
 ``` ruby
-managecontactslists = Mailjet::Contact_managemanycontacts.create(contacts_lists: [{:ListID => 234, :action => "addnoforce"}])
+managecontactslists = Mailjet::Contact_managemanycontacts.create(contacts_lists: [{:ListID => 39, :action => "addnoforce"}], contacts: [{Email: 'mr-smith@mailjet.com'}])
+
 ```
 
 To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the object; second, the job ID:
