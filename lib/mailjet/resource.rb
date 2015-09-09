@@ -78,9 +78,9 @@ module Mailjet
       end
 
       def create(attributes = {})
-         # if action method, ammend url to appropriate id
-         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
-         #
+        # if action method, ammend url to appropriate id
+        self.resource_path = create_action_resource_path(attributes[:id]) if self.action
+        #
         self.new(attributes).tap do |resource|
           resource.save!
           resource.persisted = true
@@ -232,7 +232,7 @@ module Mailjet
 
     def formatted_payload
       payload = attributes.reject { |k,v| v.blank? }
-      payload = payload.slice(*properties)
+      # payload = payload.slice(*properties) # this line seems to be the problem
       payload = camelcase_keys(payload)
       payload.inject({}) do |h, (k, v)|
         v = v.utc.as_json if v.respond_to? :utc
