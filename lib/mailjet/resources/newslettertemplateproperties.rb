@@ -6,7 +6,7 @@ module Mailjet
     self.resource_path = 'v3/REST/newslettertemplateproperties'
     self.public_operations = [:get, :put, :post, :delete]
     self.filters = [:news_letter_template]
-    self.properties = [:id, :name, :property_name, :selector, :template, :value]
+    self.resourceprop = [:id, :name, :property_name, :selector, :template, :value]
 
   end
 end

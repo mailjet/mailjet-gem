@@ -6,7 +6,7 @@ module Mailjet
     self.resource_path = 'v3/REST/preferences'
     self.public_operations = [:get, :put, :post, :delete]
     self.filters = [:user]
-    self.properties = [:id, :key, :user, :value]
+    self.resourceprop = [:id, :key, :user, :value]
 
   end
 end

@@ -2,10 +2,12 @@ require 'mailjet/connection'
 require 'mailjet/resource'
 require 'active_support/hash_with_indifferent_access'
 require 'active_support/core_ext/class'
+require 'active_support/core_ext/hash'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
+require 'json'
 
 
 # This option automatically transforms the date output by the API into something a bit more readable.
@@ -19,7 +21,7 @@ module Mailjet
     extend ActiveSupport::Concern
 
     included do
-      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :properties, :action, :non_json_urls
+      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls
       cattr_writer :connection
 
       def self.connection
@@ -38,7 +40,7 @@ module Mailjet
 
       def self.default_headers
         if @non_json_urls.include?(self.resource_path)#don't use JSON if Send API
-          default_headers = { accept: :json, accept_encoding: :deflate }
+        default_headers = { accept: :json, accept_encoding: :deflate }
         else
           default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
         end
@@ -78,13 +80,15 @@ module Mailjet
       end
 
       def create(attributes = {})
+        p attributes
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
-        #
+
         self.new(attributes).tap do |resource|
           resource.save!
           resource.persisted = true
         end
+
       end
 
       def delete(id)
@@ -232,7 +236,7 @@ module Mailjet
 
     def formatted_payload
       payload = attributes.reject { |k,v| v.blank? }
-      payload = payload.slice(*properties)
+      payload = payload.slice(*resourceprop)
       payload = camelcase_keys(payload)
       payload.inject({}) do |h, (k, v)|
         v = v.utc.as_json if v.respond_to? :utc
@@ -260,8 +264,7 @@ module Mailjet
 
     def method_missing(method_symbol, *arguments) #:nodoc:
       method_name = method_symbol.to_s
-
-      if method_name =~ /(=|\?)$/
+       if method_name =~ /(=|\?)$/
         case $1
         when "="
           attributes[$`] = arguments.first
