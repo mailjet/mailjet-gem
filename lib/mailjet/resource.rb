@@ -80,7 +80,6 @@ module Mailjet
       end
 
       def create(attributes = {})
-        p attributes
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
 
