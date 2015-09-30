@@ -24,7 +24,7 @@
 [camelcase-api]: http://api.rubyonrails.org/classes/String.html#method-i-camelcase
 [underscore-api]: http://api.rubyonrails.org/classes/String.html#method-i-underscore
 [actionmailerdoc]: http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options
-[send-api-doc]: http://dev.mailjet.com/guides/send-api-guide/
+[send-api-doc]: http://dev.mailjet.com/guides/?ruby#choose-sending-method
 [v1-branch]: https://github.com/mailjet/mailjet-gem/tree/v1
 
 <!-- You can read this readme file in other languages:
