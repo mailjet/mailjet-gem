@@ -54,8 +54,12 @@ module Mailjet
       end
 
       def all(params = {})
+        if ENV['MAILJET_RUBY_TEST']
+          return connection.url
+        end
         params = format_params(params)
-        attribute_array = parse_api_json(connection.get(default_headers.merge(params: params)))
+        response = connection.get(default_headers.merge(params: params))
+        attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
@@ -255,11 +259,9 @@ module Mailjet
       self.class.parse_api_json(response_json)
     end
 
-    #my code!
     def convert_dates_from(data)
       self.class.convert_dates_from(data)
     end
-    #end my code
 
     def method_missing(method_symbol, *arguments) #:nodoc:
       method_name = method_symbol.to_s
