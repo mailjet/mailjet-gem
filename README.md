@@ -2,6 +2,8 @@
 
 [Mailjet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
 
+[![Build Status](https://travis-ci.org/mailjet/mailjet-gem.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-gem)
+
 <!--
 
 [![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis]
