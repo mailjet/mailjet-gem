@@ -1,8 +1,7 @@
 language: ruby
 script: bundle exec rspec
 rvm:
-  - 1.9.x
-  - 2.0.x
-  - 2.1.x
+  - 1.9.3
+  - 2.1.0
 script:
   - bundle exec rspec spec/mailjet-spec.rb
