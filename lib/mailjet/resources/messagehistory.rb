@@ -6,7 +6,7 @@ module Mailjet
     self.resource_path = 'v3/REST/messagehistory'
     self.public_operations = [:get]
     self.filters = [:message]
-    self.properties = [:event_at, :event_type, :useragent]
+    self.resourceprop = [:event_at, :event_type, :useragent]
 
     self.read_only = true
 

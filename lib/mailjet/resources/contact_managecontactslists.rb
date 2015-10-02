@@ -7,6 +7,6 @@ module Mailjet
     self.resource_path = "v3/REST/contact/id/#{self.action}"
     self.public_operations = [:post]
     self.filters = []
-    self.properties = [:contacts_lists, 'ListID', :list_id, :action] #need 'ListID' and :action in a subpacket
+    self.resourceprop = [:contacts_lists, 'ListID', :list_id, :action] #need 'ListID' and :action in a subpacket
   end
 end

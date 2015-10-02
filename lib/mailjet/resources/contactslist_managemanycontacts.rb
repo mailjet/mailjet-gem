@@ -7,6 +7,6 @@ module Mailjet
     self.resource_path = "v3/REST/contactslist/id/#{self.action}"
     self.public_operations = [:post, :get] #GET is for when job_id is there
     self.filters = []
-    self.properties = [:action, :contacts, :email, :name, :properties]
+    self.resourceprop = [:action, :contacts, :email, :name, :properties]
   end
 end
