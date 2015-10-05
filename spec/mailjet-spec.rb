@@ -25,7 +25,6 @@ describe Mailjet do
     end
 
     it 'calls Contact.all with invalid parameters' do
-      # should get every contact
       res = Mailjet::Contact.all(invalid: 0)
       expect(res[0].attributes['email']).not_to be_nil
     end
@@ -41,7 +40,9 @@ describe Mailjet do
     end
 
     it 'calls Contact.find with Unique Key id' do
-      expect {Mailjet::Contact.find('test@mailjet.com')}.not_to raise_error
+      expect do
+        Mailjet::Contact.find('test@mailjet.com')
+      end.not_to raise_error
     end
 
     it 'calls Contact.count' do
@@ -63,30 +64,4 @@ describe Mailjet do
     end
 
   end
-=begin
-  describe 'urls/call matcher' do
-
-    [
-      'https://api.mailjet.com/v3/REST/contact {}',
-  		'https://api.mailjet.com/v3/REST/contact/2 {}',
-  		'https://api.mailjet.com/v3/REST/contact/2 {}',
-  		'https://api.mailjet.com/v3/REST/contact/3/getcontactslist {}',
-  		'https://api.mailjet.com/v3/REST/contact/?countOnly=1 {}',
-  		'https://api.mailjet.com/v3/REST/contact/?limit=2 {}',
-  		'https://api.mailjet.com/v3/REST/contact/?offset=233 {}',
-  		'https://api.mailjet.com/v3/REST/contact/?contatctList=34 {}',
-  		'https://api.mailjet.com/v3/REST/contactslist/34/managecontact {"email":"test@mailjet.com"}',
-  		'https://api.mailjet.com/v3/DATA/contactslist/34/csvdata "FILE"',
-  		'https://api.mailjet.com/v3/REST/newsletter/?CountOnly=1 {}',
-  		'https://api.mailjet.com/v3/DATA/batchjob/csverror {}',
-  		'https://api.mailjet.com/v3/REST/contact {"email":"test@mailjet.com"}',
-  		'https://api.mailjet.com/v3/send {"FromName":"name","FromEmail":"test@mailjet.com","Subject":"subject","Text-Part":"text","Recipients":[{"email":"test@mailjet.com"}]}',
-  		'https://api.mailjet.com/v3/send {"FromName":"name","FromEmail":"test@mailjet.com","Subject":"subject","Text-Part":"text","Recipients":[{"email":"test@mailjet.com"},{"email":"test2@mailjet.com"}]}',
-  		'https://api.mailjet.com/v3/send {"FromName":"name","FromEmail":"test@mailjet.com","Subject":"subject","Text-Part":"text","Recipients":[{"email":"test@mailjet.com","name":"name"},{"email":"test2@mailjet.com","name":"name"}]}',
-  		'https://api.mailjet.com/v3/send {"FromName":"name","FromEmail":"test@mailjet.com","Subject":"subject","Text-Part":"text","Recipients":[{"email":"test@mailjet.com","vars":{"Key1":"Value1","Key2":"Value2"}}]}'
-    ].each do |expected|
-      p expected
-    end
-  end
-=end
 end

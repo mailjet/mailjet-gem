@@ -54,9 +54,6 @@ module Mailjet
       end
 
       def all(params = {})
-        if ENV['MAILJET_RUBY_TEST']
-          return connection.url
-        end
         params = format_params(params)
         response = connection.get(default_headers.merge(params: params))
         attribute_array = parse_api_json(response)
@@ -70,9 +67,9 @@ module Mailjet
       end
 
       def find(id, job_id = nil)
-         # if action method, ammend url to appropriate id
-         self.resource_path = create_action_resource_path(id, job_id) if self.action
-         #
+        # if action method, ammend url to appropriate id
+        self.resource_path = create_action_resource_path(id, job_id) if self.action
+        #
         attributes = parse_api_json(connection[id].get(default_headers)).first
         instanciate_from_api(attributes)
       rescue Mailjet::ApiError => e
@@ -86,7 +83,6 @@ module Mailjet
       def create(attributes = {})
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
-
         self.new(attributes).tap do |resource|
           resource.save!
           resource.persisted = true
