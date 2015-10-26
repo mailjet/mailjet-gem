@@ -28,6 +28,8 @@
 [actionmailerdoc]: http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options
 [send-api-doc]: http://dev.mailjet.com/guides/?ruby#choose-sending-method
 [v1-branch]: https://github.com/mailjet/mailjet-gem/tree/v1
+[mailjet_doc]: http://dev.mailjet.com/guides/?ruby#
+[api_doc]: https://github.com/mailjet/api-documentation
 
 <!-- You can read this readme file in other languages:
 english | [french](./README.fr.md) -->
@@ -46,6 +48,12 @@ Compatibility:
 Rails ActionMailer integration designed for Rails 3.X and 4.X
 
 IMPORTANT: Mailjet gem switched to API v3, the new API provided by Mailjet. For the wrapper for API v1, check the [v1 branch][v1-branch].
+
+Every code examples can be find on the [Mailjet Documentation][mailjet_doc]
+
+(Please refer to the [Mailjet Documentation Repository][api_doc] to contribute to the documentation examples)
+
+
 
 ## Install
 
