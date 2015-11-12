@@ -260,7 +260,6 @@ module Mailjet
     end
 
     def parse_api_json(response_json)
-      p response_json
       self.class.parse_api_json(response_json)
     end
 
