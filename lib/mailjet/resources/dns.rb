@@ -6,7 +6,7 @@ module Mailjet
     self.resource_path = 'v3/REST/dns'
     self.public_operations = [:get]
     self.filters = []
-    self.properties = [:id, :isCheckInProgress, :DKIMStatus, :DKIMValue, :DKIMName, :format, :lastCheckedAt, :SPFStatus, :SPFValue, :ownershipToken]
+    self.resourceprop = [:id, :isCheckInProgress, :DKIMStatus, :DKIMValue, :DKIMName, :format, :lastCheckedAt, :SPFStatus, :SPFValue, :ownershipToken]
 
   end
 end
