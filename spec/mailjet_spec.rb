@@ -3,9 +3,9 @@ require 'mailjet_spec_helper'
 describe Mailjet do
   before(:all) do
      Mailjet.configure do |config|
-        config.api_key = ENV['yourApiKey']
-        config.secret_key = ENV['yourSecretKey']
-        config.default_from = ENV['myRegisteredMailjetEmailAtDomainDotCom']
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.default_from = ENV['gbadi@student.42.fr']
       end
   end
 

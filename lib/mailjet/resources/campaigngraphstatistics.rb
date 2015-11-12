@@ -6,7 +6,7 @@ module Mailjet
     self.resource_path = 'v3/REST/campaigngraphstatistics'
     self.public_operations =  [:get]
     self.filters = [:click, :ids, :open, :range, :spam, :unsub]
-    self.properties = [:click_count, :id, :opencount, :spamcount, :tick, :unsubcount]
+    self.resourceprop = [:click_count, :id, :opencount, :spamcount, :tick, :unsubcount]
 
   end
 end
