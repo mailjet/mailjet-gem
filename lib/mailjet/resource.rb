@@ -157,7 +157,7 @@ module Mailjet
             "#{attribute} #{direction}"
           end.join(', ')
         end
-        params
+        camelcase_keys params
       end
 
       def camelcase_keys(hash)
@@ -170,7 +170,15 @@ module Mailjet
 
       def map_keys(hash, method)
         hash.inject({}) do |_hash, (key, value)|
-          new_key = key.to_s.send(method)
+          # new_key = key.to_s.send(method)
+          new_key =
+            if key == "text_part"
+              'Text-part'
+            elsif key == "html_part"
+              'Html-part'
+            else
+              key.to_s.send(method)
+            end
           _hash[new_key] = value
           _hash
         end
