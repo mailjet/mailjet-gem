@@ -71,6 +71,7 @@ module Mailjet
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
         attributes = parse_api_json(connection[id].get(default_headers)).first
+		attributes[:id] = id
         instanciate_from_api(attributes)
       rescue Mailjet::ApiError => e
         if e.code == 404
