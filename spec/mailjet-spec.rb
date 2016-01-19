@@ -52,16 +52,4 @@ describe Mailjet do
 
   end
 
-  describe 'simple POST requests' do
-
-    it 'calls Sender.create with no parameters' do
-      expect {Mailjet::Sender.create()}.to raise_error
-    end
-
-    it 'calls Contactslist.managecontact with advanced properties' do
-      res = Mailjet::Contactslist_managecontact.create(id: 34, email: 'test@mailjet.com', action: 'addnoforce')
-      expect(res.class.resourceprop).to eq [:email, :name, :action, :properties]
-    end
-
-  end
 end
