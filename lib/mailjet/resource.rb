@@ -110,6 +110,8 @@ module Mailjet
 
         if response_hash['Data']
           response_data_array = response_hash['Data']
+        elsif response_hash['Sent']
+          response_data_array = response_hash['Sent']
         else
           response_data_array = response_hash
         end
