@@ -106,14 +106,11 @@ end
 
 ### Send emails via the SendAPI
 
-``` ruby
-require 'mailjet'
+Find more about the Mailjet SendAPI in the [official guides][send-api-doc]
 
-# initializers/mailjet.rb
-Mailjet.configure do |config|
-  config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-end
+``` ruby
+
+require 'mailjet'
 
 email = { :from_email   => "your email",
           :from_name    => "Your name",
