@@ -84,6 +84,7 @@ module Mailjet
       def create(attributes = {})
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
+
         self.new(attributes).tap do |resource|
           resource.save!
           resource.persisted = true
@@ -204,6 +205,11 @@ module Mailjet
         response = connection[id].put(formatted_payload, default_headers)
       else
         response = connection.post(formatted_payload, default_headers)
+      end
+
+      if self.resource_path == 'v3/send/'
+        self.attributes = ActiveSupport::JSON.decode(response)
+        return true
       end
 
       self.attributes = parse_api_json(response).first
