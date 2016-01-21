@@ -110,8 +110,6 @@ Find more about the Mailjet SendAPI in the [official guides][send-api-doc]
 
 ``` ruby
 
-require 'mailjet'
-
 email = { :from_email   => "your email",
           :from_name    => "Your name",
           :subject      => "Hello",
