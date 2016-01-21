@@ -57,6 +57,12 @@ Every code examples can be find on the [Mailjet Documentation][mailjet_doc]
 
 ## Install
 
+### Rubygems
+
+```bash
+$ gem install mailjet
+```
+
 ### Bundler
 
 Add the following in your Gemfile:
@@ -78,12 +84,6 @@ and let the bundler magic happen
 $ bundle install
 ```
 
-### Rubygems
-
-```bash
-$ gem install mailjet
-```
-
 ## Setup
 
 ### Api key
@@ -103,6 +103,30 @@ end
 
 
 `default_from` is optional if you send emails with `:mailjet`'s SMTP (below)
+
+### Send emails via the SendAPI
+
+``` ruby
+require 'mailjet'
+
+# initializers/mailjet.rb
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+end
+
+email = { :from_email   => "your email",
+          :from_name    => "Your name",
+          :subject      => "Hello",
+          :text_part    => "Hi",
+          :recipients   => [{:email => "recipient email"}] }
+
+test = Mailjet::Send.create(email)
+
+# retrieve the API response
+p test.attributes['Sent']
+
+```
 
 ### Send emails with ActionMailer
 A quick walkthrough to using Action Mailer from the documentation [HERE](http://guides.rubyonrails.org/action_mailer_basics.html)
