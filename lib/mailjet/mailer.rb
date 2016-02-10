@@ -41,6 +41,7 @@ class Mailjet::APIMailer
       :from => mail.from || Mailjet.config.default_from,
       :sender => mail.sender,
       :to => mail.to,
+      :reply_to => mail.reply_to,
       :cc => mail.cc,
       :bcc => mail.bcc,
       :subject => mail.subject,
