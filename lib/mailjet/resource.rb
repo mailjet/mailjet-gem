@@ -1,4 +1,4 @@
-rcomequire 'mailjet/connection'
+require 'mailjet/connection'
 require 'mailjet/resource'
 require 'active_support/hash_with_indifferent_access'
 require 'active_support/core_ext/class'
