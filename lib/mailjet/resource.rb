@@ -252,7 +252,7 @@ module Mailjet
 
     def formatted_payload
       payload = attributes.reject { |k,v| v.blank? }
-      payload = payload.slice(*resourceprop)
+      # payload = payload.slice(*resourceprop)
       payload = camelcase_keys(payload)
       payload.inject({}) do |h, (k, v)|
         v = v.utc.as_json if v.respond_to? :utc
