@@ -84,6 +84,14 @@ module Mailjet
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
 
+        if Mailjet.config.default_from
+          default_attributes = { :from_email => Mailjet.config.default_from }
+        else
+          default_attributes = {}
+        end
+
+        attributes = default_attributes.merge(attributes)
+
         self.new(attributes).tap do |resource|
           resource.save!
           resource.persisted = true
