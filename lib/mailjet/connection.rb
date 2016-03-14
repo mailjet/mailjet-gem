@@ -44,7 +44,6 @@ module Mailjet
     end
 
     def post(payload, additional_headers = {}, &block)
-      p payload
       handle_api_call(:post, additional_headers, payload, &block)
     end
 
