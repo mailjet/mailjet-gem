@@ -260,8 +260,11 @@ module Mailjet
 
     def formatted_payload
       payload = attributes.reject { |k,v| v.blank? }
-      # payload = payload.slice(*resourceprop)
+      if persisted?
+        payload = payload.slice(*resourceprop)
+      end
       payload = camelcase_keys(payload)
+      payload.tap { |hs| hs.delete("Persisted") }
       payload.inject({}) do |h, (k, v)|
         v = v.utc.as_json if v.respond_to? :utc
         h.merge!({k => v})
