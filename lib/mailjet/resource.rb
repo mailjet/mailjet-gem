@@ -83,6 +83,7 @@ module Mailjet
       def create(attributes = {})
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
+        attributes.tap { |hs| hs.delete(:id) }
 
         if Mailjet.config.default_from and self.resource_path == 'v3/send/'
           default_attributes = { :from_email => Mailjet.config.default_from }
