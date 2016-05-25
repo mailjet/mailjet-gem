@@ -57,7 +57,7 @@ module Mailjet
         params = format_params(params)
         response = connection.get(default_headers.merge(params: params))
         attribute_array = parse_api_json(response)
-        attribute_array.map{ |attributes| instanciate_from_api(attributes) }
+        attribute_array.map{ |attributes| instanciate_from_api(attributes, attributes['id']) }
       end
 
       def count
@@ -71,7 +71,8 @@ module Mailjet
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
         attributes = parse_api_json(connection[id].get(default_headers)).first
-        instanciate_from_api(attributes)
+        instanciate_from_api(attributes, id)
+
       rescue Mailjet::ApiError => e
         if e.code == 404
           nil
@@ -107,8 +108,8 @@ module Mailjet
         connection[id].delete(default_headers)
       end
 
-      def instanciate_from_api(attributes = {})
-        self.new(attributes.merge(persisted: true))
+      def instanciate_from_api(attributes = {}, id = nil)
+        self.new(attributes.merge(persisted: true), id)
       end
 
       def parse_api_json(response_json)
@@ -200,7 +201,8 @@ module Mailjet
 
     attr_accessor :attributes, :persisted
 
-    def initialize(_attributes = nil)
+    def initialize(_attributes = nil, id)
+      @id = id
       @attributes = ActiveSupport::HashWithIndifferentAccess.new(_attributes.reverse_merge(persisted: false))
     end
 
