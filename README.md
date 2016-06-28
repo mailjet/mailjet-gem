@@ -49,7 +49,7 @@ Rails ActionMailer integration designed for Rails 3.X and 4.X
 
 IMPORTANT: Mailjet gem switched to API v3, the new API provided by Mailjet. For the wrapper for API v1, check the [v1 branch][v1-branch].
 
-Every code examples can be find on the [Mailjet Documentation][mailjet_doc]
+Every code example can be found in the [Mailjet Documentation][mailjet_doc]
 
 (Please refer to the [Mailjet Documentation Repository][api_doc] to contribute to the documentation examples)
 
