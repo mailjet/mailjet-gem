@@ -7,6 +7,7 @@ require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
+require 'mail'
 require 'json'
 
 
@@ -87,7 +88,8 @@ module Mailjet
         attributes.tap { |hs| hs.delete(:id) }
 
         if Mailjet.config.default_from and self.resource_path == 'v3/send/'
-          default_attributes = { :from_email => Mailjet.config.default_from }
+		  address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
+		  default_attributes = { :from_email => address.address, :from_name => address.display_name}
         else
           default_attributes = {}
         end
