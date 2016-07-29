@@ -77,8 +77,8 @@ class Mailjet::APIMailer
   	payload = {
       :to => mail.to.join(', '),
       :reply_to => mail.reply_to,
-      :cc => mail.cc,
-      :bcc => mail.bcc,
+      :cc => mail.cc.join(', '),
+      :bcc => mail.bcc.join(', '),
       :subject => mail.subject
   	}
     .merge(content)
