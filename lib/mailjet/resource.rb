@@ -192,6 +192,8 @@ module Mailjet
               'Text-part'
             elsif key == "html_part"
               'Html-part'
+            elsif key == "inline_attachments"
+              'Inline_attachments'
             else
               key.to_s.send(method)
             end

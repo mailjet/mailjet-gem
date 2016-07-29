@@ -1,5 +1,7 @@
 require 'action_mailer'
 require 'mail'
+require 'base64'
+require 'json'
 
 class Mailjet::Mailer < ::Mail::SMTP
   def initialize(options = {})
@@ -25,40 +27,67 @@ class Mailjet::APIMailer
   end
 
   def deliver!(mail)
+    content = {}
 
-    if mail.multipart?
-      content = {
-        :text => mail.text_part.try(:decoded),
-        :html => mail.html_part.try(:decoded),
-        :attachment => mail.attachments.select{ |a| !a.inline? }.try(:decoded),
-        :inlineattachment => mail.attachments.select{ |a| !a.inline? }.try(:decoded)
-      }
-    else
-      content = (mail.mime_type == "text/html") ? {:html_part => mail.body.raw_source} : {:text_part => mail.body.raw_source}
+    if  mail.text_part
+      content[:text_part] = mail.text_part.body.decoded
     end
 
-  if Mailjet.config.default_from.present?
-    from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
-  else
-    from_address = Mail::AddressList.new(mail.from.join(', ')).addresses[0]
-  end
+    if mail.html_part
+      content[:html_part] = mail.html_part.body.decoded
+    end
 
-  base_from = { :from_name => from_address.display_name,
-                :from_email => from_address.address }
+    if !mail.attachments.empty?
+      content[:attachments] = []
+      content[:inline_attachments] = []
 
-	payload = {
-    :to => mail.to.join(', '),
-    :reply_to => mail.reply_to,
-    :cc => mail.cc,
-    :bcc => mail.bcc,
-    :subject => mail.subject,
-    :'mj-customid' => mail['X-MJ-CustomID'] && mail['X-MJ-CustomID'].value,
-    :'mj-eventpayload' => mail['X-MJ-EventPayload'] && mail['X-MJ-EventPayload'].value
-	}.merge(content).merge(base_from).merge(@delivery_method_options)
+      mail.attachments.each do |attachment|
+        mailjet_attachment = {
+          'Content-Type' => attachment.content_type.split(';')[0],
+          'Filename' => attachment.filename,
+          'content' => Base64.encode64(attachment.body.decoded)
+        }
 
-	Mailjet::Send.create(payload)
+        if attachment.inline?
+          content[:inline_attachments].push(mailjet_attachment)
+        else
+          content[:attachments].push(mailjet_attachment)
+        end
+      end
+    end
 
-	end
+    if not mail.header.fields.empty?
+      content[:headers] = {}
+      mail.header.fields.each do |header|
+        if header.name.start_with?('X-MJ') or header.name.start_with?('X-Mailjet')
+          content[:headers][header.name] = header.value
+        end
+      end
+    end
+
+    if Mailjet.config.default_from.present?
+      from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
+    else
+      from_address = Mail::AddressList.new(mail.from.join(', ')).addresses[0]
+    end
+
+    base_from = { :from_name => from_address.display_name,
+                  :from_email => from_address.address }
+
+  	payload = {
+      :to => mail.to.join(', '),
+      :reply_to => mail.reply_to,
+      :cc => mail.cc,
+      :bcc => mail.bcc,
+      :subject => mail.subject
+  	}
+    .merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options)
+
+  	Mailjet::Send.create(payload)
+
+  	end
 end
 
 ActionMailer::Base.add_delivery_method :mailjet_api, Mailjet::APIMailer
