@@ -3,6 +3,8 @@ require 'mail'
 require 'base64'
 require 'json'
 
+# Mailjet::Mailer enables to send a Mail::Message via Mailjet SMTP relay servers
+# User is the API key, and password the API secret
 class Mailjet::Mailer < ::Mail::SMTP
   def initialize(options = {})
     ActionMailer::Base.default(:from => Mailjet.config.default_from) if Mailjet.config.default_from.present?
@@ -19,8 +21,10 @@ end
 
 ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 
-
-
+# Mailjet::APIMailer maps a Mail::Message coming from ActionMailer
+# To Mailjet Send API (see full documentation here dev.mailjet.com/guides/#send-transactional-email)
+# Mailjet sends API expects a JSON payload as the input.
+# The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
   def initialize(options = {})
     @delivery_method_options = options.slice(:'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign', :'mj-trackopen', :'mj-trackclick', :'mj-customid', :'mj-eventpayload', :'header')
@@ -37,6 +41,7 @@ class Mailjet::APIMailer
       content[:html_part] = mail.html_part.body.decoded
     end
 
+    # Formatting attachments (inline + regular)
     if !mail.attachments.empty?
       content[:attachments] = []
       content[:inline_attachments] = []
@@ -56,6 +61,7 @@ class Mailjet::APIMailer
       end
     end
 
+    # Formatting headers. Passing only the ones starting with X-MJ / X-Mailjet.
     if not mail.header.fields.empty?
       content[:headers] = {}
       mail.header.fields.each do |header|
@@ -65,6 +71,7 @@ class Mailjet::APIMailer
       end
     end
 
+    # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
     if Mailjet.config.default_from.present?
       from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
     else
@@ -85,9 +92,9 @@ class Mailjet::APIMailer
     .merge(base_from)
     .merge(@delivery_method_options)
 
+    # Send the final payload to Mailjet Send API
   	Mailjet::Send.create(payload)
-
-  	end
+	end
 end
 
 ActionMailer::Base.add_delivery_method :mailjet_api, Mailjet::APIMailer
