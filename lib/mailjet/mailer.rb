@@ -26,10 +26,6 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 # Mailjet sends API expects a JSON payload as the input.
 # The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
-  def initialize(options = {})
-    @delivery_method_options = options.slice(:'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign', :'mj-trackopen', :'mj-trackclick', :'mj-customid', :'mj-eventpayload', :'header')
-  end
-
   def deliver!(mail)
     content = {}
 
