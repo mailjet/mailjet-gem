@@ -25,10 +25,11 @@ class Mailjet::APIMailer
   end
 
   def deliver!(mail)
-
     if mail.multipart?
       content = {
+        :text_part => mail.text_part.try(:decoded),
         :text => mail.text_part.try(:decoded),
+        :html_part => mail.html_part.try(:decoded),
         :html => mail.html_part.try(:decoded),
         :attachment => mail.attachments.select{ |a| !a.inline? }.try(:decoded),
         :inlineattachment => mail.attachments.select{ |a| !a.inline? }.try(:decoded)
