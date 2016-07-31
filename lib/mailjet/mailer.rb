@@ -25,7 +25,8 @@ class Mailjet::APIMailer
   end
 
   def deliver!(mail)
-
+    require 'byebug'
+    byebug
     if mail.multipart?
       content = {
         :text => mail.text_part.try(:decoded),

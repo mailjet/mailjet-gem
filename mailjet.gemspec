@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rack", ">= 1.4.0"
   s.add_dependency "rest-client"
   s.add_development_dependency "actionmailer", ">= 3.0.9"
-  s.add_development_dependency "minitest"
+  s.add_development_dependency "minitest", "5.9.0"
   s.add_development_dependency "minitest-matchers"
   s.add_development_dependency "minitest-spec-context"
   s.add_development_dependency "turn"
