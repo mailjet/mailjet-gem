@@ -29,12 +29,14 @@ class Mailjet::APIMailer
   def deliver!(mail)
     content = {}
 
-    if  mail.text_part
-      content[:text_part] = mail.text_part.body.decoded
+    if mail.text_part
+      content[:text_part] = mail.text_part.try(:decoded)
+      content[:text] = mail.text_part.try(:decoded)
     end
 
     if mail.html_part
-      content[:html_part] = mail.html_part.body.decoded
+      content[:html_part] = mail.html_part.try(:decoded)
+      content[:html] = mail.html_part.try(:decoded)
     end
 
     if !mail.attachments.empty?
@@ -56,34 +58,34 @@ class Mailjet::APIMailer
       end
     end
 
-    if not mail.header.fields.empty?
-      content[:headers] = {}
-      mail.header.fields.each do |header|
-        if header.name.start_with?('X-MJ') or header.name.start_with?('X-Mailjet')
-          content[:headers][header.name] = header.value
-        end
-      end
-    end
+		if mail.header and not mail.header.fields.empty?
+		 content[:headers] = {}
+		 mail.header.fields.each do |header|
+			 if header.name.start_with?('X-MJ') or header.name.start_with?('X-Mailjet')
+				 content[:headers][header.name] = header.value
+			 end
+		 end
+		end
 
     if Mailjet.config.default_from.present?
-      from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
-    else
-      from_address = Mail::AddressList.new(mail.from.join(', ')).addresses[0]
+      # from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
+			mail[:from] = Mailjet.config.default_from
     end
 
-    base_from = { :from_name => from_address.display_name,
-                  :from_email => from_address.address }
+    base_from = { :from_name => mail[:from].display_names.first,
+                  :from_email => mail[:from].addresses.first }
 
   	payload = {
-      :to => mail.to.join(', '),
-      :reply_to => mail.reply_to,
-      :cc => mail.cc,
-      :bcc => mail.bcc,
+      :to => mail[:to].formatted.join(', '),
       :subject => mail.subject
   	}
     .merge(content)
     .merge(base_from)
     .merge(@delivery_method_options)
+
+		payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
+		payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
+		payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
 
   	Mailjet::Send.create(payload)
 

@@ -4,4 +4,4 @@ rvm:
   - 2.1.0
   - 2.2.3
 script:
-  - bundle exec rspec spec/mailjet-spec.rb
+  - bundle exec rspec spec/mailjet/mailer_spec.rb spec/mailjet-spec.rb

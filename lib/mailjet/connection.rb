@@ -21,17 +21,17 @@ module Mailjet
     end
 
     def initialize(end_point, api_key, secret_key, options = {})
-      ##charles proxy
+      # #charles proxy
       # RestClient.proxy = "http://127.0.0.1:8888"
-      ##
-      ##Output for debugging
+      # #
+      # #Output for debugging
       # RestClient.log =
       # Object.new.tap do |proxy|
       #   def proxy.<<(message)
       #     Rails.logger.info message
       #   end
       # end
-      ##
+      # #
       adapter_class = options[:adapter_class] || RestClient::Resource
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
