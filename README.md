@@ -124,24 +124,47 @@ p test.attributes['Sent']
 ```
 
 ### Send emails with ActionMailer
-A quick walkthrough to using Action Mailer from the documentation [HERE](http://guides.rubyonrails.org/action_mailer_basics.html)
+A quick walkthrough to use Rails Action Mailer [here](http://guides.rubyonrails.org/action_mailer_basics.html)
 
-First set your delivery method:
-
+First set your delivery method (here Mailjet SMTP relay servers):
 ```ruby
 # application.rb or config/environments specific settings, which take precedence
 config.action_mailer.delivery_method = :mailjet
 
 ```
 
-Or if you prefer sending messages through mailjet REST API:
-
+Or if you prefer sending messages through [Mailjet Send API](http://dev.mailjet.com/guides/#send-transactional-email):
 ```ruby
 # application.rb
 config.action_mailer.delivery_method = :mailjet_api
 ```
 
-You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc][actionmailerdoc]
+You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc][http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options].
+
+Supported options are:
+```ruby
+* :'mj-prio'
+* :'mj-campaign'
+* :'mj-deduplicatecampaign'
+* :'mj-templatelanguage'
+* :'mj-templateerrorreporting'
+* :'mj-templateerrordeliver'
+* :'mj-templateid'
+* :'mj-trackopen'
+* :'mj-trackclick'
+* :'mj-customid'
+* :'mj-eventpayload'
+* :'vars'
+* :'headers'
+* :'recipients'
+```
+
+Otherwise, you can pass the custom Mailjet SMTP headers directly:
+```ruby
+headers['X-MJ-CustomID'] = 'rubyPR_Test_ID_1469790724'
+headers['X-MJ-EventPayload'] = 'rubyPR_Test_Payload'
+headers['X-MJ-TemplateLanguage'] = '1'
+```
 
 Creating a Mailer:
 ```ruby
@@ -167,28 +190,40 @@ class UserMailer < ApplicationMailer
           subject: "This is a nice welcome email")
    end
 end
-
 ```
-There's also the ability to set [Mailjet custom headers](https://dev.mailjet.com/guides/send-api-guide/)
+
+Next, create your templates in the views folder:
+```ruby
+#app/views/user_mailer/welcome_email.html.erb
+Hello world in HTML!
+
+#app/views/user_mailer/welcome_email.text.erb
+Hello world in plain text!
+```
+
+There's also the ability to set [Mailjet custom headers](http://dev.mailjet.com/guides/#send-api-json-properties)
 ```ruby
 #app/mailers/user_mailer.rb
 class UserMailer < ApplicationMailer
   def welcome_email()
-      mail.header['X-MJ-CustomID'] = 'custom value'
-      mail.header['X-MJ-EventPayload'] = 'custom payload'
-    mail(from: "me@mailjet.com", to: "you@mailjet.com",
-          subject: "This is a nice welcome email")
+    headers['X-MJ-CustomID'] = 'custom value'
+    headers['X-MJ-EventPayload'] = 'custom payload'
+
+    mail(
+    from: "me@mailjet.com",
+    to: "you@mailjet.com",
+    subject: "This is a nice welcome email"
+    )
   end
 end
 ```
 For sending email, you can call the method with a variety of `MessageDelivery` priorities:
 ```ruby
-#In this example, we are sending immediately
+# In this example, we are sending the email immediately
 UserMailer.welcome_email.deliver_now!
 ```
+
 For more information on `ActionMailer::MessageDeilvery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
-
-
 
 ## Manage your campaigns
 

@@ -3,6 +3,8 @@ require 'mail'
 require 'base64'
 require 'json'
 
+# Mailjet::Mailer enables to send a Mail::Message via Mailjet SMTP relay servers
+# User is the API key, and password the API secret
 class Mailjet::Mailer < ::Mail::SMTP
   def initialize(options = {})
     ActionMailer::Base.default(:from => Mailjet.config.default_from) if Mailjet.config.default_from.present?
@@ -19,11 +21,18 @@ end
 
 ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 
-
-
+# Mailjet::APIMailer maps a Mail::Message coming from ActionMailer
+# To Mailjet Send API (see full documentation here dev.mailjet.com/guides/#send-transactional-email)
+# Mailjet sends API expects a JSON payload as the input.
+# The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
   def initialize(options = {})
-    @delivery_method_options = options.slice(:'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign', :'mj-trackopen', :'mj-trackclick', :'mj-customid', :'mj-eventpayload', :'header')
+    @delivery_method_options = options.slice(
+    :'recipients', :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
+    :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
+    :'mj-trackopen', :'mj-trackclick',
+    :'mj-customid', :'mj-eventpayload', :'vars', :'headers'
+    )
   end
 
   def deliver!(mail)
@@ -39,6 +48,7 @@ class Mailjet::APIMailer
       content[:html] = mail.html_part.try(:decoded)
     end
 
+    # Formatting attachments (inline + regular)
     if !mail.attachments.empty?
       content[:attachments] = []
       content[:inline_attachments] = []
@@ -67,6 +77,13 @@ class Mailjet::APIMailer
 		 end
 		end
 
+    # Reply-To is not a property in Mailjet Send API
+    # Passing it as an header
+    if mail.reply_to
+      content[:headers]['Reply-To'] = mail.reply_to.join(', ')
+    end
+
+    # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
     if Mailjet.config.default_from.present?
       # from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
 			mail[:from] = Mailjet.config.default_from
@@ -87,9 +104,9 @@ class Mailjet::APIMailer
 		payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
 		payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
 
+    # Send the final payload to Mailjet Send API
   	Mailjet::Send.create(payload)
-
-  	end
+	end
 end
 
 ActionMailer::Base.add_delivery_method :mailjet_api, Mailjet::APIMailer
