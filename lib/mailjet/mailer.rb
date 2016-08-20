@@ -82,8 +82,7 @@ class Mailjet::APIMailer
     content[:headers]['Reply-To'] = mail.reply_to.join(', ') if mail.reply_to
 
     # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
-    if Mailjet.config.default_from.present?
-      # from_address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
+    if mail[:from].nil? && Mailjet.config.default_from.present?
       mail[:from] = Mailjet.config.default_from
     end
 
