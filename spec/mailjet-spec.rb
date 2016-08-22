@@ -35,7 +35,8 @@ describe Mailjet do
     end
 
     it 'calls Contact.find with numeric ID' do
-      res = Mailjet::Contact.find(5771382)
+      res = Mailjet::Contact.first
+      res = Mailjet::Contact.find(res.attributes['id'])
       expect(res.attributes['email']).not_to be_nil
     end
 
