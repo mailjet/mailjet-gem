@@ -1,4 +1,3 @@
-
 require 'base64'
 require 'mailjet'
 require 'mailjet/mailer'
@@ -26,6 +25,49 @@ module Mailjet
           from_name: fromName,
           from_email: fromEmail,
           text_part: text
+        )
+      )
+
+      APIMailer.new.deliver!(message)
+    end
+
+    it 'fallsback to default_from if from is not set' do
+      Mailjet.config.default_from = 'Test Person <test@example.com>'
+
+      message = Mail.new
+      message.text_part = Mail::Part.new do
+        body 'test'
+      end
+
+      message.to = ['foo@bar.com']
+
+      expect(Mailjet::Send).to receive(:create).with(
+        hash_including(
+          from_name: 'Test Person',
+          from_email: 'test@example.com',
+          text_part: 'test'
+        )
+      )
+
+      APIMailer.new.deliver!(message)
+    end
+
+    it 'does not overrwrite `from` with `default_from`' do
+      Mailjet.config.default_from = 'Test Person <test@example.com>'
+
+      message = Mail.new
+      message.text_part = Mail::Part.new do
+        body 'test'
+      end
+
+      message.to = ['foo@bar.com']
+      message.from = 'FooBar <foobar@mailjet.com>'
+
+      expect(Mailjet::Send).to receive(:create).with(
+        hash_including(
+          from_name: 'FooBar',
+          from_email: 'foobar@mailjet.com',
+          text_part: 'test'
         )
       )
 
