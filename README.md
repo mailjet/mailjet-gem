@@ -163,7 +163,7 @@ Otherwise, you can pass the custom Mailjet SMTP headers directly:
 ```ruby
 headers['X-MJ-CustomID'] = 'rubyPR_Test_ID_1469790724'
 headers['X-MJ-EventPayload'] = 'rubyPR_Test_Payload'
-headers['X-MJ-TemplateLanguage'] = '1'
+headers['X-MJ-TemplateLanguage'] = 'true'
 ```
 
 Creating a Mailer:
