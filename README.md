@@ -223,7 +223,7 @@ For sending email, you can call the method with a variety of `MessageDelivery` p
 UserMailer.welcome_email.deliver_now!
 ```
 
-For more information on `ActionMailer::MessageDeilvery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
+For more information on `ActionMailer::MessageDelivery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
 
 ## Manage your campaigns
 
