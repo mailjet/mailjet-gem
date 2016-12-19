@@ -16,7 +16,7 @@ module Mailjet
           end.join("\n")
         else
           res.inspect
-        end + "\n\nPlease see http://api.mailjet.com/0.1/HelpStatus for more informations on error numbers.\n\n"
+        end + "\n\nPlease see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers.\n\n"
       )
     end
   end
