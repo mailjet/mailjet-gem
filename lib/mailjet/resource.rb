@@ -22,11 +22,11 @@ module Mailjet
     extend ActiveSupport::Concern
 
     included do
-      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls
+      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
       cattr_writer :connection
 
       def self.connection
-        @non_json_urls = ["v3/send/message"] #urls that don't accept JSON input
+        @non_json_urls = ["send/message"] #urls that don't accept JSON input
         class_variable_get(:@@connection) || default_connection
       end
 
@@ -41,7 +41,7 @@ module Mailjet
 
       def self.default_headers
         if @non_json_urls.include?(self.resource_path)#don't use JSON if Send API
-        default_headers = { accept: :json, accept_encoding: :deflate }
+          default_headers = { accept: :json, accept_encoding: :deflate }
         else
           default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
         end
@@ -82,14 +82,14 @@ module Mailjet
         end
       end
 
-      def create(attributes = {})
+      def create(attributes = {}, option = {})
         # if action method, ammend url to appropriate id
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
         attributes.tap { |hs| hs.delete(:id) }
 
-        if Mailjet.config.default_from and self.resource_path == 'v3/send/'
-		  address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
-		  default_attributes = { :from_email => address.address, :from_name => address.display_name}
+        if Mailjet.config.default_from and self.resource_path == 'send/'
+          address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
+          default_attributes = { :from_email => address.address, :from_name => address.display_name}
         else
           default_attributes = {}
         end
@@ -220,7 +220,7 @@ module Mailjet
         response = connection.post(formatted_payload, default_headers)
       end
 
-      if self.resource_path == 'v3/send/'
+      if self.resource_path == 'send/'
         self.attributes = ActiveSupport::JSON.decode(response)
         return true
       end

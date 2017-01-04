@@ -6,10 +6,15 @@ module Mailjet
     mattr_accessor :secret_key
     mattr_accessor :end_point
     mattr_accessor :default_from
-#    mattr_accessor :uversion
+    mattr_accessor :uversion do
+      'v3'
+    end
+    mattr_accessor :main_url do
+      'https://api.mailjet.com'
+    end
 
     # @@end_point = 'https://api.preprod.mailjet.com'
-    @@end_point = 'https://api.mailjet.com'
+    # @@end_point = 'https://api.mailjet.com'
 
   end
 end
