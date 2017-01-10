@@ -31,7 +31,7 @@ module Mailjet
       end
 
       def self.default_connection(opts)
-        abort("#{opts[1]}/#{opts[0]}/#{resource_path}")
+        print("#{opts[1]}/#{opts[0]}/#{resource_path}\n")
         Mailjet::Connection.new(
           "#{opts[1]}/#{opts[0]}/#{resource_path}",
           Mailjet.config.api_key,
@@ -58,14 +58,14 @@ module Mailjet
       def all(params = {}, options = {})
         opts = change_resource_path(options) #TODO
         params = format_params(params)
-        response = connection(opts).get(default_headers.merge(params: params))
+        response = connection(opts).get(default_headers.merge(params: params), opts[2])
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
       def count(options = {})
         opts = change_resource_path(options) #TODO
-        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
+        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}), opts[2])
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
       end
@@ -75,7 +75,7 @@ module Mailjet
         opts = change_resource_path(options) #TODO
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
-        attributes = parse_api_json(connection[id].get(default_headers)).first
+        attributes = parse_api_json(connection[id].get(default_headers, opts[2])).first
         instanciate_from_api(attributes)
 
       rescue Mailjet::ApiError => e
@@ -210,10 +210,16 @@ module Mailjet
       def change_resource_path(options = {})
         ver = choose_version(options)
         url = Mailjet.config.main_url
-        if options != {} && options['url'] #undefined method.exists
-          url = options['url']
+        call = Mailjet.config.is_called
+        if options != {}
+          if options['call'] == false || options['call'] == true
+            call = options['call']
+          end
+          if options['url'] #undefined method.exists
+            url = options['url']
+          end
         end
-        ret = [ver, url]
+        ret = [ver, url, call]
         ret
       end
       
@@ -242,17 +248,19 @@ module Mailjet
 
     def save(opts)
       if persisted?
-        response = connection(opts)[attributes[:id]].put(formatted_payload, default_headers)
+        response = connection(opts)[attributes[:id]].put(formatted_payload, default_headers, opts[2])
       else
-        response = connection(opts).post(formatted_payload, default_headers)
+        response = connection(opts).post(formatted_payload, default_headers, opts[2])
       end
 
-      if self.resource_path == 'send/'
-        self.attributes = ActiveSupport::JSON.decode(response)
-        return true
-      end
+      if opts[2] == true
+        if self.resource_path == 'send/'
+          self.attributes = ActiveSupport::JSON.decode(response)
+          return true
+        end
 
-      self.attributes = parse_api_json(response).first
+        self.attributes = parse_api_json(response).first
+      end
       return true
     rescue Mailjet::ApiError => e
       if e.code.to_s == "304"
@@ -277,7 +285,7 @@ module Mailjet
       save(opts)
     end
 
-    def delete
+    def delete(call)
       self.class.delete(id)
     end
 

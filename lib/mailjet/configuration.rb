@@ -12,6 +12,9 @@ module Mailjet
     mattr_accessor :main_url do
       'https://api.mailjet.com'
     end
+    mattr_accessor :is_called do
+      true
+    end
 
     # @@end_point = 'https://api.preprod.mailjet.com'
     # @@end_point = 'https://api.mailjet.com'
