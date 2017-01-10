@@ -7,7 +7,7 @@ require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
 require 'active_support/json/decoding'
-require 'mail'
+#require 'mail'
 require 'json'
 
 
@@ -25,14 +25,15 @@ module Mailjet
       cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
       cattr_writer :connection
 
-      def self.connection
+      def self.connection(opts)
         @non_json_urls = ["send/message"] #urls that don't accept JSON input
-        class_variable_get(:@@connection) || default_connection
+        class_variable_get(:@@connection) || default_connection(opts)
       end
 
-      def self.default_connection
+      def self.default_connection(opts)
+        abort("#{opts[1]}/#{opts[0]}/#{resource_path}")
         Mailjet::Connection.new(
-          "#{Mailjet.config.end_point}/#{resource_path}",
+          "#{opts[1]}/#{opts[0]}/#{resource_path}",
           Mailjet.config.api_key,
           Mailjet.config.secret_key,
           public_operations: public_operations,
@@ -50,25 +51,28 @@ module Mailjet
     end
 
     module ClassMethods
-      def first(params = {})
-        all(params.merge!(limit: 1)).first
+      def first(params = {}, options = {})
+        all(params.merge!(limit: 1), options).first
       end
 
-      def all(params = {})
+      def all(params = {}, options = {})
+        opts = change_resource_path(options) #TODO
         params = format_params(params)
-        response = connection.get(default_headers.merge(params: params))
+        response = connection(opts).get(default_headers.merge(params: params))
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
-      def count
-        response_json = connection.get(default_headers.merge(params: {limit: 1, countrecords: 1}))
+      def count(options = {})
+        opts = change_resource_path(options) #TODO
+        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
       end
 
-      def find(id, job_id = nil)
+      def find(id, job_id = nil, options = {})
         # if action method, ammend url to appropriate id
+        opts = change_resource_path(options) #TODO
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
         attributes = parse_api_json(connection[id].get(default_headers)).first
@@ -82,8 +86,9 @@ module Mailjet
         end
       end
 
-      def create(attributes = {}, option = {})
+      def create(attributes = {}, options = {})
         # if action method, ammend url to appropriate id
+        opts = change_resource_path(options)
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
         attributes.tap { |hs| hs.delete(:id) }
 
@@ -97,17 +102,17 @@ module Mailjet
         attributes = default_attributes.merge(attributes)
 
         self.new(attributes).tap do |resource|
-          resource.save!
+          resource.save!(opts)
           resource.persisted = true
         end
 
       end
 
-      def delete(id)
+      def delete(id, options = {})
          # if action method, ammend url to appropriate id
+         opts = change_resource_path(options)
          self.resource_path = create_action_resource_path(id) if self.action
-         #
-        connection[id].delete(default_headers)
+         connection(options)[id].delete(default_headers)
       end
 
       def instanciate_from_api(attributes = {})
@@ -201,6 +206,28 @@ module Mailjet
           _hash
         end
       end
+      
+      def change_resource_path(resource, options = {})
+        ver = choose_version(options)
+        url = Mailjet.config.main_url
+        if options != {} && options['url'].exists
+          url = options['url']
+        end
+        ret = [ver, url]
+        ret
+      end
+      
+      def choose_version(options = {})
+        ver = version
+        if options != {} && options['version'].exists
+          version = options['version']
+        end
+        if ver == nil || ver == ''
+          ver = Mailjet.config.uversion
+        end
+        ver
+      end
+      
     end
 
     attr_accessor :attributes, :persisted
@@ -213,11 +240,11 @@ module Mailjet
       attributes[:persisted]
     end
 
-    def save
+    def save(opts)
       if persisted?
-        response = connection[attributes[:id]].put(formatted_payload, default_headers)
+        response = connection(opts)[attributes[:id]].put(formatted_payload, default_headers)
       else
-        response = connection.post(formatted_payload, default_headers)
+        response = connection(opts).post(formatted_payload, default_headers)
       end
 
       if self.resource_path == 'send/'
@@ -235,8 +262,8 @@ module Mailjet
       end
     end
 
-    def save!
-      save || raise(StandardError.new("Resource not persisted"))
+    def save!(opts)
+      save(opts) || raise(StandardError.new("Resource not persisted"))
     end
 
     def attributes=(attribute_hash = {})
@@ -245,9 +272,9 @@ module Mailjet
       end
     end
 
-    def update_attributes(attribute_hash = {})
+    def update_attributes(attribute_hash = {}, opts = {})
       self.attributes = attribute_hash
-      save
+      save(opts)
     end
 
     def delete
@@ -256,8 +283,8 @@ module Mailjet
 
     private
 
-    def connection
-      self.class.connection
+    def connection(opts)
+      self.class.connection(opts)
     end
 
     def default_headers
@@ -309,5 +336,6 @@ module Mailjet
         super
       end
     end
+    
   end
 end
