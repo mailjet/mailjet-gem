@@ -207,10 +207,10 @@ module Mailjet
         end
       end
       
-      def change_resource_path(resource, options = {})
+      def change_resource_path(options = {})
         ver = choose_version(options)
         url = Mailjet.config.main_url
-        if options != {} && options['url'].exists
+        if options != {} && options['url'] #undefined method.exists
           url = options['url']
         end
         ret = [ver, url]
@@ -219,8 +219,8 @@ module Mailjet
       
       def choose_version(options = {})
         ver = version
-        if options != {} && options['version'].exists
-          version = options['version']
+        if options != {} && options['version'] #undefined method .exists
+          ver = options['version']
         end
         if ver == nil || ver == ''
           ver = Mailjet.config.uversion
