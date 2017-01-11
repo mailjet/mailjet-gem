@@ -31,7 +31,6 @@ module Mailjet
       end
 
       def self.default_connection(opts)
-        print("#{opts[1]}/#{opts[0]}/#{resource_path}\n")
         Mailjet::Connection.new(
           "#{opts[1]}/#{opts[0]}/#{resource_path}",
           Mailjet.config.api_key,
@@ -209,8 +208,8 @@ module Mailjet
       
       def change_resource_path(options = {})
         ver = choose_version(options)
-        url = Mailjet.config.main_url
-        call = Mailjet.config.is_called
+        url = Mailjet.config.api_url
+        call = Mailjet.config.perform_api_call
         if options != {}
           if options['call'] == false || options['call'] == true
             call = options['call']
@@ -229,7 +228,7 @@ module Mailjet
           ver = options['version']
         end
         if ver == nil || ver == ''
-          ver = Mailjet.config.uversion
+          ver = Mailjet.config.api_version
         end
         ver
       end
