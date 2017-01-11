@@ -27,6 +27,7 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 # The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
   def initialize(options = {})
+#    abort("test")
     @delivery_method_options = options.slice(
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
@@ -37,19 +38,25 @@ class Mailjet::APIMailer
 
   def deliver!(mail)
     content = {}
+#    print("test\n")
+#    abort(mail.inspect)
 
     if mail.text_part
+#      content[:TextPart] = mail.text_part.try(:decoded)
       content[:text_part] = mail.text_part.try(:decoded)
       content[:text] = mail.text_part.try(:decoded)
     end
 
     if mail.html_part
+#      content[:HTMLPart] = mail.html_part.try(:decoded)
       content[:html_part] = mail.html_part.try(:decoded)
       content[:html] = mail.html_part.try(:decoded)
     end
 
     # Formatting attachments (inline + regular)
     unless mail.attachments.empty?
+#      content[:Attachments] = []
+#      content[:InlineAttachments] = []
       content[:attachments] = []
       content[:inline_attachments] = []
 
