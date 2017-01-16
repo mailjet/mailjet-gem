@@ -208,7 +208,7 @@ module Mailjet
       
       def change_resource_path(options = {})
         ver = choose_version(options)
-        url = Mailjet.config.api_url
+        url = Mailjet.config.end_point
         call = Mailjet.config.perform_api_call
         if options != {}
           if options['call'] == false || options['call'] == true

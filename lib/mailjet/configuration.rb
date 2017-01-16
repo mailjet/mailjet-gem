@@ -9,7 +9,7 @@ module Mailjet
     mattr_accessor :api_version do
       'v3'
     end
-    mattr_accessor :api_url do
+    mattr_accessor :end_point do
       'https://api.mailjet.com'
     end
     mattr_accessor :perform_api_call do
