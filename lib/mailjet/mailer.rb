@@ -46,20 +46,20 @@ class Mailjet::APIMailer
 
     if mail.text_part
       if (@version == 'v3.1')
-        content[:TextPart] = mail.text_part.try(:decoded)
+        content["TextPart"] = mail.text_part.try(:decoded)
       else
         content[:text_part] = mail.text_part.try(:decoded)
+        content[:text] = mail.text_part.try(:decoded)
       end
-      content[:text] = mail.text_part.try(:decoded)
     end
 
     if mail.html_part
       if (@version == 'v3.1')
-        content[:HTMLPart] = mail.html_part.try(:decoded)
+        content["HTMLPart"] = mail.html_part.try(:decoded)
       else
         content[:html_part] = mail.html_part.try(:decoded)
+        content[:html] = mail.html_part.try(:decoded)
       end
-      content[:html] = mail.html_part.try(:decoded)
     end
 
     # Formatting attachments (inline + regular)
@@ -95,11 +95,13 @@ class Mailjet::APIMailer
       end
     end
 
-    if mail.header && !mail.header.fields.empty?
-      content[:headers] = {}
-      mail.header.fields.each do |header|
-        if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
-          content[:headers][header.name] = header.value
+    if (@version != 'v3.1')
+      if mail.header && !mail.header.fields.empty?
+        content[:headers] = {}
+        mail.header.fields.each do |header|
+          if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
+            content[:headers][header.name] = header.value
+          end
         end
       end
     end
@@ -130,7 +132,7 @@ class Mailjet::APIMailer
           to = [{'Email'=>mail[:to].data.raw}]
         else
           to = []
-          mail[:to].each do |t|
+          mail[:to].formatted.each do |t|
             to << {'Email'=> t}
           end
         end
@@ -139,17 +141,18 @@ class Mailjet::APIMailer
         "To"=> to,
         "Sender"=> mail[:sender],
         "Subject"=> mail.subject
-      }
+      }.merge(content)
+      .merge(setFrom(mail))
+      .merge(@delivery_method_options)
     else
       payload = {
         to: mail[:to].formatted.join(', '),
         sender: mail[:sender],
         subject: mail.subject
-      }
+      }.merge(content)
+      .merge(setFrom(mail))
+      .merge(@delivery_method_options)
     end
-    .merge(content)
-    .merge(setFrom(mail))
-    .merge(@delivery_method_options)
     
     if (@version == "v3.1")
       if (mail[:cc])
@@ -164,11 +167,11 @@ class Mailjet::APIMailer
         end
       end
       if (mail[:bcc])
-        if (mail[:bcc].is_a? String)
+        if (mail[:bcc].formatted.is_a? String)
           payload["Bcc"] = [{'Email'=>mail[:bcc]}]
         else
           bccs = []
-          mail[:bcc].each do |bcc|
+          mail[:bcc].formatted.each do |bcc|
             bccs << {'Email'=> bcc}
           end
           payload['Bcc'] = bccs
@@ -178,6 +181,8 @@ class Mailjet::APIMailer
       payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
       payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
     end
+    print("Hello world !!\n")
+    print(payload["TextPart"])
     payload
   end
 
@@ -185,10 +190,12 @@ class Mailjet::APIMailer
     if (@version == "v3.1")
       base_from = {
         From:{
-          "Email"=> mail[:from].addresses.first,
-          "Name"=> mail[:from].display_names.first
+          "Email"=> mail[:from].addresses.first
         }
       }
+      if (mail[:from].display_names.first)
+        base_from["From"]["Name"] = mail[:from].display_names.first
+      end
     else
       base_from = {
         from_name: mail[:from].display_names.first,
