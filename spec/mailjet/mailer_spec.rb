@@ -3,6 +3,7 @@ require 'mailjet'
 require 'mailjet/mailer'
 
 module Mailjet
+  RSpec::Expectations.configuration.on_potential_false_positives = :nothing
   RSpec.describe APIMailer do
     it 'set proper fields also for multipart emails' do
       message = Mail.new
@@ -190,6 +191,20 @@ module Mailjet
 
       APIMailer.new.deliver!(message)
     end
+    
+    #it 'fails to send' do
+    #  from_name = 'Albert'
+    #  from_email = 'albert@bar.com'
+    #  recipients = ''
+    #  message = Mail.new do
+    #    from       ""
+    #    to         recipients
+    #  end
+      
+    #  expect { raise NoMethodError }.to raise_error
+    
+    #  APIMailer.new.deliver!(message)
+    #end
 
     # it 'test the attachments' do
     #   from_name = 'Albert'

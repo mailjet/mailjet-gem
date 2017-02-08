@@ -39,29 +39,29 @@ module Mailjet
       self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json'))
     end
 
-    def get(additional_headers = {}, call, &block)
-      handle_api_call(:get, additional_headers, call, &block)
+    def get(additional_headers = {}, perform_api_call, &block)
+      handle_api_call(:get, additional_headers, perform_api_call, &block)
     end
 
-    def post(payload, additional_headers = {}, call, &block)
-      handle_api_call(:post, additional_headers, payload, call, &block)
+    def post(payload, additional_headers = {}, perform_api_call, &block)
+      handle_api_call(:post, additional_headers, payload, perform_api_call, &block)
     end
 
-    def put(payload, additional_headers = {}, call, &block)
-      handle_api_call(:put, additional_headers, payload, call, &block)
+    def put(payload, additional_headers = {}, perform_api_call, &block)
+      handle_api_call(:put, additional_headers, payload, perform_api_call, &block)
     end
 
-    def delete(additional_headers = {}, call, &block)
-      handle_api_call(:delete, additional_headers, call, &block)
+    def delete(additional_headers = {}, perform_api_call, &block)
+      handle_api_call(:delete, additional_headers, perform_api_call, &block)
     end
 
     private
 
-    def handle_api_call(method, additional_headers = {}, payload = {}, call, &block)
+    def handle_api_call(method, additional_headers = {}, payload = {}, perform_api_call, &block)
       formatted_payload = (additional_headers[:content_type] == :json) ? payload.to_json : payload
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
-      if call == true
+      if perform_api_call
         if [:get, :delete].include?(method)
           @adapter.send(method, additional_headers, &block)
         else
