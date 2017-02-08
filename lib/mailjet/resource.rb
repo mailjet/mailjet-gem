@@ -25,14 +25,14 @@ module Mailjet
       cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
       cattr_writer :connection
 
-      def self.connection(opts)
+      def self.connection(options)
         @non_json_urls = ["send/message"] #urls that don't accept JSON input
-        class_variable_get(:@@connection) || default_connection(opts)
+        class_variable_get(:@@connection) || default_connection(options)
       end
 
-      def self.default_connection(opts)
+      def self.default_connection(options)
         Mailjet::Connection.new(
-          "#{opts[1]}/#{opts[0]}/#{resource_path}",
+          "#{options[1]}/#{options[0]}/#{resource_path}",
           Mailjet.config.api_key,
           Mailjet.config.secret_key,
           public_operations: public_operations,
@@ -209,16 +209,16 @@ module Mailjet
       def change_resource_path(options = {})
         ver = choose_version(options)
         url = Mailjet.config.end_point
-        call = Mailjet.config.perform_api_call
+        perform_api_call = Mailjet.config.perform_api_call
         if options != {}
           if options['call'] == false || options['call'] == true
-            call = options['call']
+            perform_api_call = options['call']
           end
           if options['url'] #undefined method.exists
             url = options['url']
           end
         end
-        ret = [ver, url, call]
+        ret = [ver, url, perform_api_call]
         ret
       end
       
@@ -227,7 +227,7 @@ module Mailjet
         if options != {} && options['version'] #undefined method .exists
           ver = options['version']
         end
-        if ver == nil || ver == ''
+        if ver.blank?
           ver = Mailjet.config.api_version
         end
         ver
@@ -245,22 +245,25 @@ module Mailjet
       attributes[:persisted]
     end
 
-    def save(opts)
+    #Options[0] = Method, options[1] = URL, options[2] = api_perform_call
+    def save(options)
       if persisted?
-        response = connection(opts)[attributes[:id]].put(formatted_payload, default_headers, opts[2])
+        response = connection(options)[attributes[:id]].put(formatted_payload, default_headers, options[2])
       else
-        response = connection(opts).post(formatted_payload, default_headers, opts[2])
+        response = connection(options).post(formatted_payload, default_headers, options[2])
       end
 
-      if opts[2] == true
+      if options[2] == true
         if self.resource_path == 'send/'
           self.attributes = ActiveSupport::JSON.decode(response)
           return true
         end
 
         self.attributes = parse_api_json(response).first
+      else
+        p options[1]
       end
-      return true
+      true
     rescue Mailjet::ApiError => e
       if e.code.to_s == "304"
         return true # When you save a record twice it should not raise error
@@ -269,8 +272,8 @@ module Mailjet
       end
     end
 
-    def save!(opts)
-      save(opts) || raise(StandardError.new("Resource not persisted"))
+    def save!(options)
+      save(options) || raise(StandardError.new("Resource not persisted"))
     end
 
     def attributes=(attribute_hash = {})
@@ -279,9 +282,9 @@ module Mailjet
       end
     end
 
-    def update_attributes(attribute_hash = {}, opts = {})
+    def update_attributes(attribute_hash = {}, options = {})
       self.attributes = attribute_hash
-      save(opts)
+      save(options)
     end
 
     def delete(call)
@@ -290,8 +293,8 @@ module Mailjet
 
     private
 
-    def connection(opts)
-      self.class.connection(opts)
+    def connection(options)
+      self.class.connection(options)
     end
 
     def default_headers

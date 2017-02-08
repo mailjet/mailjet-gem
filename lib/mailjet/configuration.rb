@@ -4,7 +4,6 @@ module Mailjet
   module Configuration
     mattr_accessor :api_key
     mattr_accessor :secret_key
-    mattr_accessor :end_point
     mattr_accessor :default_from
     mattr_accessor :api_version do
       'v3'
