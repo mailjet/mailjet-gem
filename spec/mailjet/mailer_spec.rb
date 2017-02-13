@@ -156,7 +156,7 @@ module Mailjet
       from_name = 'Albert'
       from_email = 'albert@bar.com'
       recipients = ['test@test.com', 'paul <paul@test.com>']
-      rt = 'john@test.com'
+      rt = 'john <john@test.com>'
 
       message = Mail.new do
         from       "#{from_name} <#{from_email}>"
@@ -190,6 +190,25 @@ module Mailjet
       )
 
       APIMailer.new.deliver!(message)
+    end
+    
+    it 'test v3.1' do
+      from_name = 'Albert'
+      from_email = 'albert@bar.com'
+      recipients = 'test <test@test.com>'
+
+      message = Mail.new do
+        from       "#{from_name} <#{from_email}>"
+        to         recipients
+      end
+
+      expect(Mailjet::Send).to receive(:create).with(
+        hash_including(
+          to: recipients
+        )
+      )
+
+      APIMailer.new.deliver!(message, {"version"=> "v3.1", "call"=> false})
     end
     
     #it 'fails to send' do

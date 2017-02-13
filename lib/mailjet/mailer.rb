@@ -45,7 +45,15 @@ class Mailjet::APIMailer
     )
   end
 
-  def deliver!(mail)
+  def deliver!(mail, options = nil)
+    
+    if (options && options.kind_of?(Object) && options['version'].present?)
+      @version = options['version']
+    end
+    
+    if (!options.kind_of?(Object))
+      options = []
+    end
 
     # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
     if mail[:from].nil? && Mailjet.config.default_from.present?
@@ -53,20 +61,15 @@ class Mailjet::APIMailer
     end
 
     if (@version == 'v3.1')
-      Mailjet::Send.create({"Messages" => setContentV3_1(mail)})
+      Mailjet::Send.create({"Messages" => setContentV3_1(mail)}, [])
     else
-      Mailjet::Send.create(setContentV3(mail))
+      Mailjet::Send.create(setContentV3(mail), [])
     end
   end
 
   def setContentV3_1(mail)
-    if mail.text_part
-      content["TextPart"] = mail.text_part.try(:decoded)
-    end
-    
-    if mail.html_part
-      content["HTMLPart"] = mail.html_part.try(:decoded)
-    end
+    content["TextPart"] = mail.text_part.try(:decoded)
+    content["HTMLPart"] = mail.html_part.try(:decoded)
     
     unless mail.attachments.empty?
       content[:Attachments] = []
@@ -90,7 +93,7 @@ class Mailjet::APIMailer
     if mail.header && !mail.header.fields.empty?
       content[:headers] = {}
       mail.header.fields.each do |header|
-        if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
+        if !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
           content[:headers][header.name] = header.value
         end
       end
@@ -98,7 +101,8 @@ class Mailjet::APIMailer
 
     # Reply-To is not a property in Mailjet Send API
     # Passing it as an header
-    content[:headers]['Reply-To'] = mail.reply_to.join(', ') if mail.reply_to
+    content[:headers]['Reply-To'] = {'Email': mail[:reply_to].addresses.first,
+      'Name': [:reply_to].display_names.first,} if mail.reply_to
     
     if (mail[:to])
       if (mail[:to].is_a? String)
@@ -207,7 +211,7 @@ class Mailjet::APIMailer
 
     base_from = { from_name: mail[:from].display_names.first,
                   from_email: mail[:from].addresses.first }
-
+        
     payload = {
       to: mail[:to].formatted.join(', '),
       sender: mail[:sender],
