@@ -67,8 +67,6 @@ module Mailjet
         else
           @adapter.send(method, formatted_payload, additional_headers, &block)
         end
-      else
-        "ok"
       end
     rescue RestClient::Exception => e
       handle_exception(e, additional_headers, formatted_payload)

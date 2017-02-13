@@ -37,40 +37,40 @@ class Mailjet::APIMailer
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',
-      :'mj-customid', :'mj-eventpayload', :vars, :headers
+      :'mj-customid', :'mj-eventpayload', :vars, :headers,
+      :'prio', :'campaign', :'deduplicatecampaign',
+      :'templatelanguage', :'templateerrorreporting', :'templateerrordeliver', :'templateid',
+      :'trackopen', :'trackclick',
+      :'customid', :'eventpayload'
     )
   end
 
   def deliver!(mail)
-    content = {}
 
+    # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
+    if mail[:from].nil? && Mailjet.config.default_from.present?
+      mail[:from] = Mailjet.config.default_from
+    end
+
+    if (@version == 'v3.1')
+      Mailjet::Send.create({"Messages" => setContentV3_1(mail)})
+    else
+      Mailjet::Send.create(setContentV3(mail))
+    end
+  end
+
+  def setContentV3_1(mail)
     if mail.text_part
-      if (@version == 'v3.1')
-        content["TextPart"] = mail.text_part.try(:decoded)
-      else
-        content[:text_part] = mail.text_part.try(:decoded)
-        content[:text] = mail.text_part.try(:decoded)
-      end
+      content["TextPart"] = mail.text_part.try(:decoded)
     end
-
+    
     if mail.html_part
-      if (@version == 'v3.1')
-        content["HTMLPart"] = mail.html_part.try(:decoded)
-      else
-        content[:html_part] = mail.html_part.try(:decoded)
-        content[:html] = mail.html_part.try(:decoded)
-      end
+      content["HTMLPart"] = mail.html_part.try(:decoded)
     end
-
-    # Formatting attachments (inline + regular)
+    
     unless mail.attachments.empty?
-      if (@version == 'v3.1')
-        content[:Attachments] = []
-        content[:InlineAttachments] = []
-      else
-        content[:attachments] = []
-        content[:inline_attachments] = []
-      end
+      content[:Attachments] = []
+      content[:InlineAttachments] = []
 
       mail.attachments.each do |attachment|
         mailjet_attachment = {
@@ -80,129 +80,149 @@ class Mailjet::APIMailer
         }
 
         if attachment.inline?
-          if (@version == 'v3.1')
-            content[:InlineAttachments].push(mailjet_attachment)
-          else
-            content[:inline_attachments].push(mailjet_attachment)
-          end
+          content[:InlineAttachments].push(mailjet_attachment)
         else
-          if (@version == 'v3.1')
-            content[:Attachments].push(mailjet_attachment)
-          else
-            content[:attachments].push(mailjet_attachment)
-          end
+          content[:Attachments].push(mailjet_attachment)
         end
       end
     end
 
-    if (@version != 'v3.1')
-      if mail.header && !mail.header.fields.empty?
-        content[:headers] = {}
-        mail.header.fields.each do |header|
-          if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
-            content[:headers][header.name] = header.value
-          end
+    if mail.header && !mail.header.fields.empty?
+      content[:headers] = {}
+      mail.header.fields.each do |header|
+        if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
+          content[:headers][header.name] = header.value
         end
       end
     end
 
     # Reply-To is not a property in Mailjet Send API
     # Passing it as an header
-    if mail.reply_to
-      if (@version == 'v3.1')
-        content['ReplyTo'] = {"Email"=> mail.reply_to.join(', ')}
+    content[:headers]['Reply-To'] = mail.reply_to.join(', ') if mail.reply_to
+    
+    if (mail[:to])
+      if (mail[:to].is_a? String)
+        to = [{'Email'=>mail[:to].data.raw}]
       else
-        content[:headers]['Reply-To'] = mail.reply_to.join(', ')
+        to = []
+        mail[:to].formatted.each do |t|
+          to << {'Email'=> t}
+        end
       end
     end
+    
+    base_from = {
+      From:{
+        "Email"=> mail[:from].addresses.first
+      }
+    }
+    if (mail[:from].display_names.first)
+      base_from["From"]["Name"] = mail[:from].display_names.first
+    end
+    
+    payload = {
+      "To"=> to,
+      "Sender"=> mail[:sender],
+      "Subject"=> mail.subject
+    }.merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options)
+  
+    if (mail[:cc])
+      if (mail[:cc].is_a? String)
+        payload["Cc"] = [{'Email'=>mail[:cc]}]
+      else
+        ccs = []
+        mail[:cc].each do |cc|
+          ccs << {'Email'=> cc}
+        end
+        payload['Cc'] = ccs
+      end
+    end
+    if (mail[:bcc])
+      if (mail[:bcc].formatted.is_a? String)
+        payload["Bcc"] = [{'Email'=>mail[:bcc]}]
+      else
+        bccs = []
+        mail[:bcc].formatted.each do |bcc|
+          bccs << {'Email'=> bcc}
+        end
+        payload['Bcc'] = bccs
+      end
+    end
+    payload
+    
+  end
+  
+  def setContentV3(mail)
+    content = {}
+
+    if mail.text_part
+      content[:text_part] = mail.text_part.try(:decoded)
+      content[:text] = mail.text_part.try(:decoded)
+    end
+
+    if mail.html_part
+      content[:html_part] = mail.html_part.try(:decoded)
+      content[:html] = mail.html_part.try(:decoded)
+    end
+
+    # Formatting attachments (inline + regular)
+    unless mail.attachments.empty?
+      content[:attachments] = []
+      content[:inline_attachments] = []
+
+      mail.attachments.each do |attachment|
+        mailjet_attachment = {
+          'Content-Type' => attachment.content_type.split(';')[0],
+          'Filename' => attachment.filename,
+          'content' => Base64.encode64(attachment.body.decoded)
+        }
+
+        if attachment.inline?
+          content[:inline_attachments].push(mailjet_attachment)
+        else
+          content[:attachments].push(mailjet_attachment)
+        end
+      end
+    end
+
+    if mail.header && !mail.header.fields.empty?
+      content[:headers] = {}
+      mail.header.fields.each do |header|
+        if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
+          content[:headers][header.name] = header.value
+        end
+      end
+    end
+
+    # Reply-To is not a property in Mailjet Send API
+    # Passing it as an header
+    content[:headers]['Reply-To'] = mail.reply_to.join(', ') if mail.reply_to
 
     # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
     if mail[:from].nil? && Mailjet.config.default_from.present?
       mail[:from] = Mailjet.config.default_from
     end
 
+    base_from = { from_name: mail[:from].display_names.first,
+                  from_email: mail[:from].addresses.first }
+
+    payload = {
+      to: mail[:to].formatted.join(', '),
+      sender: mail[:sender],
+      subject: mail.subject
+    }
+              .merge(content)
+              .merge(base_from)
+              .merge(@delivery_method_options)
+
+    payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
+    payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
+    payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
+
     # Send the final payload to Mailjet Send API
-    Mailjet::Send.create({"Messages"=> [setPayload(mail, content)]})
-  end
-
-  def setPayload(mail, content)
-    if (@version == "v3.1")
-      if (mail[:to])
-        if (mail[:to].is_a? String)
-          to = [{'Email'=>mail[:to].data.raw}]
-        else
-          to = []
-          mail[:to].formatted.each do |t|
-            to << {'Email'=> t}
-          end
-        end
-      end
-      payload = {
-        "To"=> to,
-        "Sender"=> mail[:sender],
-        "Subject"=> mail.subject
-      }.merge(content)
-      .merge(setFrom(mail))
-      .merge(@delivery_method_options)
-    else
-      payload = {
-        to: mail[:to].formatted.join(', '),
-        sender: mail[:sender],
-        subject: mail.subject
-      }.merge(content)
-      .merge(setFrom(mail))
-      .merge(@delivery_method_options)
-    end
-    
-    if (@version == "v3.1")
-      if (mail[:cc])
-        if (mail[:cc].is_a? String)
-          payload["Cc"] = [{'Email'=>mail[:cc]}]
-        else
-          ccs = []
-          mail[:cc].each do |cc|
-            ccs << {'Email'=> cc}
-          end
-          payload['Cc'] = ccs
-        end
-      end
-      if (mail[:bcc])
-        if (mail[:bcc].formatted.is_a? String)
-          payload["Bcc"] = [{'Email'=>mail[:bcc]}]
-        else
-          bccs = []
-          mail[:bcc].formatted.each do |bcc|
-            bccs << {'Email'=> bcc}
-          end
-          payload['Bcc'] = bccs
-        end
-      end
-    else
-      payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
-      payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
-    end
-    print("Hello world !!\n")
-    print(payload["TextPart"])
     payload
-  end
-
-  def setFrom(mail)
-    if (@version == "v3.1")
-      base_from = {
-        From:{
-          "Email"=> mail[:from].addresses.first
-        }
-      }
-      if (mail[:from].display_names.first)
-        base_from["From"]["Name"] = mail[:from].display_names.first
-      end
-    else
-      base_from = {
-        from_name: mail[:from].display_names.first,
-        from_email: mail[:from].addresses.first
-      }
-    end
-    base_from
   end
 end
 
