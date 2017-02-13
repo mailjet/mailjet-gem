@@ -32,7 +32,7 @@ module Mailjet
 
       def self.default_connection(options)
         Mailjet::Connection.new(
-          "#{options[1]}/#{options[0]}/#{resource_path}",
+          "#{options[:url]}/#{options[:version]}/#{resource_path}",
           Mailjet.config.api_key,
           Mailjet.config.secret_key,
           public_operations: public_operations,
@@ -57,14 +57,14 @@ module Mailjet
       def all(params = {}, options = {})
         opts = change_resource_path(options)
         params = format_params(params)
-        response = connection(opts).get(default_headers.merge(params: params), opts[2])
+        response = connection(opts).get(default_headers.merge(params: params), opts[:perform_api_call])
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
       def count(options = {})
         opts = change_resource_path(options)
-        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}), opts[2])
+        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}), opts[:perform_api_call])
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
       end
@@ -74,7 +74,7 @@ module Mailjet
         opts = change_resource_path(options)
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
-        attributes = parse_api_json(connection(opts)[id].get(default_headers, opts[2])).first
+        attributes = parse_api_json(connection(opts)[id].get(default_headers, opts[:perform_api_call])).first
         instanciate_from_api(attributes)
 
       rescue Mailjet::ApiError => e
@@ -135,7 +135,7 @@ module Mailjet
       def create_action_resource_path(id, job_id = nil)
          url_elements = self.resource_path.split("/")
          url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
-         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[2] == "contactslist")
+         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[:perform_api_call] == "contactslist")
            url_elements[3] = id.to_s
         end
          url_elements << job_id.to_s if job_id #if job_id exists, ammend it to end of the URI
@@ -218,8 +218,7 @@ module Mailjet
             url = options['url']
           end
         end
-        ret = [ver, url, perform_api_call]
-        print ret
+        ret = {'version': ver, 'url': url, 'perform_api_call': perform_api_call}
         ret
       end
       
@@ -246,15 +245,14 @@ module Mailjet
       attributes[:persisted]
     end
 
-    #Options[0] = Method, options[1] = URL, options[2] = api_perform_call
     def save(options)
       if persisted?
-        response = connection(options)[attributes[:id]].put(formatted_payload, default_headers, options[2])
+        response = connection(options)[attributes[:id]].put(formatted_payload, default_headers, options[:perform_api_call])
       else
-        response = connection(options).post(formatted_payload, default_headers, options[2])
+        response = connection(options).post(formatted_payload, default_headers, options[:perform_api_call])
       end
 
-      if options[2] == true
+      if options[:perform_api_call] == true
         if self.resource_path == 'send/'
           self.attributes = ActiveSupport::JSON.decode(response)
           return true
@@ -262,7 +260,7 @@ module Mailjet
 
         self.attributes = parse_api_json(response).first
       else
-        p options[1]
+        p options['url']
       end
       true
     rescue Mailjet::ApiError => e
