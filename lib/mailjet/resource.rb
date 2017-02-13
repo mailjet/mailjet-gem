@@ -25,7 +25,7 @@ module Mailjet
       cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
       cattr_writer :connection
 
-      def self.connection(options)
+      def self.connection(options = {})
         @non_json_urls = ["send/message"] #urls that don't accept JSON input
         class_variable_get(:@@connection) || default_connection(options)
       end
@@ -55,7 +55,7 @@ module Mailjet
       end
 
       def all(params = {}, options = {})
-        opts = change_resource_path(options) #TODO
+        opts = change_resource_path(options)
         params = format_params(params)
         response = connection(opts).get(default_headers.merge(params: params), opts[2])
         attribute_array = parse_api_json(response)
@@ -63,7 +63,7 @@ module Mailjet
       end
 
       def count(options = {})
-        opts = change_resource_path(options) #TODO
+        opts = change_resource_path(options)
         response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}), opts[2])
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
@@ -71,10 +71,10 @@ module Mailjet
 
       def find(id, job_id = nil, options = {})
         # if action method, ammend url to appropriate id
-        opts = change_resource_path(options) #TODO
+        opts = change_resource_path(options)
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
-        attributes = parse_api_json(connection[id].get(default_headers, opts[2])).first
+        attributes = parse_api_json(connection(opts)[id].get(default_headers, opts[2])).first
         instanciate_from_api(attributes)
 
       rescue Mailjet::ApiError => e
@@ -219,6 +219,7 @@ module Mailjet
           end
         end
         ret = [ver, url, perform_api_call]
+        print ret
         ret
       end
       
