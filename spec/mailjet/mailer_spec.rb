@@ -192,7 +192,7 @@ module Mailjet
       APIMailer.new.deliver!(message)
     end
     
-    it 'test v3.1' do
+    it 'test with one recipient on v3.1' do
       from_name = 'Albert'
       from_email = 'albert@bar.com'
       recipients = 'test <test@test.com>'
@@ -207,7 +207,7 @@ module Mailjet
         )
       )
 
-      APIMailer.new.deliver!(message, {"version"=> "v3.1", "call"=> false})
+      APIMailer.new(:'mj-trackclick' => true).deliver!(message, {"version"=> "v3.1", "call"=> false})
     end
     
     #it 'fails to send' do

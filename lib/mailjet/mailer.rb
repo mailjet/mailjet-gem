@@ -81,12 +81,13 @@ class Mailjet::APIMailer
 
       mail.attachments.each do |attachment|
         mailjet_attachment = {
-          'Content-Type' => attachment.content_type.split(';')[0],
+          'ContentType' => attachment.content_type.split(';')[0],
           'Filename' => attachment.filename,
           'content' => Base64.encode64(attachment.body.decoded)
         }
 
         if attachment.inline?
+          mailjet_attachment['ContentId'] = attachment.content_id
           content[:InlineAttachments].push(mailjet_attachment)
         else
           content[:Attachments].push(mailjet_attachment)
@@ -188,6 +189,7 @@ class Mailjet::APIMailer
         }
 
         if attachment.inline?
+#          mailjet_attachment['Content-Id'] = attachment.content_id
           content[:inline_attachments].push(mailjet_attachment)
         else
           content[:attachments].push(mailjet_attachment)
@@ -221,9 +223,9 @@ class Mailjet::APIMailer
       sender: mail[:sender],
       subject: mail.subject
     }
-              .merge(content)
-              .merge(base_from)
-              .merge(@delivery_method_options)
+    .merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options)
 
     payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
     payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
