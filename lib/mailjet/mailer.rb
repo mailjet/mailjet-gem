@@ -38,14 +38,17 @@ class Mailjet::APIMailer
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',
       :'mj-customid', :'mj-eventpayload', :vars, :headers,
-      :'prio', :'campaign', :'deduplicatecampaign',
+    )
+    @delivery_method_options_v3_1 = options.slice(
+      :recipients, :'prio', :'campaign', :'deduplicatecampaign',
       :'templatelanguage', :'templateerrorreporting', :'templateerrordeliver', :'templateid',
       :'trackopen', :'trackclick',
-      :'customid', :'eventpayload'
+      :'customid', :'eventpayload', :vars, :headers,
     )
   end
 
   def deliver!(mail, options = nil)
+#    p mail.header.fields
     
     if (options && options.kind_of?(Object) && options['version'].present?)
       @version = options['version']
@@ -61,15 +64,16 @@ class Mailjet::APIMailer
     end
 
     if (@version == 'v3.1')
-      Mailjet::Send.create({"Messages" => setContentV3_1(mail)}, [])
+      Mailjet::Send.create({:Messages => setContentV3_1(mail)})
     else
-      Mailjet::Send.create(setContentV3(mail), [])
+      Mailjet::Send.create(setContentV3(mail))
     end
   end
 
   def setContentV3_1(mail)
-    content["TextPart"] = mail.text_part.try(:decoded)
-    content["HTMLPart"] = mail.html_part.try(:decoded)
+    content = {}
+    content[:TextPart] = mail.text_part.try(:decoded)
+    content[:HTMLPart] = mail.html_part.try(:decoded)
     
     unless mail.attachments.empty?
       content[:Attachments] = []
@@ -93,7 +97,7 @@ class Mailjet::APIMailer
     if mail.header && !mail.header.fields.empty?
       content[:headers] = {}
       mail.header.fields.each do |header|
-        if !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
+        if header.name.start_with?('X-') && !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
           content[:headers][header.name] = header.value
         end
       end
@@ -101,36 +105,36 @@ class Mailjet::APIMailer
 
     # Reply-To is not a property in Mailjet Send API
     # Passing it as an header
-    content[:headers]['Reply-To'] = {'Email': mail[:reply_to].addresses.first,
-      'Name': [:reply_to].display_names.first,} if mail.reply_to
+    content[:headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first,
+      :Name=> [:reply_to].display_names.first,} if mail.reply_to
     
     if (mail[:to])
       if (mail[:to].is_a? String)
-        to = [{'Email'=>mail[:to].data.raw}]
+        to = [{:Email=>mail[:to].addresses.first, :Name=>mail[:to].display_names.first}]
       else
         to = []
-        mail[:to].formatted.each do |t|
-          to << {'Email'=> t}
+        mail[:to].each do |t|
+          to << {:Email=> t.address, :Name=>t.display_name}
         end
       end
     end
     
     base_from = {
       From:{
-        "Email"=> mail[:from].addresses.first
+        :Email=> mail[:from].addresses.first
       }
     }
     if (mail[:from].display_names.first)
-      base_from["From"]["Name"] = mail[:from].display_names.first
+      base_from[:From][:Name] = mail[:from].display_names.first
     end
     
     payload = {
-      "To"=> to,
-      "Sender"=> mail[:sender],
-      "Subject"=> mail.subject
+      :To=> to,
+      :Sender=> mail[:sender],
+      :Subject=> mail.subject
     }.merge(content)
     .merge(base_from)
-    .merge(@delivery_method_options)
+    .merge(@delivery_method_options_v3_1)
   
     if (mail[:cc])
       if (mail[:cc].is_a? String)
@@ -138,20 +142,20 @@ class Mailjet::APIMailer
       else
         ccs = []
         mail[:cc].each do |cc|
-          ccs << {'Email'=> cc}
+          ccs << {:Email=> cc}
         end
-        payload['Cc'] = ccs
+        payload[:Cc] = ccs
       end
     end
     if (mail[:bcc])
       if (mail[:bcc].formatted.is_a? String)
-        payload["Bcc"] = [{'Email'=>mail[:bcc]}]
+        payload[:Bcc] = [{:Email=>mail[:bcc]}]
       else
         bccs = []
         mail[:bcc].formatted.each do |bcc|
-          bccs << {'Email'=> bcc}
+          bccs << {:Email=> bcc}
         end
-        payload['Bcc'] = bccs
+        payload[:Bcc] = bccs
       end
     end
     payload
