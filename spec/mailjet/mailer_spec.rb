@@ -224,30 +224,33 @@ module Mailjet
     #  APIMailer.new.deliver!(message)
     #end
 
-    # it 'test the attachments' do
-    #   from_name = 'Albert'
-    #   from_email = 'albert@bar.com'
-    #   recipients = 'test@test.com'
-    #
-    #   file = Base64.encode64(File.open(File.expand_path('../testAttachments.txt', __FILE__), 'rb').read)
-    #
-    #   message = Mail.new do
-    #     from       "#{from_name} <#{from_email}>"
-    #     to         recipients
-    #     add_file   file
-    #   end
-    #
-    #   expect(Mailjet::Send).to receive(:create).with(
-    #     hash_including(
-    #       attachments: [{
-    #         'Content-Type' => 'text/plain',
-    #         'Filename' => 'testAttachments.txt',
-    #         'content' => file
-    #       }]
-    #     )
-    #   )
-    #
-    #   APIMailer.new.deliver!(message)
-    # end
+    it 'should test content id set on inline attachments' do
+      from_name = 'Albert'
+      from_email = 'albert@bar.com'
+      recipients = 'test@test.com'
+      
+      message = Mail.new do
+        from       "#{from_name} <#{from_email}>"
+        to         recipients
+      end
+      
+      content = 'FooBar'
+      content_id = "FooBarId"
+      file_name = "TestFileName"
+      message.attachments.inline[file_name] = {
+        mime_type: 'text/plain',
+        content: content,
+        content_id: content_id
+      }
+
+      expect(APIMailer.new.setContentV3_1(message)).to include(
+        InlineAttachments: [{
+          'ContentType' => 'text/plain',
+          'Filename' => file_name,
+          'Base64Content' => Base64.encode64(content),
+          'ContentId' => content_id
+        }]
+      )
+    end
   end
 end

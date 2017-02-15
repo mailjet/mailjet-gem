@@ -83,7 +83,7 @@ class Mailjet::APIMailer
         mailjet_attachment = {
           'ContentType' => attachment.content_type.split(';')[0],
           'Filename' => attachment.filename,
-          'content' => Base64.encode64(attachment.body.decoded)
+          'Base64Content' => Base64.encode64(attachment.body.decoded)
         }
 
         if attachment.inline?
