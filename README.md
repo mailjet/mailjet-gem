@@ -369,8 +369,6 @@ In these modifiers, there is now the ability to add a Mailjet custom-id or Mailj
 
 For more information on custom properties and available params, see the [official doc][send-api-doc].
 
-##
-
 ## Track email delivery
 
 You can setup your Rack application in order to receive feedback on emails you sent (clicks, etc.)
@@ -421,6 +419,53 @@ class User < ActiveRecord::Base
 ```
 
 Note that since it's a Rack application, any Ruby Rack framework (say: Sinatra, Padrino, etc.) is compatible.
+
+## API V3.1
+
+This version adds two new parameters on the configuration file. They are preset and not mandatory. :
+
+- api_version (v3)
+- perform_api_call (true)
+
+Variable's name will change. To have more information about it, please, consult [our beta documentation](https://dev.mailjet.com/beta)
+
+It also allow you to modify theses informations during a call (and only for this call) by adding a collection containing at least one of the following parameters :
+
+- url
+- version
+- call
+
+example : 
+
+```ruby
+Mailjet::Send.create(my_variables, {"version"=> "v3", "call"=> false, "url"=>"example.mailjet.com"})
+```
+
+### ActionMailer
+
+Modifications were also added to the action mailer. Are now supported the following keys :
+```ruby
+* :'prio'
+* :'campaign'
+* :'deduplicatecampaign'
+* :'templatelanguage'
+* :'templateerrorreporting'
+* :'templateerrordeliver'
+* :'templateid'
+* :'trackopen'
+* :'trackclick'
+* :'customid'
+* :'eventpayload'
+* :'vars'
+* :'headers'
+* :'recipients'
+```
+
+You can also add any custom header by including a "X-" before.
+```ruby
+headers['X-CustomHeader'] = 'CustomHeader'
+```
+
 
 ## Testing
 
