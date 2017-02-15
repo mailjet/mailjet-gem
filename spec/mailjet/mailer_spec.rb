@@ -203,7 +203,7 @@ module Mailjet
 
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
-          :Messages=>{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Sender=>nil, :Subject=>nil, :TextPart=>nil, :HTMLPart=>nil, :headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}
+          :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Sender=>nil, :Subject=>nil, :TextPart=>nil, :HTMLPart=>nil, :Headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
         )
       )
 

@@ -33,7 +33,7 @@ class Mailjet::APIMailer
 #    else
       @version = Mailjet.config.api_version
 #    end
-    @delivery_method_options_v3 = options.slice(
+    @delivery_method_options_v3_0 = options.slice(
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',
@@ -64,7 +64,7 @@ class Mailjet::APIMailer
     end
 
     if (@version == 'v3.1')
-      Mailjet::Send.create({:Messages => setContentV3_1(mail)})
+      Mailjet::Send.create({:Messages => [setContentV3_1(mail)]})
     else
       Mailjet::Send.create(setContentV3_0(mail))
     end
@@ -94,28 +94,44 @@ class Mailjet::APIMailer
         end
       end
     end
-
+    
+    # We do the next part in purpose to accept only custom header from the user, but without accepting the mailjet related ones
+    # The mailjet related ones are stocked in another variable and directly added to the body
     if mail.header && !mail.header.fields.empty?
-      content[:headers] = {}
+      content[:Headers] = {}
       mail.header.fields.each do |header|
         if header.name.start_with?('X-') && !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
-          content[:headers][header.name] = header.value
+          content[:Headers][header.name] = header.value
         end
       end
     end
 
     # Reply-To is not a property in Mailjet Send API
-    # Passing it as an header
-    content[:headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first,
-      :Name=> [:reply_to].display_names.first,} if mail.reply_to
+    # Passing it as an header if mail.reply_to
+    
+    if mail.reply_to
+      if mail.reply_to.display_names.first
+        content[:Headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first, :Name=> mail[:reply_to].display_names.first}
+      else
+        content[:Headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first}
+      end
+    end
     
     if (mail[:to])
       if (mail[:to].is_a? String)
-        to = [{:Email=>mail[:to].addresses.first, :Name=>mail[:to].display_names.first}]
+        if mail[:to].display_names.first
+          to = [{:Email=>mail[:to].addresses.first, :Name=>mail[:to].display_names.first}]
+        else
+          to = [{:Email=>mail[:to].addresses.first}]
+        end
       else
         to = []
         mail[:to].each do |t|
-          to << {:Email=> t.address, :Name=>t.display_name}
+          if (t.display_name)
+            to << {:Email=> t.address, :Name=>t.display_name}
+          else
+            to << {:Email=> t.address}
+          end
         end
       end
     end
@@ -137,26 +153,40 @@ class Mailjet::APIMailer
   
     if (mail[:cc])
       if (mail[:cc].is_a? String)
-        payload[:Cc] = [{:Email=>mail[:cc].address, :Name=>mail[:cc].display_name}]
+        if mail[:cc].display_name.first
+          ccs =[{:Email=>mail[:cc].address.first, :Name=>mail[:cc].display_name.first}]
+        else
+          ccs =[{:Email=>mail[:cc].address.first}]
+        end
       else
         ccs = []
         mail[:cc].each do |cc|
           ccs << {:Email=> cc.address, :Name=>cc.display_name}
         end
-        payload[:Cc] = ccs
       end
+      payload[:Cc] = ccs
     end
+    
     if (mail[:bcc])
       if (mail[:bcc].formatted.is_a? String)
-        payload[:Bcc] = [{:Email=>mail[:bcc].address, :Name=>mail[:bcc].display_name}]
+        if mail[:bcc].display_name.first
+          payload[:Bcc] = [{:Email=>mail[:bcc].address.first, :Name=>mail[:bcc].display_name.first}]
+        else
+          payload[:Bcc] = [{:Email=>mail[:bcc].address.first}]
+        end
       else
         bccs = []
         mail[:bcc].formatted.each do |bcc|
-          bccs << {:Email=> bcc.address, :Name=>bcc.display_name}
+          if bcc.display_name
+            bccs << {:Email=> bcc.address, :Name=>bcc.display_name}
+          else
+            bccs << {:Email=> bcc.address}
+          end
         end
         payload[:Bcc] = bccs
       end
     end
+    
     payload.merge(content)
     .merge(base_from)
     .merge(@delivery_method_options_v3_1)
@@ -187,7 +217,6 @@ class Mailjet::APIMailer
         }
 
         if attachment.inline?
-#          mailjet_attachment['Content-Id'] = attachment.content_id
           content[:inline_attachments].push(mailjet_attachment)
         else
           content[:attachments].push(mailjet_attachment)
@@ -195,6 +224,8 @@ class Mailjet::APIMailer
       end
     end
 
+    # We do the next part in purpose to accept only custom header from the user, but without accepting the mailjet related ones
+    # The mailjet related ones are stocked in another variable and directly added to the body
     if mail.header && !mail.header.fields.empty?
       content[:headers] = {}
       mail.header.fields.each do |header|
@@ -229,7 +260,7 @@ class Mailjet::APIMailer
     # Send the final payload to Mailjet Send API
     payload.merge(content)
     .merge(base_from)
-    .merge(@delivery_method_options_v3)
+    .merge(@delivery_method_options_v3_0)
     end
 end
 
