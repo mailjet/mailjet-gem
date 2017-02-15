@@ -139,13 +139,13 @@ module Mailjet
         to         recipients
       end
 
-      message.header['X-MJ-ping'] = 'pong'
+      message.header['X-ping'] = 'pong'
       message.header['ping'] = 'pong'
       message.header['template'] = 'pong'
 
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
-          headers: { 'X-MJ-ping' => 'pong' }
+          headers: { 'X-ping' => 'pong' }
         )
       )
 

@@ -33,7 +33,7 @@ class Mailjet::APIMailer
 #    else
       @version = Mailjet.config.api_version
 #    end
-    @delivery_method_options = options.slice(
+    @delivery_method_options_v3 = options.slice(
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',
@@ -66,7 +66,7 @@ class Mailjet::APIMailer
     if (@version == 'v3.1')
       Mailjet::Send.create({:Messages => setContentV3_1(mail)})
     else
-      Mailjet::Send.create(setContentV3(mail))
+      Mailjet::Send.create(setContentV3_0(mail))
     end
   end
 
@@ -133,47 +133,45 @@ class Mailjet::APIMailer
       :To=> to,
       :Sender=> mail[:sender],
       :Subject=> mail.subject
-    }.merge(content)
-    .merge(base_from)
-    .merge(@delivery_method_options_v3_1)
+    }
   
     if (mail[:cc])
       if (mail[:cc].is_a? String)
-        payload["Cc"] = [{'Email'=>mail[:cc]}]
+        payload[:Cc] = [{:Email=>mail[:cc].address, :Name=>mail[:cc].display_name}]
       else
         ccs = []
         mail[:cc].each do |cc|
-          ccs << {:Email=> cc}
+          ccs << {:Email=> cc.address, :Name=>cc.display_name}
         end
         payload[:Cc] = ccs
       end
     end
     if (mail[:bcc])
       if (mail[:bcc].formatted.is_a? String)
-        payload[:Bcc] = [{:Email=>mail[:bcc]}]
+        payload[:Bcc] = [{:Email=>mail[:bcc].address, :Name=>mail[:bcc].display_name}]
       else
         bccs = []
         mail[:bcc].formatted.each do |bcc|
-          bccs << {:Email=> bcc}
+          bccs << {:Email=> bcc.address, :Name=>bcc.display_name}
         end
         payload[:Bcc] = bccs
       end
     end
-    payload
+    payload.merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options_v3_1)
     
   end
   
-  def setContentV3(mail)
+  def setContentV3_0(mail)
     content = {}
 
     if mail.text_part
       content[:text_part] = mail.text_part.try(:decoded)
-      content[:text] = mail.text_part.try(:decoded)
     end
 
     if mail.html_part
       content[:html_part] = mail.html_part.try(:decoded)
-      content[:html] = mail.html_part.try(:decoded)
     end
 
     # Formatting attachments (inline + regular)
@@ -200,7 +198,7 @@ class Mailjet::APIMailer
     if mail.header && !mail.header.fields.empty?
       content[:headers] = {}
       mail.header.fields.each do |header|
-        if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
+        if header.name.start_with?('X-') && !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
           content[:headers][header.name] = header.value
         end
       end
@@ -223,17 +221,16 @@ class Mailjet::APIMailer
       sender: mail[:sender],
       subject: mail.subject
     }
-    .merge(content)
-    .merge(base_from)
-    .merge(@delivery_method_options)
 
     payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
     payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
     payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
 
     # Send the final payload to Mailjet Send API
-    payload
-  end
+    payload.merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options_v3)
+    end
 end
 
 ActionMailer::Base.add_delivery_method :mailjet_api, Mailjet::APIMailer
