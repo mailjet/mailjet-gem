@@ -9,6 +9,7 @@
 [![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis]
 [![Dependency Status](https://gemnasium.com/jbescoyez/mailjet.png)][gemnasium]
 [![Maintainance status](http://stillmaintained.com/jbescoyez/mailjet.png)][stillmaintained]
+![Current Version](https://img.shields.io/badge/version-1.5.0-green.svg)
 
 -->
 
