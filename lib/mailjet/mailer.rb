@@ -40,10 +40,10 @@ class Mailjet::APIMailer
       :'mj-customid', :'mj-eventpayload', :vars, :headers,
     )
     @delivery_method_options_v3_1 = options.slice(
-      :recipients, :'prio', :'campaign', :'deduplicatecampaign',
-      :'templatelanguage', :'templateerrorreporting', :'templateerrordeliver', :'templateid',
-      :'trackopen', :'trackclick',
-      :'customid', :'eventpayload', :vars, :headers,
+      :'Priority', :'CustomCampaign', :'DeduplicateCampaign',
+      :'TemplateLanguage', :'TemplateErrorReporting', :'TemplateErrorDeliver', :'TemplateID',
+      :'TrackOpens', :'TrackClicks',
+      :'CustomID', :'EventPayload', :vars, :Headers,
     )
   end
 
@@ -144,12 +144,6 @@ class Mailjet::APIMailer
     if (mail[:from].display_names.first)
       base_from[:From][:Name] = mail[:from].display_names.first
     end
-    
-    payload = {
-      :To=> to,
-      :Sender=> mail[:sender],
-      :Subject=> mail.subject
-    }
   
     if (mail[:cc])
       if (mail[:cc].is_a? String)
@@ -164,7 +158,6 @@ class Mailjet::APIMailer
           ccs << {:Email=> cc.address, :Name=>cc.display_name}
         end
       end
-      payload[:Cc] = ccs
     end
     
     if (mail[:bcc])
@@ -183,13 +176,26 @@ class Mailjet::APIMailer
             bccs << {:Email=> bcc.address}
           end
         end
-        payload[:Bcc] = bccs
       end
     end
     
-    payload.merge(content)
+    payload = {
+      :To=> to,
+      :Sender=> mail[:sender],
+      :Subject=> mail.subject
+    }.merge(content)
     .merge(base_from)
     .merge(@delivery_method_options_v3_1)
+    
+    if (mail[:cc])
+      payload[:Cc] = ccs
+    end
+  
+    if (mail[:bcc])
+      payload[:Bcc] = bccs
+    end
+    
+    payload
     
   end
   

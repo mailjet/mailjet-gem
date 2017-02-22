@@ -207,7 +207,7 @@ module Mailjet
         )
       )
 
-      APIMailer.new(:'mj-trackclick' => true).deliver!(message, {"version"=> "v3.1", "call"=> false})
+      APIMailer.new.deliver!(message, {"version"=> "v3.1", "call"=> false})
     end
     
     #it 'fails to send' do
