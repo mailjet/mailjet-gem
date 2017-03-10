@@ -9,8 +9,11 @@ module Mailjet
 
     def initialize(code, res, request, request_path, params)
       self.code = code
-      resdec = ActiveSupport::JSON.decode(res)
-      self.reason = resdec['ErrorMessage']
+      self.reason = ""
+      unless res.blank?
+        resdec = ActiveSupport::JSON.decode(res)
+        self.reason = resdec['ErrorMessage']
+      end
       # code is ugly, output is pretty
       super("error #{code} while sending #{request.inspect} to #{request_path} with #{params.inspect}\n\n" +
         if res['errors'].present?
