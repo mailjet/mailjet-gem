@@ -4,10 +4,13 @@ require 'active_support'
 module Mailjet
   class ApiError < StandardError
 
-    attr_accessor :code
+    attr_accessor :code, :reason
+
 
     def initialize(code, res, request, request_path, params)
       self.code = code
+      resdec = ActiveSupport::JSON.decode(res)
+      self.reason = resdec['ErrorMessage']
       # code is ugly, output is pretty
       super("error #{code} while sending #{request.inspect} to #{request_path} with #{params.inspect}\n\n" +
         if res['errors'].present?
@@ -16,7 +19,7 @@ module Mailjet
           end.join("\n")
         else
           res.inspect
-        end + "\n\nPlease see http://api.mailjet.com/0.1/HelpStatus for more informations on error numbers.\n\n"
+        end + "\n\nPlease see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers.\n\n"
       )
     end
   end
