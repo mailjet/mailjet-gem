@@ -163,7 +163,7 @@ Otherwise, you can pass the custom Mailjet SMTP headers directly:
 ```ruby
 headers['X-MJ-CustomID'] = 'rubyPR_Test_ID_1469790724'
 headers['X-MJ-EventPayload'] = 'rubyPR_Test_Payload'
-headers['X-MJ-TemplateLanguage'] = '1'
+headers['X-MJ-TemplateLanguage'] = 'true'
 ```
 
 Creating a Mailer:
@@ -223,7 +223,7 @@ For sending email, you can call the method with a variety of `MessageDelivery` p
 UserMailer.welcome_email.deliver_now!
 ```
 
-For more information on `ActionMailer::MessageDeilvery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
+For more information on `ActionMailer::MessageDelivery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
 
 ## Manage your campaigns
 
