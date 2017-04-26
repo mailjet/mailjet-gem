@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Manycontacts
     include Mailjet::Resource

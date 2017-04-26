@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Campaigndraft_send
     include Mailjet::Resource

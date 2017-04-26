@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Contactslist_managemanycontacts
     include Mailjet::Resource

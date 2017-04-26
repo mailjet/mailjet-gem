@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Aggregategraphstatistics
     include Mailjet::Resource

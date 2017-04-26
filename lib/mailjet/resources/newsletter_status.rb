@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Newsletter_status
     include Mailjet::Resource

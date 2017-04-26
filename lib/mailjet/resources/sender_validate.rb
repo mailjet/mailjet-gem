@@ -1,6 +1,3 @@
-
-require 'mailjet/resource'
-
 module Mailjet
   class Sender_validate
     include Mailjet::Resource

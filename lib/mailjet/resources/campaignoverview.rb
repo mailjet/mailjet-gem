@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Campaignoverview
     include Mailjet::Resource
