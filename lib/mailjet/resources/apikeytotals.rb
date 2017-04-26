@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Apikeytotals
     include Mailjet::Resource

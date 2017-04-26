@@ -1,6 +1,3 @@
-
-require 'mailjet/resource'
-
 module Mailjet
   class Template_detailcontent
     include Mailjet::Resource

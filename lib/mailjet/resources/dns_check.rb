@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class DNS_check
     include Mailjet::Resource

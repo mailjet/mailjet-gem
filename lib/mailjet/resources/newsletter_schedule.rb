@@ -1,5 +1,3 @@
-require 'mailjet/resource'
-
 module Mailjet
   class Newsletter_schedule
     include Mailjet::Resource
@@ -8,6 +6,6 @@ module Mailjet
     self.public_operations = [:post, :delete]
     self.filters = []
     self.resourceprop = [:date]
-    
+
   end
 end
