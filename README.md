@@ -139,10 +139,25 @@ Or if you prefer sending messages through [Mailjet Send API](http://dev.mailjet.
 config.action_mailer.delivery_method = :mailjet_api
 ```
 
-You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc][http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options].
+You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc](http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options):
+
+```ruby
+class AwesomeMailer < ApplicationMailer
+
+  def awesome_mail(user)
+
+    mail(
+      to: user.email,
+      delivery_method_options: { api_key: 'your-api-key', secret_key: 'your-secret-key' }
+    )
+  end
+end
+```
 
 Supported options are:
 ```ruby
+* :api_key
+* :secret_key
 * :'mj-prio'
 * :'mj-campaign'
 * :'mj-deduplicatecampaign'
