@@ -12,8 +12,8 @@ class Mailjet::Mailer < ::Mail::SMTP
       address: 'in-v3.mailjet.com',
       port: 587,
       authentication: 'plain',
-      user_name: Mailjet.config.api_key,
-      password: Mailjet.config.secret_key,
+      user_name: options.delete(:api_key) || Mailjet.config.api_key,
+      password: options.delete(:secret_key) || Mailjet.config.secret_key,
       enable_starttls_auto: true
     }.merge(options))
   end
@@ -28,6 +28,7 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 class Mailjet::APIMailer
   def initialize(options = {})
     @delivery_method_options = options.slice(
+      :api_key, :secret_key,
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',

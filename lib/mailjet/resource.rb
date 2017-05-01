@@ -20,27 +20,28 @@ module Mailjet
   module Resource
     extend ActiveSupport::Concern
 
+    NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
+
     included do
       cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls
       cattr_writer :connection
 
-      def self.connection
-        @non_json_urls = ["v3/send/message"] #urls that don't accept JSON input
-        class_variable_get(:@@connection) || default_connection
+      def self.connection(options = {})
+        class_variable_get(:@@connection) || default_connection(options)
       end
 
-      def self.default_connection
+      def self.default_connection(options = {})
         Mailjet::Connection.new(
           "#{Mailjet.config.end_point}/#{resource_path}",
-          Mailjet.config.api_key,
-          Mailjet.config.secret_key,
+          options[:api_key] || Mailjet.config.api_key,
+          options[:secret_key] || Mailjet.config.secret_key,
           public_operations: public_operations,
           read_only: read_only)
       end
 
       def self.default_headers
-        if @non_json_urls.include?(self.resource_path)#don't use JSON if Send API
-        default_headers = { accept: :json, accept_encoding: :deflate }
+        if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
+          default_headers = { accept: :json, accept_encoding: :deflate }
         else
           default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
         end
@@ -87,8 +88,8 @@ module Mailjet
         attributes.tap { |hs| hs.delete(:id) }
 
         if Mailjet.config.default_from and self.resource_path == 'v3/send/'
-		  address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
-		  default_attributes = { :from_email => address.address, :from_name => address.display_name}
+          address = Mail::AddressList.new(Mailjet.config.default_from).addresses[0]
+          default_attributes = { :from_email => address.address, :from_name => address.display_name}
         else
           default_attributes = {}
         end
@@ -256,7 +257,7 @@ module Mailjet
     private
 
     def connection
-      self.class.connection
+      self.class.connection(@attributes.slice(:api_key, :secret_key))
     end
 
     def default_headers
