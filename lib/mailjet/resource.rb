@@ -135,11 +135,14 @@ module Mailjet
       def create_action_resource_path(id, job_id = nil)
          url_elements = self.resource_path.split("/")
          url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
-         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[:perform_api_call] == "contactslist")
-           url_elements[3] = id.to_s
-        end
-         url_elements << job_id.to_s if job_id #if job_id exists, ammend it to end of the URI
+
+         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[1] == "contactslist")
+           url_elements[2] = id.to_s
+         end
+
+         url_elements << job_id.to_s if job_id #if job_id exists, amend it to end of the URI
          url = url_elements.join("/")
+
          return url
       end
 
@@ -205,23 +208,23 @@ module Mailjet
           _hash
         end
       end
-      
+
       def change_resource_path(options = {})
         ver = choose_version(options)
         url = Mailjet.config.end_point
         perform_api_call = Mailjet.config.perform_api_call
         if options != {}
-          if options['call'] == false || options['call'] == true
-            perform_api_call = options['call']
+          if options.key?(:perform_api_call)
+            perform_api_call = options[:perform_api_call]
           end
-          if options['url'] #undefined method.exists
+          if options.key?(:url)
             url = options['url']
           end
         end
         ret = {'version': ver, 'url': url, 'perform_api_call': perform_api_call}
         ret
       end
-      
+
       def choose_version(options = {})
         ver = version
         if options != {} && options['version'] #undefined method .exists
@@ -232,7 +235,7 @@ module Mailjet
         end
         ver
       end
-      
+
     end
 
     attr_accessor :attributes, :persisted
@@ -252,17 +255,17 @@ module Mailjet
         response = connection(options).post(formatted_payload, default_headers, options[:perform_api_call])
       end
 
-      if options[:perform_api_call] == true
+      if options[:perform_api_call]
         if self.resource_path == 'send/'
           self.attributes = ActiveSupport::JSON.decode(response)
           return true
         end
 
         self.attributes = parse_api_json(response).first
+        return true
       else
-        p options['url']
+        return true
       end
-      true
     rescue Mailjet::ApiError => e
       if e.code.to_s == "304"
         return true # When you save a record twice it should not raise error
@@ -345,6 +348,6 @@ module Mailjet
         super
       end
     end
-    
+
   end
 end
