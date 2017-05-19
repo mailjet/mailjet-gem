@@ -221,7 +221,7 @@ module Mailjet
             url = options['url']
           end
         end
-        ret = {'version' => ver, 'url' => url, 'perform_api_call' => perform_api_call}
+        ret = {version: ver, url: url, perform_api_call: perform_api_call}
         ret
       end
 
