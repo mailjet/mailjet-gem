@@ -136,7 +136,7 @@ module Mailjet
          url_elements = self.resource_path.split("/")
          url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
 
-         if self.action != "managemanycontacts" || (self.action == "managemanycontacts" && url_elements[1] == "contactslist")
+         if !(url_elements[1] == "contacts" && self.action == "managemanycontacts")
            url_elements[2] = id.to_s
          end
 
@@ -213,7 +213,7 @@ module Mailjet
         ver = choose_version(options)
         url = Mailjet.config.end_point
         perform_api_call = Mailjet.config.perform_api_call
-        if options != {}
+        if options.any?
           if options.key?(:perform_api_call)
             perform_api_call = options[:perform_api_call]
           end
@@ -226,13 +226,8 @@ module Mailjet
       end
 
       def choose_version(options = {})
-        ver = version
-        if options != {} && options['version'] #undefined method .exists
-          ver = options['version']
-        end
-        if ver.blank?
-          ver = Mailjet.config.api_version
-        end
+        ver = options['version'] || Mailjet.config.api_version || version
+
         ver
       end
 
