@@ -1,3 +1,3 @@
 module Mailjet
-  VERSION = "1.4.12"
+  VERSION = "1.5.0"
 end

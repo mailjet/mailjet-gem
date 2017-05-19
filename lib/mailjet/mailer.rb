@@ -27,27 +27,177 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 # The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
   def initialize(options = {})
-    @delivery_method_options = options.slice(
+#    send = Mailjet.Send.new
+#    if send.version.exists
+#      version = send.version
+#    else
+      @version = Mailjet.config.api_version
+#    end
+    @delivery_method_options_v3_0 = options.slice(
       :api_key, :secret_key,
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',
-      :'mj-customid', :'mj-eventpayload', :vars, :headers
+      :'mj-customid', :'mj-eventpayload', :vars, :headers,
+    )
+    @delivery_method_options_v3_1 = options.slice(
+      :api_key, :secret_key,
+      :'Priority', :'CustomCampaign', :'DeduplicateCampaign',
+      :'TemplateLanguage', :'TemplateErrorReporting', :'TemplateErrorDeliver', :'TemplateID',
+      :'TrackOpens', :'TrackClicks',
+      :'CustomID', :'EventPayload', :'Variables', :'Headers',
     )
   end
 
-  def deliver!(mail)
+  def deliver!(mail, options = nil)
+#    p mail.header.fields
+
+    if (options && options.kind_of?(Object) && options['version'].present?)
+      @version = options['version']
+    end
+
+    if (!options.kind_of?(Object))
+      options = []
+    end
+
+    # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
+    if mail[:from].nil? && Mailjet.config.default_from.present?
+      mail[:from] = Mailjet.config.default_from
+    end
+
+    if (@version == 'v3.1')
+      Mailjet::Send.create({:Messages => [setContentV3_1(mail)]})
+    else
+      Mailjet::Send.create(setContentV3_0(mail))
+    end
+  end
+
+  def setContentV3_1(mail)
+    content = {}
+    content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
+    content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+
+    if mail.attachments.any?
+      content[:Attachments] = []
+      content[:InlineAttachments] = []
+
+      mail.attachments.each do |attachment|
+        mailjet_attachment = {
+          'ContentType' => attachment.content_type.split(';')[0],
+          'Filename' => attachment.filename,
+          'Base64Content' => Base64.encode64(attachment.body.decoded)
+        }
+
+        if attachment.inline?
+          mailjet_attachment['ContentId'] = attachment.content_id
+          content[:InlineAttachments].push(mailjet_attachment)
+        else
+          content[:Attachments].push(mailjet_attachment)
+        end
+      end
+    end
+
+    # We do the next part in purpose to accept only custom header from the user, but without accepting the mailjet related ones
+    # The mailjet related ones are stocked in another variable and directly added to the body
+    if mail.header && mail.header.fields.any?
+      content[:Headers] = {}
+      mail.header.fields.each do |header|
+        if header.name.start_with?('X-') && !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
+          content[:Headers][header.name] = header.value
+        end
+      end
+    end
+
+    # Reply-To is not a property in Mailjet Send API
+    # Passing it as an header if mail.reply_to
+
+    if mail.reply_to
+      if mail.reply_to.display_names.first
+        content[:Headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first, :Name=> mail[:reply_to].display_names.first}
+      else
+        content[:Headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first}
+      end
+    end
+
+    if (mail[:to])
+      if (mail[:to].is_a? String)
+        if mail[:to].display_names.first
+          to = [{:Email=>mail[:to].addresses.first, :Name=>mail[:to].display_names.first}]
+        else
+          to = [{:Email=>mail[:to].addresses.first}]
+        end
+      else
+        to = []
+        mail[:to].each do |t|
+          if (t.display_name)
+            to << { :Email => t.address, :Name => t.display_name }
+          else
+            to << { :Email => t.address }
+          end
+        end
+      end
+    end
+
+    base_from = {
+      From:{
+        :Email=> mail[:from].addresses.first
+      }
+    }
+    if (mail[:from].display_names.first)
+      base_from[:From][:Name] = mail[:from].display_names.first
+    end
+
+    if (mail[:cc])
+      if (mail[:cc].is_a? String)
+        if mail[:cc].display_name.first
+          ccs =[{:Email=>mail[:cc].address.first, :Name=>mail[:cc].display_name.first}]
+        else
+          ccs =[{:Email=>mail[:cc].address.first}]
+        end
+      else
+        mail[:cc].each do |cc|
+          ccs << {:Email=> cc.address, :Name=>cc.display_name}
+        end
+      end
+    end
+
+    if (mail[:bcc])
+      if (mail[:bcc].formatted.is_a? String)
+        if mail[:bcc].display_name.first
+          payload[:Bcc] = [{:Email=>mail[:bcc].address.first, :Name=>mail[:bcc].display_name.first}]
+        else
+          payload[:Bcc] = [{:Email=>mail[:bcc].address.first}]
+        end
+      else
+        mail[:bcc].formatted.each do |bcc|
+          if bcc.display_name
+            bccs << {:Email=> bcc.address, :Name=>bcc.display_name}
+          else
+            bccs << {:Email=> bcc.address}
+          end
+        end
+      end
+    end
+
+    payload = {
+      :To=> to,
+    }.merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options_v3_1)
+
+    payload[:Subject] = mail.subject if !mail.subject.blank?
+    payload[:Sender] = mail[:sender] if !mail[:sender].blank?
+    payload[:Cc] = ccs if mail[:cc]
+    payload[:Bcc] = bccs if mail[:bcc]
+
+    payload
+  end
+
+  def setContentV3_0(mail)
     content = {}
 
-    if mail.text_part
-      content[:text_part] = mail.text_part.try(:decoded)
-      content[:text] = mail.text_part.try(:decoded)
-    end
-
-    if mail.html_part
-      content[:html_part] = mail.html_part.try(:decoded)
-      content[:html] = mail.html_part.try(:decoded)
-    end
+    content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
+    content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
 
     # Formatting attachments (inline + regular)
     unless mail.attachments.empty?
@@ -69,12 +219,12 @@ class Mailjet::APIMailer
       end
     end
 
+    # We do the next part in purpose to accept only custom header from the user, but without accepting the mailjet related ones
+    # The mailjet related ones are stocked in another variable and directly added to the body
     if mail.header && !mail.header.fields.empty?
       content[:headers] = {}
       mail.header.fields.each do |header|
-        if header.name.start_with?('X-MJ') || header.name.start_with?('X-Mailjet')
-          content[:headers][header.name] = header.value
-        end
+        content[:headers][header.name] = header.value if header.name =~ /^X-(?!\b(MJ|Mailjet)\b).*$/
       end
     end
 
@@ -83,9 +233,7 @@ class Mailjet::APIMailer
     content[:headers]['Reply-To'] = mail.reply_to.join(', ') if mail.reply_to
 
     # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
-    if mail[:from].nil? && Mailjet.config.default_from.present?
-      mail[:from] = Mailjet.config.default_from
-    end
+    mail[:from] ||= Mailjet.config.default_from
 
     base_from = { from_name: mail[:from].display_names.first,
                   from_email: mail[:from].addresses.first }
@@ -95,17 +243,16 @@ class Mailjet::APIMailer
       sender: mail[:sender],
       subject: mail.subject
     }
-              .merge(content)
-              .merge(base_from)
-              .merge(@delivery_method_options)
 
     payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
     payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
     payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
 
     # Send the final payload to Mailjet Send API
-    Mailjet::Send.create(payload)
-  end
+    payload.merge(content)
+    .merge(base_from)
+    .merge(@delivery_method_options_v3_0)
+    end
 end
 
 ActionMailer::Base.add_delivery_method :mailjet_api, Mailjet::APIMailer

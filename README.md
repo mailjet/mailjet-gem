@@ -9,6 +9,7 @@
 [![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis]
 [![Dependency Status](https://gemnasium.com/jbescoyez/mailjet.png)][gemnasium]
 [![Maintainance status](http://stillmaintained.com/jbescoyez/mailjet.png)][stillmaintained]
+![Current Version](https://img.shields.io/badge/version-1.5.0-green.svg)
 
 -->
 
@@ -42,8 +43,7 @@ This gem helps you to:
 
 Compatibility:
 
- - Ruby 1.9.X
- - Ruby 2.X.X
+ - Ruby 2.2.X
 
 Rails ActionMailer integration designed for Rails 3.X and 4.X
 
@@ -101,15 +101,13 @@ Mailjet.configure do |config|
 end
 ```
 
-
 `default_from` is optional if you send emails with `:mailjet`'s SMTP (below)
 
-### Send emails via the SendAPI
+### Send emails via the Send API
 
-Find more about the Mailjet SendAPI in the [official guides][send-api-doc]
+Find more about the Mailjet Send API in the [official guides](http://dev.mailjet.com/guides/?ruby#choose-sending-method)
 
 ``` ruby
-
 email = { :from_email   => "your email",
           :from_name    => "Your name",
           :subject      => "Hello",
@@ -120,7 +118,6 @@ test = Mailjet::Send.create(email)
 
 # retrieve the API response
 p test.attributes['Sent']
-
 ```
 
 ### Send emails with ActionMailer
@@ -383,8 +380,6 @@ In these modifiers, there is now the ability to add a Mailjet custom-id or Mailj
 ```
 
 For more information on custom properties and available params, see the [official doc][send-api-doc].
-
-##
 
 ## Track email delivery
 

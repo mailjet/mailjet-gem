@@ -3,6 +3,7 @@ require 'mailjet'
 require 'mailjet/mailer'
 
 module Mailjet
+  RSpec::Expectations.configuration.on_potential_false_positives = :nothing
   RSpec.describe APIMailer do
     it 'set proper fields also for multipart emails' do
       message = Mail.new
@@ -138,13 +139,13 @@ module Mailjet
         to         recipients
       end
 
-      message.header['X-MJ-ping'] = 'pong'
+      message.header['X-ping'] = 'pong'
       message.header['ping'] = 'pong'
       message.header['template'] = 'pong'
 
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
-          headers: { 'X-MJ-ping' => 'pong' }
+          headers: { 'X-ping' => 'pong' }
         )
       )
 
@@ -155,7 +156,7 @@ module Mailjet
       from_name = 'Albert'
       from_email = 'albert@bar.com'
       recipients = ['test@test.com', 'paul <paul@test.com>']
-      rt = 'john@test.com'
+      rt = 'john <john@test.com>'
 
       message = Mail.new do
         from       "#{from_name} <#{from_email}>"
@@ -191,30 +192,65 @@ module Mailjet
       APIMailer.new.deliver!(message)
     end
 
-    # it 'test the attachments' do
-    #   from_name = 'Albert'
-    #   from_email = 'albert@bar.com'
-    #   recipients = 'test@test.com'
-    #
-    #   file = Base64.encode64(File.open(File.expand_path('../testAttachments.txt', __FILE__), 'rb').read)
-    #
-    #   message = Mail.new do
-    #     from       "#{from_name} <#{from_email}>"
-    #     to         recipients
-    #     add_file   file
-    #   end
-    #
-    #   expect(Mailjet::Send).to receive(:create).with(
-    #     hash_including(
-    #       attachments: [{
-    #         'Content-Type' => 'text/plain',
-    #         'Filename' => 'testAttachments.txt',
-    #         'content' => file
-    #       }]
-    #     )
-    #   )
-    #
-    #   APIMailer.new.deliver!(message)
-    # end
+    it 'test with one recipient on v3.1' do
+      from_name = 'Albert'
+      from_email = 'albert@bar.com'
+      recipients = 'test <test@test.com>'
+
+      message = Mail.new
+      message.from = "#{from_name} <#{from_email}>"
+      message.to = recipients
+
+      expect(Mailjet::Send).to receive(:create).with(
+        hash_including(
+          :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
+        )
+      )
+
+      APIMailer.new.deliver!(message, {"version"=> "v3.1", "call"=> false})
+    end
+
+    #it 'fails to send' do
+    #  from_name = 'Albert'
+    #  from_email = 'albert@bar.com'
+    #  recipients = ''
+    #  message = Mail.new do
+    #    from       ""
+    #    to         recipients
+    #  end
+
+    #  expect { raise NoMethodError }.to raise_error
+
+    #  APIMailer.new.deliver!(message)
+    #end
+
+    it 'should test content id set on inline attachments' do
+      from_name = 'Albert'
+      from_email = 'albert@bar.com'
+      recipients = 'test@test.com'
+
+      message = Mail.new do
+        from       "#{from_name} <#{from_email}>"
+        to         recipients
+      end
+
+      content = 'FooBar'
+      content_id = "FooBarId"
+      file_name = "TestFileName"
+      message.attachments.inline[file_name] = {
+        mime_type: 'text/plain',
+        content: content,
+        content_id: content_id
+      }
+
+      expect(APIMailer.new.setContentV3_1(message)).to include(
+        InlineAttachments: [{
+          'ContentType' => 'text/plain',
+          'Filename' => file_name,
+          'Base64Content' => Base64.encode64(content),
+          'ContentId' => content_id
+        }]
+      )
+    end
   end
 end
