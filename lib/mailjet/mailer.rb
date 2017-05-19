@@ -179,11 +179,11 @@ class Mailjet::APIMailer
 
     payload = {
       :To=> to,
-      :Subject=> mail.subject
     }.merge(content)
     .merge(base_from)
     .merge(@delivery_method_options_v3_1)
 
+    payload[:Subject] = mail.subject if !mail.subject.blank?
     payload[:Sender] = mail[:sender] if !mail[:sender].blank?
     payload[:Cc] = ccs if mail[:cc]
     payload[:Bcc] = bccs if mail[:bcc]

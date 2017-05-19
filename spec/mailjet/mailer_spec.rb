@@ -191,7 +191,7 @@ module Mailjet
 
       APIMailer.new.deliver!(message)
     end
-    
+
     it 'test with one recipient on v3.1' do
       from_name = 'Albert'
       from_email = 'albert@bar.com'
@@ -203,13 +203,13 @@ module Mailjet
 
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
-          :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Sender=>nil, :Subject=>nil, :TextPart=>nil, :HTMLPart=>nil, :Headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
+          :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
         )
       )
 
       APIMailer.new.deliver!(message, {"version"=> "v3.1", "call"=> false})
     end
-    
+
     #it 'fails to send' do
     #  from_name = 'Albert'
     #  from_email = 'albert@bar.com'
@@ -218,9 +218,9 @@ module Mailjet
     #    from       ""
     #    to         recipients
     #  end
-      
+
     #  expect { raise NoMethodError }.to raise_error
-    
+
     #  APIMailer.new.deliver!(message)
     #end
 
@@ -228,12 +228,12 @@ module Mailjet
       from_name = 'Albert'
       from_email = 'albert@bar.com'
       recipients = 'test@test.com'
-      
+
       message = Mail.new do
         from       "#{from_name} <#{from_email}>"
         to         recipients
       end
-      
+
       content = 'FooBar'
       content_id = "FooBarId"
       file_name = "TestFileName"
