@@ -43,8 +43,7 @@ This gem helps you to:
 
 Compatibility:
 
- - Ruby 1.9.X
- - Ruby 2.X.X
+ - Ruby 2.2.X
 
 Rails ActionMailer integration designed for Rails 3.X and 4.X
 
