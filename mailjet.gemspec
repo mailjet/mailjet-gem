@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "activesupport", ">= 3.1.0"
-  s.add_dependency "rack", ">= 1.4.0"
+  s.add_dependency "rack", ">= 1.4.0", "<= 1.6.4"
   s.add_dependency "rest-client"
   s.add_development_dependency "actionmailer", ">= 3.0.9"
   s.add_development_dependency "minitest"
