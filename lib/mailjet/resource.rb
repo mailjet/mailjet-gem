@@ -254,7 +254,7 @@ module Mailjet
 
       if options[:perform_api_call] && !persisted?
         # get attributes only for entity creation
-        self.attributes = if self.resource_path == 'send/'
+        self.attributes = if self.resource_path == 'send'
           ActiveSupport::JSON.decode(response)
         else
           parse_api_json(response).first

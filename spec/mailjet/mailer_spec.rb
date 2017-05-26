@@ -252,5 +252,58 @@ module Mailjet
         }]
       )
     end
+
+    it 'should return data in attribute "Sent" using Send API v3.0' do
+
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3"
+      end
+
+      recipient = { 'Email': ENV['TEST_EMAIL'] }
+
+      message = Mailjet::Send.create(
+        from_email: ENV['TEST_EMAIL'],
+        from_name: 'Mailjet Ruby Wrapper CI',
+        subject: 'Mailjet Ruby Wrapper CI Send API v3.0 spec',
+        text_part: 'Mailjet Ruby Wrapper CI content',
+        html_part: '<h3>Mailjet Ruby Wrapper CI content</h3>',
+        recipients: [recipient]
+      )
+
+      expect(message.attributes['Sent'].first).to include(recipient)
+    end
+
+    it 'should return data in attribute "Sent" using API v3.1' do
+
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3.1"
+      end
+
+      recipient = {
+        'Email' => ENV['TEST_EMAIL'],
+        'Name' => 'test'
+      }
+
+      message = Mailjet::Send.create(
+        messages: [{
+          'From' => {
+            'Email' => ENV['TEST_EMAIL'],
+            'Name' => 'Mailjet Ruby Wrapper CI'
+          },
+          'To' => [
+            recipient
+          ],
+            'Subject' => 'Mailjet Ruby Wrapper CI Send API v3.1 spec',
+            'TextPart' => 'Mailjet Ruby Wrapper CI content',
+            'HTMLPart' => '<h3>Mailjet Ruby Wrapper CI content</h3>'
+          }]
+      )
+
+      expect(message.attributes['Messages'].first['To'].first['Email']).to eq(ENV['TEST_EMAIL'])
+    end
   end
 end
