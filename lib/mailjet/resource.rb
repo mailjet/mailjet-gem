@@ -251,7 +251,7 @@ module Mailjet
       end
 
       if options[:perform_api_call]
-        if self.resource_path == 'send/'
+        if self.resource_path.include? 'send'
           self.attributes = ActiveSupport::JSON.decode(response)
           return true
         end
