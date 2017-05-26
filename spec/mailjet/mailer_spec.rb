@@ -276,34 +276,33 @@ module Mailjet
       expect(message.attributes['Sent'].first).to include(recipient)
     end
 
-    # TODO set a test environment for API v3.1
-    # it 'should return data in attribute "Sent" using API v3.1' do
-    #
-    #   Mailjet.configure do |config|
-    #     config.api_key = ENV['MJ_APIKEY_PUBLIC']
-    #     config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-    #     config.api_version = "v3.1"
-    #   end
-    #
-    #   message = Mailjet::Send.create(
-    #     messages: [{
-    #       'From' => {
-    #         'Email' => 'albert@bar.com',
-    #         'Name' => 'Albert'
-    #       },
-    #       'To' => [
-    #         {
-    #           'Email' => 'test@test.com',
-    #           'Name' => 'test'
-    #         }
-    #       ],
-    #         'Subject' => 'Your email flight plan!',
-    #         'TextPart' => 'Dear passenger 1, welcome to Mailjet! May the delivery force be with you!',
-    #         'HTMLPart' => '<h3>Dear passenger 1, welcome to Mailjet!</h3><br />May the delivery force be with you!'
-    #       }]
-    #   )
-    #
-    #   expect(message.attributes['Sent'].first).to include(recipient)
-    # end
+    it 'should return data in attribute "Sent" using API v3.1' do
+
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3.1"
+      end
+
+      message = Mailjet::Send.create(
+        messages: [{
+          'From' => {
+            'Email' => 'devrel-team@mailjet.com',
+            'Name' => 'DevRel Team'
+          },
+          'To' => [
+            {
+              'Email' => 'test@test.com',
+              'Name' => 'test'
+            }
+          ],
+            'Subject' => 'Your email flight plan!',
+            'TextPart' => 'Dear passenger 1, welcome to Mailjet! May the delivery force be with you!',
+            'HTMLPart' => '<h3>Dear passenger 1, welcome to Mailjet!</h3><br />May the delivery force be with you!'
+          }]
+      )
+
+      expect(message.attributes['Sent'].first).to include(recipient)
+    end
   end
 end
