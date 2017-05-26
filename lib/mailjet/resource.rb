@@ -245,22 +245,24 @@ module Mailjet
 
     def save(options)
       if persisted?
+        # case where the entity is updated
         response = connection(options)[attributes[:id]].put(formatted_payload, default_headers, options[:perform_api_call])
       else
+        # case where the entity is created
         response = connection(options).post(formatted_payload, default_headers, options[:perform_api_call])
       end
 
-      if options[:perform_api_call]
-        if self.resource_path == 'send/'
-          self.attributes = ActiveSupport::JSON.decode(response)
-          return true
+      if options[:perform_api_call] && !persisted?
+        # get attributes only for entity creation
+        self.attributes = if self.resource_path == 'send/'
+          ActiveSupport::JSON.decode(response)
+        else
+          parse_api_json(response).first
         end
-
-        self.attributes = parse_api_json(response).first
-        return true
-      else
-        return true
       end
+
+      return true
+
     rescue Mailjet::ApiError => e
       if e.code.to_s == "304"
         return true # When you save a record twice it should not raise error
@@ -280,8 +282,19 @@ module Mailjet
     end
 
     def update_attributes(attribute_hash = {}, options = {})
-      self.attributes = attribute_hash
-      save(options)
+      self.attributes.deep_merge!(attribute_hash) do |key, old, new|
+        if old.is_a?(Array) && new.is_a?(Array)
+          # uniqueness of hashes based on their value of "Name"
+          (new + old).uniq do |data|
+            data["Name"]
+          end
+        else
+          new
+        end
+      end
+
+      opts = self.class.change_resource_path(options)
+      save(opts)
     end
 
     def delete(call)
