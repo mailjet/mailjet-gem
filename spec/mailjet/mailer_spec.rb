@@ -253,7 +253,16 @@ module Mailjet
       )
     end
 
-    it 'should return data in attribute "Sent" using API v3' do
+    it 'should allow to list valid sender' do
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+      end
+
+      p Mailjet::Sender.all(limit: 0)
+    end
+
+    it 'should return data in attribute "Sent" using Send API v3.0' do
 
       Mailjet.configure do |config|
         config.api_key = ENV['MJ_APIKEY_PUBLIC']
