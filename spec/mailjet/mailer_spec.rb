@@ -269,50 +269,47 @@ module Mailjet
         config.secret_key = ENV['MJ_APIKEY_PRIVATE']
         config.api_version = "v3"
       end
-
-      from_email = 'albert@bar.com'
-      recipient = { 'Email': 'test@test.com' }
-
+      
       message = Mailjet::Send.create(
-        from_email: from_email,
+        from_email: ENV['TEST_EMAIL'],
         from_name: 'Mailjet Pilot',
         subject: 'Your email flight plan!',
         text_part: 'Dear passenger, welcome to Mailjet! May the delivery force be with you!',
         html_part: '<h3>Dear passenger, welcome to Mailjet!</h3><br />May the delivery force be with you!',
-        recipients: [recipient]
+        recipients: [{ 'Email': ENV['TEST_EMAIL'] }]
       )
 
       expect(message.attributes['Sent'].first).to include(recipient)
     end
 
-    # TODO set a test environment for API v3.1
-    # it 'should return data in attribute "Sent" using API v3.1' do
-    #
-    #   Mailjet.configure do |config|
-    #     config.api_key = ENV['MJ_APIKEY_PUBLIC']
-    #     config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-    #     config.api_version = "v3.1"
-    #   end
-    #
-    #   message = Mailjet::Send.create(
-    #     messages: [{
-    #       'From' => {
-    #         'Email' => 'albert@bar.com',
-    #         'Name' => 'Albert'
-    #       },
-    #       'To' => [
-    #         {
-    #           'Email' => 'test@test.com',
-    #           'Name' => 'test'
-    #         }
-    #       ],
-    #         'Subject' => 'Your email flight plan!',
-    #         'TextPart' => 'Dear passenger 1, welcome to Mailjet! May the delivery force be with you!',
-    #         'HTMLPart' => '<h3>Dear passenger 1, welcome to Mailjet!</h3><br />May the delivery force be with you!'
-    #       }]
-    #   )
-    #
-    #   expect(message.attributes['Sent'].first).to include(recipient)
+    TODO set a test environment for API v3.1
+    it 'should return data in attribute "Sent" using API v3.1' do
+
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3.1"
+      end
+
+      message = Mailjet::Send.create(
+        messages: [{
+          'From' => {
+            'Email' => ENV['TEST_EMAIL'],
+            'Name' => 'Albert'
+          },
+          'To' => [
+            {
+              'Email' => ENV['TEST_EMAIL'],
+              'Name' => 'test'
+            }
+          ],
+            'Subject' => 'Your email flight plan!',
+            'TextPart' => 'Dear passenger 1, welcome to Mailjet! May the delivery force be with you!',
+            'HTMLPart' => '<h3>Dear passenger 1, welcome to Mailjet!</h3><br />May the delivery force be with you!'
+          }]
+      )
+
+      expect(message.attributes['Sent'].first).to include(recipient)
     # end
   end
 end
