@@ -273,7 +273,6 @@ module Mailjet
       expect(message.attributes['Sent'].first).to include(recipient)
     end
 
-    TODO set a test environment for API v3.1
     it 'should return data in attribute "Sent" using API v3.1' do
 
       Mailjet.configure do |config|
@@ -301,6 +300,6 @@ module Mailjet
       )
 
       expect(message.attributes['Sent'].first).to include(recipient)
-    # end
+    end
   end
 end
