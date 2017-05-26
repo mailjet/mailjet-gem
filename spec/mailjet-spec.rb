@@ -10,6 +10,7 @@ describe Mailjet do
     Mailjet.configure do |config|
       config.api_key = API_KEY
       config.secret_key = API_SECRET
+      config.api_version = "v3"
     end
   end
 
