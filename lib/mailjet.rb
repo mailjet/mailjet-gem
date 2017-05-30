@@ -19,6 +19,8 @@ module Mailjet
   def self.config
     Mailjet::Configuration
   end
+
+  class Error < Exception; end
 end
 
 if defined?(ActionMailer)

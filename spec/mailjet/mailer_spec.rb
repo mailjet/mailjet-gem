@@ -305,5 +305,30 @@ module Mailjet
 
       expect(message.attributes['Messages'].first['To'].first['Email']).to eq(ENV['TEST_EMAIL'])
     end
+
+    it 'raise Mailjet::Error if no recipient set' do
+     message = Mail.new
+
+     expect do
+       APIMailer.new.deliver!(message, { version: 'v3', call: false })
+     end
+     .to raise_error(Mailjet::Error, 'No recipient set')
+
+     expect do
+       APIMailer.new.deliver!(message, { version:  'v3.1', call: false })
+     end
+     .to raise_error(Mailjet::Error, 'No recipient set')
+    end
+
+    it 'raise Mailjet::Error if wrong API version given' do
+     message = Mail.new do
+       to 'recipient'
+     end
+
+     expect do
+       APIMailer.new.deliver!(message, { version: 'wrong', call: false })
+     end
+     .to raise_error(Mailjet::Error, 'Wrong API version, given: "wrong"')
+    end
   end
 end
