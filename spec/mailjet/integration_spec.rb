@@ -14,6 +14,7 @@ describe "Mailjet API Resource" do
   let(:subject_id) { 4 }
 
   it "retrieves all contact lists" do
+    skip_if_no_config
     VCR.use_cassette('fetch lists') do
       lists = subject.all(limit: 0)
       lists.size.must_equal 9
@@ -21,6 +22,7 @@ describe "Mailjet API Resource" do
   end
 
   it "creates new contact lists" do
+    skip_if_no_config
     VCR.use_cassette('create lists', match_requests_on: [:method, :uri, :body]) do
       list = subject.create(name: "Test List")
       list.must_be :persisted?
@@ -28,6 +30,7 @@ describe "Mailjet API Resource" do
   end
 
   it "it retrieves lists by id" do
+    skip_if_no_config
     VCR.use_cassette('fetch list') do
       list = subject.find(subject_id)
       list.name.must_equal "Test List"
@@ -35,6 +38,7 @@ describe "Mailjet API Resource" do
   end
 
   it "updates list fields" do
+    skip_if_no_config
     VCR.use_cassette('update list') do
       list = subject.find(subject_id)
       list.update_attributes(name: "Test List Updated")
@@ -44,6 +48,7 @@ describe "Mailjet API Resource" do
   end
 
   it "deletes list fields" do
+    skip_if_no_config
     VCR.use_cassette('destroy list') do
       list = subject.find(subject_id)
       list.delete
@@ -58,6 +63,7 @@ describe "Mailjet API Resource" do
     end
 
     it "raise an error" do
+      skip_if_no_config
       VCR.use_cassette('fetch list on wrong resource path') do
         proc { subject.all(limit: 0) }.must_raise Mailjet::ApiError
       end
