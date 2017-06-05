@@ -36,7 +36,8 @@ module Mailjet
           options[:api_key] || Mailjet.config.api_key,
           options[:secret_key] || Mailjet.config.secret_key,
           public_operations: public_operations,
-          read_only: read_only)
+          read_only: read_only,
+          perform_api_call: options[:perform_api_call])
       end
 
       def self.default_headers
@@ -57,14 +58,14 @@ module Mailjet
       def all(params = {}, options = {})
         opts = change_resource_path(options)
         params = format_params(params)
-        response = connection(opts).get(default_headers.merge(params: params), opts[:perform_api_call])
+        response = connection(opts).get(default_headers.merge(params: params))
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
       def count(options = {})
         opts = change_resource_path(options)
-        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}), opts[:perform_api_call])
+        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
       end
@@ -74,7 +75,7 @@ module Mailjet
         opts = change_resource_path(options)
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
-        attributes = parse_api_json(connection(opts)[id].get(default_headers, opts[:perform_api_call])).first
+        attributes = parse_api_json(connection(opts)[id].get(default_headers)).first
         instanciate_from_api(attributes)
 
       rescue Mailjet::ApiError => e
@@ -120,6 +121,7 @@ module Mailjet
 
       def parse_api_json(response_json)
         response_hash = ActiveSupport::JSON.decode(response_json)
+
         #Take the response from the API and put it through a method -- taken from the ActiveSupport library -- which converts
         #the date-time from "2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
         response_hash = convert_dates_from(response_hash)
@@ -244,15 +246,17 @@ module Mailjet
     end
 
     def save(options = {})
+      opts = self.class.change_resource_path(options)
+
       if persisted?
         # case where the entity is updated
-        response = connection(options)[attributes[:id]].put(formatted_payload, default_headers, options[:perform_api_call])
+        response = connection(opts)[attributes[:id]].put(formatted_payload, default_headers)
       else
         # case where the entity is created
-        response = connection(options).post(formatted_payload, default_headers, options[:perform_api_call])
+        response = connection(opts).post(formatted_payload, default_headers)
       end
 
-      if options[:perform_api_call] && !persisted?
+      if opts[:perform_api_call] && !persisted?
         # get attributes only for entity creation
         self.attributes = if self.resource_path == 'send'
           ActiveSupport::JSON.decode(response)

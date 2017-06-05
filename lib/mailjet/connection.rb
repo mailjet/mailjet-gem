@@ -6,7 +6,7 @@ require 'json'
 module Mailjet
   class Connection
 
-    attr_accessor :adapter, :public_operations, :read_only
+    attr_accessor :adapter, :public_operations, :read_only, :perform_api_call
     alias :read_only? :read_only
 
     delegate :options, :concat_urls, :url, to: :adapter
@@ -37,36 +37,39 @@ module Mailjet
       self.read_only = options[:read_only]
       # self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :verify_ssl => false, content_type: 'application/json'))
       self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json'))
+      self.perform_api_call = options.key?(:perform_api_call) ? options[:perform_api_call] : true
     end
 
-    def get(additional_headers = {}, perform_api_call, &block)
-      handle_api_call(:get, additional_headers, perform_api_call, &block)
+    def get(additional_headers = {}, &block)
+      handle_api_call(:get, additional_headers, &block)
     end
 
-    def post(payload, additional_headers = {}, perform_api_call, &block)
-      handle_api_call(:post, additional_headers, payload, perform_api_call, &block)
+    def post(payload, additional_headers = {}, &block)
+      handle_api_call(:post, additional_headers, payload, &block)
     end
 
-    def put(payload, additional_headers = {}, perform_api_call, &block)
-      handle_api_call(:put, additional_headers, payload, perform_api_call, &block)
+    def put(payload, additional_headers = {}, &block)
+      handle_api_call(:put, additional_headers, payload, &block)
     end
 
-    def delete(additional_headers = {}, perform_api_call, &block)
-      handle_api_call(:delete, additional_headers, perform_api_call, &block)
+    def delete(additional_headers = {}, &block)
+      handle_api_call(:delete, additional_headers, &block)
     end
 
     private
 
-    def handle_api_call(method, additional_headers = {}, payload = {}, perform_api_call, &block)
+    def handle_api_call(method, additional_headers = {}, payload = {}, &block)
       formatted_payload = (additional_headers[:content_type] == :json) ? payload.to_json : payload
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
-      if perform_api_call
+      if self.perform_api_call
         if [:get, :delete].include?(method)
           @adapter.send(method, additional_headers, &block)
         else
           @adapter.send(method, formatted_payload, additional_headers, &block)
         end
+      else
+        return {'Count': 0, 'Data': [mock_api_call: true], 'Total': 0}.to_json
       end
     rescue RestClient::Exception => e
       handle_exception(e, additional_headers, formatted_payload)
