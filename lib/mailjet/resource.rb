@@ -111,7 +111,7 @@ module Mailjet
          # if action method, ammend url to appropriate id
          opts = change_resource_path(options)
          self.resource_path = create_action_resource_path(id) if self.action
-         connection(options)[id].delete(default_headers)
+         connection(opts)[id].delete(default_headers)
       end
 
       def instanciate_from_api(attributes = {})
@@ -243,7 +243,7 @@ module Mailjet
       attributes[:persisted]
     end
 
-    def save(options)
+    def save(options = {})
       if persisted?
         # case where the entity is updated
         response = connection(options)[attributes[:id]].put(formatted_payload, default_headers, options[:perform_api_call])
@@ -271,7 +271,7 @@ module Mailjet
       end
     end
 
-    def save!(options)
+    def save!(options = {})
       save(options) || raise(StandardError.new("Resource not persisted"))
     end
 
