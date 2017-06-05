@@ -220,7 +220,7 @@ module Mailjet
             perform_api_call = options[:perform_api_call]
           end
           if options.key?(:url)
-            url = options['url']
+            url = options[:url]
           end
         end
         ret = {version: ver, url: url, perform_api_call: perform_api_call}
