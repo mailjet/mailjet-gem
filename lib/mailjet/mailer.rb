@@ -79,7 +79,7 @@ class Mailjet::APIMailer
 
     if mail.attachments.any?
       content[:Attachments] = []
-      content[:InlineAttachments] = []
+      content[:InlinedAttachments] = []
 
       mail.attachments.each do |attachment|
         mailjet_attachment = {
@@ -90,7 +90,7 @@ class Mailjet::APIMailer
 
         if attachment.inline?
           mailjet_attachment['ContentId'] = attachment.content_id
-          content[:InlineAttachments].push(mailjet_attachment)
+          content[:InlinedAttachments].push(mailjet_attachment)
         else
           content[:Attachments].push(mailjet_attachment)
         end
@@ -108,14 +108,14 @@ class Mailjet::APIMailer
       end
     end
 
-    # Reply-To is not a property in Mailjet Send API
+    # ReplyTo property was added in v3.1
     # Passing it as an header if mail.reply_to
 
     if mail.reply_to
       if mail.reply_to.display_names.first
-        content[:Headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first, :Name=> mail[:reply_to].display_names.first}
+        content[:ReplyTo] = {:Email=> mail[:reply_to].addresses.first, :Name=> mail[:reply_to].display_names.first}
       else
-        content[:Headers]['Reply-To'] = {:Email=> mail[:reply_to].addresses.first}
+        content[:ReplyTo] = {:Email=> mail[:reply_to].addresses.first}
       end
     end
 
