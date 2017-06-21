@@ -244,7 +244,7 @@ module Mailjet
       }
 
       expect(APIMailer.new.setContentV3_1(message)).to include(
-        InlineAttachments: [{
+        InlinedAttachments: [{
           'ContentType' => 'text/plain',
           'Filename' => file_name,
           'Base64Content' => Base64.encode64(content),
