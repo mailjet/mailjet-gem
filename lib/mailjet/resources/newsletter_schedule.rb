@@ -3,7 +3,7 @@ module Mailjet
     include Mailjet::Resource
     self.action = "schedule"
     self.resource_path = "REST/newsletter/id/#{self.action}"
-    self.public_operations = [:post, :delete]
+    self.public_operations = [:get, :post, :delete]
     self.filters = []
     self.resourceprop = [:date]
 
