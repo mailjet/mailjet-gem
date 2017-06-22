@@ -69,7 +69,7 @@ module Mailjet
           @adapter.send(method, formatted_payload, additional_headers, &block)
         end
       else
-        return {'Count': 0, 'Data': [mock_api_call: true], 'Total': 0}.to_json
+        return {'Count' => 0, 'Data' => [mock_api_call: true], 'Total' => 0}.to_json
       end
     rescue RestClient::Exception => e
       handle_exception(e, additional_headers, formatted_payload)
