@@ -283,6 +283,59 @@ module Mailjet
       expect(sent.attributes["Messages"].first["Status"]).to eq("success")
     end
 
+    it "should send email with Text body and an attachment with API v3.1" do
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3.1"
+      end
+
+      from_email = ENV['TEST_EMAIL']
+      recipient  = ENV['TEST_EMAIL']
+
+      message = Mail.new do
+        from          from_email
+        to            recipient
+        subject       "This is a nice welcome email"
+        body          "Test"
+        content_type  "text/plain"
+      end
+
+      message.attachments['filename.txt'] = {
+        mime_type: 'text/plain',
+        content: "hello world"
+      }
+
+      sent = APIMailer.new.deliver!(message)
+      p sent
+
+      expect(sent.attributes["Messages"].first["Status"]).to eq("success")
+    end
+
+    it "should not send email without any Text or HTML body and an attachment with API v3.1 but raise a Mailjet::ApiError" do
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3.1"
+      end
+
+      from_email = ENV['TEST_EMAIL']
+      recipient  = ENV['TEST_EMAIL']
+
+      message = Mail.new do
+        from          from_email
+        to            recipient
+        subject       "This is a nice welcome email"
+      end
+
+      message.attachments['filename.txt'] = {
+        mime_type: 'text/plain',
+        content: "hello world"
+      }
+
+      expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::ApiError)
+    end
+
     it 'should return data in attribute "Sent" using Send API v3.0' do
 
       Mailjet.configure do |config|
