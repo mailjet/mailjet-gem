@@ -27,7 +27,7 @@ module Mailjet
           from_name: fromName,
           from_email: fromEmail,
           text_part: text
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -48,7 +48,7 @@ module Mailjet
           from_name: 'Test Person',
           from_email: 'test@example.com',
           text_part: 'test'
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -70,7 +70,7 @@ module Mailjet
           from_name: 'FooBar',
           from_email: 'foobar@mailjet.com',
           text_part: 'test'
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -94,7 +94,7 @@ module Mailjet
           from_email: from_email,
           to: recipients.join(', '),
           cc: 'blabla@test.com'
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -124,7 +124,7 @@ module Mailjet
         hash_including(
           text_part: text,
           html_part: html
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -147,7 +147,7 @@ module Mailjet
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
           headers: { 'X-ping' => 'pong' }
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -168,7 +168,7 @@ module Mailjet
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
           reply_to: rt
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -187,7 +187,7 @@ module Mailjet
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
           to: recipients
-        )
+        ), {}
       )
 
       APIMailer.new.deliver!(message)
@@ -205,10 +205,11 @@ module Mailjet
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
           :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
-        )
+        ),
+        { "version" => "v3.1" }
       )
 
-      APIMailer.new.deliver!(message, {"version"=> "v3.1", "call"=> false})
+      APIMailer.new.deliver!(message, { "version" => "v3.1" })
     end
 
     #it 'fails to send' do
@@ -252,6 +253,34 @@ module Mailjet
           'ContentId' => content_id
         }]
       )
+    end
+
+    it "should send email with HTML body and an attachment with API v3.1" do
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3.1"
+      end
+
+      from_email = ENV['TEST_EMAIL']
+      recipient  = ENV['TEST_EMAIL']
+
+      message = Mail.new do
+        from          from_email
+        to            recipient
+        subject       "This is a nice welcome email"
+        body          "Test"
+        content_type  "text/html"
+      end
+
+      message.attachments['filename.txt'] = {
+        mime_type: 'text/plain',
+        content: "hello world"
+      }
+
+      sent = APIMailer.new.deliver!(message)
+
+      expect(sent.attributes["Messages"].first["Status"]).to eq("success")
     end
 
     it 'should return data in attribute "Sent" using Send API v3.0' do
