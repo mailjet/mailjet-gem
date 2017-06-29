@@ -307,7 +307,6 @@ module Mailjet
       }
 
       sent = APIMailer.new.deliver!(message)
-      p sent
 
       expect(sent.attributes["Messages"].first["Status"]).to eq("success")
     end
