@@ -78,8 +78,8 @@ class Mailjet::APIMailer
     if mail.multipart?
       content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
       content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
-    else
-      content[mail.content_type.include?('html') ? :HTMLPart : :TextPart] = mail.body.raw_source
+    elsif !mail.body.raw_source.empty?
+      content[mail.content_type.try(:include?,'text/html') ? :HTMLPart : :TextPart] = mail.body.raw_source
     end
 
 
@@ -206,8 +206,8 @@ class Mailjet::APIMailer
     if mail.multipart?
       content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
       content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
-    else
-      content[mail.content_type.include?('html') ? :html_part : :text_part] = mail.body.raw_source
+    elsif !mail.body.raw_source.empty?
+      content[mail.content_type.try(:include?,'text/html') ? :html_part : :text_part] = mail.body.raw_source
     end
 
     # Formatting attachments (inline + regular)
