@@ -74,11 +74,11 @@ class Mailjet::APIMailer
   def setContentV3_1(mail)
     content = {}
 
-    # handle either multipart or singlepart mail content
-    if mail.multipart?
-      content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
-      content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
-    elsif !mail.body.raw_source.empty?
+    content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
+    content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+
+    # try message `body` as fallback is no content found
+    unless content[:TextPart] || content[:HTMLPart] || mail.body.try(:raw_source).empty?
       content[mail.content_type.try(:include?,'text/html') ? :HTMLPart : :TextPart] = mail.body.raw_source
     end
 
@@ -202,11 +202,11 @@ class Mailjet::APIMailer
   def setContentV3_0(mail)
     content = {}
 
-    # handle either multipart or singlepart mail content
-    if mail.multipart?
-      content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
-      content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
-    elsif !mail.body.raw_source.empty?
+    content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
+    content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+
+    # try message `body` as fallback is no content found
+    unless content[:text_part] || content[:html_part] || mail.body.try(:raw_source).empty?
       content[mail.content_type.try(:include?,'text/html') ? :html_part : :text_part] = mail.body.raw_source
     end
 
