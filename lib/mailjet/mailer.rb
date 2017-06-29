@@ -49,7 +49,7 @@ class Mailjet::APIMailer
     )
   end
 
-  def deliver!(mail, options = nil)
+  def deliver!(mail, options = {})
 
     if (options && options.kind_of?(Object) && options['version'].present?)
       @version = options['version']
@@ -65,9 +65,9 @@ class Mailjet::APIMailer
     end
 
     if (@version == 'v3.1')
-      Mailjet::Send.create({:Messages => [setContentV3_1(mail)]})
+      Mailjet::Send.create({:Messages => [setContentV3_1(mail)]}, options)
     else
-      Mailjet::Send.create(setContentV3_0(mail))
+      Mailjet::Send.create(setContentV3_0(mail), options)
     end
   end
 
