@@ -50,7 +50,6 @@ class Mailjet::APIMailer
   end
 
   def deliver!(mail, options = nil)
-#    p mail.header.fields
 
     if (options && options.kind_of?(Object) && options['version'].present?)
       @version = options['version']
@@ -74,8 +73,15 @@ class Mailjet::APIMailer
 
   def setContentV3_1(mail)
     content = {}
-    content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
-    content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+
+    # handle either multipart or singlepart mail content
+    if mail.multipart?
+      content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
+      content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+    else
+      content[mail.content_type.include?('html') ? :HTMLPart : :TextPart] = mail.body.raw_source
+    end
+
 
     if mail.attachments.any?
       content[:Attachments] = []
@@ -112,7 +118,7 @@ class Mailjet::APIMailer
     # Passing it as an header if mail.reply_to
 
     if mail.reply_to
-      if mail.reply_to.display_names.first
+      if mail.reply_to.respond_to?(:display_names) && mail.reply_to.display_names.first
         content[:ReplyTo] = {:Email=> mail[:reply_to].addresses.first, :Name=> mail[:reply_to].display_names.first}
       else
         content[:ReplyTo] = {:Email=> mail[:reply_to].addresses.first}
@@ -196,8 +202,13 @@ class Mailjet::APIMailer
   def setContentV3_0(mail)
     content = {}
 
-    content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
-    content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+    # handle either multipart or singlepart mail content
+    if mail.multipart?
+      content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
+      content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
+    else
+      content[mail.content_type.include?('html') ? :html_part : :text_part] = mail.body.raw_source
+    end
 
     # Formatting attachments (inline + regular)
     unless mail.attachments.empty?
