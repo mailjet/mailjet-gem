@@ -103,6 +103,13 @@ end
 
 `default_from` is optional if you send emails with `:mailjet`'s SMTP (below)
 
+But if you are using Mailjet with Rails, you can simply generate it:
+
+```shell
+$ rails generate mailjet:initializer
+```
+
+
 ### Send emails via the Send API
 
 Find more about the Mailjet Send API in the [official guides](http://dev.mailjet.com/guides/?ruby#choose-sending-method)

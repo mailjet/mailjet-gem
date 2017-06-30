@@ -15,6 +15,17 @@ Gem::Specification.new do |s|
   s.summary     = "Mailjet a powerful all-in-one email service provider clients can use to get maximum insight and deliverability results from both their marketing and transactional emails. Our analytics tools and intelligent APIs give senders the best understanding of how to maximize benefits for each individual contact, with each email sent."
   s.description = "Ruby wrapper for Mailjet's v3 API"
 
+  s.post_install_message = %q{
+    The Ruby wrapper for Mailjet has just been installed successfully, congrats!
+    Maybe you want to configure your credentials to use your account.
+    All informations available on https://github.com/mailjet/mailjet-gem.
+    But if you are using Rails, you'll be glad to generate it easily using:
+
+    \t$ rails generate mailjet:initializer
+
+    We hope you will enjoy Mailjet!
+  }
+
 
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
