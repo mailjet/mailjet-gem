@@ -3,5 +3,6 @@ Mailjet.configure do |config|
   config.api_key = '<%= @api_key %>'
   config.secret_key = '<%= @secret_key %>'
   config.default_from = '<%= @default_from %>'
-  config.api_version = "v3<%= '.1' if @api_v3_1 %>"
+<% if @api_v3_1 %><%= @api_v3_1_notice.split("\n").reject(&:empty?).map{ |l| '  # ' + l }.join("\n") %>
+  config.api_version = 'v3.1'<% end %>
 end
