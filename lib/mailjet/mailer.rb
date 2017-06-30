@@ -27,44 +27,34 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 # The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
   def initialize(options = {})
-#    send = Mailjet.Send.new
-#    if send.version.exists
-#      version = send.version
-#    else
-      @version = Mailjet.config.api_version
-#    end
     @delivery_method_options_v3_0 = options.slice(
-      :api_key, :secret_key,
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
       :'mj-trackopen', :'mj-trackclick',
       :'mj-customid', :'mj-eventpayload', :vars, :headers,
     )
+
     @delivery_method_options_v3_1 = options.slice(
-      :api_key, :secret_key,
       :'Priority', :'CustomCampaign', :'DeduplicateCampaign',
       :'TemplateLanguage', :'TemplateErrorReporting', :'TemplateErrorDeliver', :'TemplateID',
       :'TrackOpens', :'TrackClicks',
       :'CustomID', :'EventPayload', :'Variables', :'Headers',
     )
+
+    @connection_options = options.slice(:api_key, :secret_key)
   end
 
-  def deliver!(mail, options = {})
-
-    if (options && options.kind_of?(Object) && options['version'].present?)
-      @version = options['version']
-    end
-
-    if (!options.kind_of?(Object))
-      options = []
-    end
+  def deliver!(mail, opts = {})
+    options = HashWithIndifferentAccess.new(opts)
 
     # Mailjet Send API does not support full from. Splitting the from field into two: name and email address
-    if mail[:from].nil? && Mailjet.config.default_from.present?
-      mail[:from] = Mailjet.config.default_from
-    end
+    mail[:from] ||= Mailjet.config.default_from if Mailjet.config.default_from
 
-    if (@version == 'v3.1')
+    # add `@connection_options` in `options` only if not exist yet (values in `options` prime)
+    options.reverse_merge!(@connection_options)
+
+    # `options[:version]` primes on global config
+    if ((options[:version] || Mailjet.config.api_version) == 'v3.1')
       Mailjet::Send.create({:Messages => [setContentV3_1(mail)]}, options)
     else
       Mailjet::Send.create(setContentV3_0(mail), options)

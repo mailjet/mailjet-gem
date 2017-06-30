@@ -20,6 +20,9 @@ module Mailjet
   module Resource
     extend ActiveSupport::Concern
 
+    # define here available options for filtering
+    OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key]
+
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
 
     included do
@@ -56,7 +59,7 @@ module Mailjet
       end
 
       def all(params = {}, options = {})
-        opts = change_resource_path(options)
+        opts = define_options(options)
         params = format_params(params)
         response = connection(opts).get(default_headers.merge(params: params))
         attribute_array = parse_api_json(response)
@@ -64,7 +67,7 @@ module Mailjet
       end
 
       def count(options = {})
-        opts = change_resource_path(options)
+        opts = define_options(options)
         response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
@@ -72,7 +75,7 @@ module Mailjet
 
       def find(id, job_id = nil, options = {})
         # if action method, ammend url to appropriate id
-        opts = change_resource_path(options)
+        opts = define_options(options)
         self.resource_path = create_action_resource_path(id, job_id) if self.action
         #
         attributes = parse_api_json(connection(opts)[id].get(default_headers)).first
@@ -88,7 +91,7 @@ module Mailjet
 
       def create(attributes = {}, options = {})
         # if action method, ammend url to appropriate id
-        opts = change_resource_path(options)
+        opts = define_options(options)
         self.resource_path = create_action_resource_path(attributes[:id]) if self.action
         attributes.tap { |hs| hs.delete(:id) }
 
@@ -110,7 +113,7 @@ module Mailjet
 
       def delete(id, options = {})
          # if action method, ammend url to appropriate id
-         opts = change_resource_path(options)
+         opts = define_options(options)
          self.resource_path = create_action_resource_path(id) if self.action
          connection(opts)[id].delete(default_headers)
       end
@@ -211,26 +214,14 @@ module Mailjet
         end
       end
 
-      def change_resource_path(options = {})
-        ver = choose_version(options)
-        url = Mailjet.config.end_point
-        perform_api_call = Mailjet.config.perform_api_call
-        if options.any?
-          if options.key?(:perform_api_call)
-            perform_api_call = options[:perform_api_call]
-          end
-          if options.key?(:url)
-            url = options[:url]
-          end
-        end
-        ret = {version: ver, url: url, perform_api_call: perform_api_call}
-        ret
-      end
-
-      def choose_version(options = {})
-        ver = options['version'] || Mailjet.config.api_version || version
-
-        ver
+      def define_options(options = {})
+        # merge default options with given ones on-the-fly
+        {
+          version: version || Mailjet.config.api_version,
+          url: Mailjet.config.end_point,
+          perform_api_call: Mailjet.config.perform_api_call
+        }
+        .merge(options.symbolize_keys.slice(*OPTIONS))
       end
 
     end
@@ -246,7 +237,7 @@ module Mailjet
     end
 
     def save(options = {})
-      opts = self.class.change_resource_path(options)
+      opts = self.class.define_options(options)
 
       if persisted?
         # case where the entity is updated
@@ -297,7 +288,7 @@ module Mailjet
         end
       end
 
-      opts = self.class.change_resource_path(options)
+      opts = self.class.define_options(options)
       save(opts)
     end
 
