@@ -77,7 +77,7 @@ class Mailjet::APIMailer
     content[:TextPart] = mail.text_part.try(:decoded) if !mail.text_part.blank?
     content[:HTMLPart] = mail.html_part.try(:decoded) if !mail.html_part.blank?
 
-    # try message `body` as fallback is no content found
+    # try message `body` as fallback if no content found
     unless content[:TextPart] || content[:HTMLPart] || mail.body.try(:raw_source).empty?
       content[mail.content_type.try(:include?,'text/html') ? :HTMLPart : :TextPart] = mail.body.raw_source
     end
@@ -205,7 +205,7 @@ class Mailjet::APIMailer
     content[:text_part] = mail.text_part.try(:decoded) if !mail.text_part.blank?
     content[:html_part] = mail.html_part.try(:decoded) if !mail.html_part.blank?
 
-    # try message `body` as fallback is no content found
+    # try message `body` as fallback if no content found
     unless content[:text_part] || content[:html_part] || mail.body.try(:raw_source).empty?
       content[mail.content_type.try(:include?,'text/html') ? :html_part : :text_part] = mail.body.raw_source
     end
