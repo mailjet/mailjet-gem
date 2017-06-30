@@ -255,6 +255,62 @@ module Mailjet
       )
     end
 
+    it "should send email with HTML body and an attachment with API v3.0" do
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3"
+      end
+
+      from_email = ENV['TEST_EMAIL']
+      recipient  = ENV['TEST_EMAIL']
+
+      message = Mail.new do
+        from          from_email
+        to            recipient
+        subject       "This is a nice welcome email (API v3.0)"
+        body          "Test"
+        content_type  "text/html"
+      end
+
+      message.attachments['filename.txt'] = {
+        mime_type: 'text/plain',
+        content: "hello world"
+      }
+
+      sent = APIMailer.new.deliver!(message)
+
+      expect(sent.attributes["Sent"].first["Email"]).to eq(ENV['TEST_EMAIL'])
+    end
+
+    it "should send email with Text body and an attachment with API v3.0" do
+      Mailjet.configure do |config|
+        config.api_key = ENV['MJ_APIKEY_PUBLIC']
+        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
+        config.api_version = "v3"
+      end
+
+      from_email = ENV['TEST_EMAIL']
+      recipient  = ENV['TEST_EMAIL']
+
+      message = Mail.new do
+        from          from_email
+        to            recipient
+        subject       "This is a nice welcome email (API v3.0)"
+        body          "Test"
+        content_type  "text/plain"
+      end
+
+      message.attachments['filename.txt'] = {
+        mime_type: 'text/plain',
+        content: "hello world"
+      }
+
+      sent = APIMailer.new.deliver!(message)
+
+      expect(sent.attributes["Sent"].first["Email"]).to eq(ENV['TEST_EMAIL'])
+    end
+
     it "should send email with HTML body and an attachment with API v3.1" do
       Mailjet.configure do |config|
         config.api_key = ENV['MJ_APIKEY_PUBLIC']
@@ -268,7 +324,7 @@ module Mailjet
       message = Mail.new do
         from          from_email
         to            recipient
-        subject       "This is a nice welcome email"
+        subject       "This is a nice welcome email (API v3.1)"
         body          "Test"
         content_type  "text/html"
       end
@@ -296,7 +352,7 @@ module Mailjet
       message = Mail.new do
         from          from_email
         to            recipient
-        subject       "This is a nice welcome email"
+        subject       "This is a nice welcome email (API v3.1)"
         body          "Test"
         content_type  "text/plain"
       end
@@ -324,7 +380,7 @@ module Mailjet
       message = Mail.new do
         from          from_email
         to            recipient
-        subject       "This is a nice welcome email"
+        subject       "This is a nice welcome email (API v3.1)"
       end
 
       message.attachments['filename.txt'] = {
