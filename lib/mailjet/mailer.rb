@@ -26,7 +26,11 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 # Mailjet sends API expects a JSON payload as the input.
 # The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
-  def initialize(options = {})
+  def initialize(opts = {})
+    options = HashWithIndifferentAccess.new(opts)
+
+    @version = options[:version]
+
     @delivery_method_options_v3_0 = options.slice(
       :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
       :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
@@ -53,9 +57,11 @@ class Mailjet::APIMailer
     # add `@connection_options` in `options` only if not exist yet (values in `options` prime)
     options.reverse_merge!(@connection_options)
 
-    # `options[:version]` primes on global config
-    if ((options[:version] || Mailjet.config.api_version) == 'v3.1')
-      Mailjet::Send.create({:Messages => [setContentV3_1(mail)]}, options)
+    # `options[:version]` primes on attribute, both of them on global config
+    options[:version] ||= (@version || Mailjet.config.api_version)
+
+    if (options[:version] == 'v3.1')
+      Mailjet::Send.create({ :Messages => [setContentV3_1(mail)] }, options)
     else
       Mailjet::Send.create(setContentV3_0(mail), options)
     end
