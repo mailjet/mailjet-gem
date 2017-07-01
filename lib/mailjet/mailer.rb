@@ -57,10 +57,13 @@ class Mailjet::APIMailer
     # add `@connection_options` in `options` only if not exist yet (values in `options` prime)
     options.reverse_merge!(@connection_options)
 
-    # `options[:version]` primes on attribute, both of them on global config
-    options[:version] ||= (@version || Mailjet.config.api_version)
+    # add `@version` in options if set
+    options[:version] = @version if @version
 
-    if (options[:version] == 'v3.1')
+    # `options[:version]` primes on global config
+    version = options[:version] || Mailjet.config.api_version
+
+    if (version == 'v3.1')
       Mailjet::Send.create({ :Messages => [setContentV3_1(mail)] }, options)
     else
       Mailjet::Send.create(setContentV3_0(mail), options)
