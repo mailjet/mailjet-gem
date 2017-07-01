@@ -26,26 +26,29 @@ ActionMailer::Base.add_delivery_method :mailjet, Mailjet::Mailer
 # Mailjet sends API expects a JSON payload as the input.
 # The deliver methods maps the Mail::Message attributes to the MailjetSend API JSON expected structure
 class Mailjet::APIMailer
+  V3_0_PERMITTED_OPTIONS = [
+    :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
+    :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
+    :'mj-trackopen', :'mj-trackclick',
+    :'mj-customid', :'mj-eventpayload', :vars, :headers,
+  ]
+
+  V3_1_PERMITTED_OPTIONS = [
+    :'Priority', :'CustomCampaign', :'DeduplicateCampaign',
+    :'TemplateLanguage', :'TemplateErrorReporting', :'TemplateErrorDeliver', :'TemplateID',
+    :'TrackOpens', :'TrackClicks',
+    :'CustomID', :'EventPayload', :'Variables', :'Headers',
+  ]
+
+  CONNECTION_PERMITTED_OPTIONS = [:api_key, :secret_key]
+
   def initialize(opts = {})
     options = HashWithIndifferentAccess.new(opts)
 
     @version = options[:version]
-
-    @delivery_method_options_v3_0 = options.slice(
-      :recipients, :'mj-prio', :'mj-campaign', :'mj-deduplicatecampaign',
-      :'mj-templatelanguage', :'mj-templateerrorreporting', :'mj-templateerrordeliver', :'mj-templateid',
-      :'mj-trackopen', :'mj-trackclick',
-      :'mj-customid', :'mj-eventpayload', :vars, :headers,
-    )
-
-    @delivery_method_options_v3_1 = options.slice(
-      :'Priority', :'CustomCampaign', :'DeduplicateCampaign',
-      :'TemplateLanguage', :'TemplateErrorReporting', :'TemplateErrorDeliver', :'TemplateID',
-      :'TrackOpens', :'TrackClicks',
-      :'CustomID', :'EventPayload', :'Variables', :'Headers',
-    )
-
-    @connection_options = options.slice(:api_key, :secret_key)
+    @delivery_method_options_v3_0 = options.slice(*V3_0_PERMITTED_OPTIONS)
+    @delivery_method_options_v3_1 = options.slice(*V3_1_PERMITTED_OPTIONS)
+    @connection_options = options.slice(*CONNECTION_PERMITTED_OPTIONS)
   end
 
   def deliver!(mail, opts = {})
