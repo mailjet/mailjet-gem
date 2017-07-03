@@ -363,12 +363,12 @@ Mailjet::Contact_managemanycontacts.find(nil, 34062)
 In order to send emails through the API, you just have to `create` a new `MessageDelivery` resource.
 
 ``` ruby
-Mailjet::MessageDelivery.create(from: "me@example.com", to: "you@example.com", subject: "Mailjet is awesome", text: "Yes, it is!")
+Mailjet::MessageDelivery.create(from_email: "me@example.com", to: "you@example.com", subject: "Mailjet is awesome", text_part: "Yes, it is!")
 ```
 
 If you want to send it to multiple recipients, just use an array:
 ``` ruby
-Mailjet::MessageDelivery.create(from: "me@example.com", to: ["you@example.com", "someone-else@example.com"], subject: "Mailjet is awesome", text: "Yes, it is!")
+Mailjet::MessageDelivery.create(from_email: "me@example.com", to: "you@example.com, someone-else@example.com", subject: "Mailjet is awesome", text_part: "Yes, it is!")
 ```
 
 In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
