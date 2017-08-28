@@ -40,7 +40,8 @@ module Mailjet
           options[:secret_key] || Mailjet.config.secret_key,
           public_operations: public_operations,
           read_only: read_only,
-          perform_api_call: options[:perform_api_call])
+          perform_api_call: options[:perform_api_call],
+          read_timeout: options[:read_timeout])
       end
 
       def self.default_headers
