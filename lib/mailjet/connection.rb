@@ -6,7 +6,7 @@ require 'json'
 module Mailjet
   class Connection
 
-    attr_accessor :adapter, :public_operations, :read_only, :perform_api_call, :read_timeout
+    attr_accessor :adapter, :public_operations, :read_only, :perform_api_call, :read_timeout, :open_timeout
     alias :read_only? :read_only
 
     delegate :options, :concat_urls, :url, to: :adapter
@@ -36,8 +36,9 @@ module Mailjet
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
       self.read_timeout = options[:read_timeout]
+      self.open_timeout = options[:open_timeout]
       # self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, :verify_ssl => false, content_type: 'application/json'))
-      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json', read_timeout: self.read_timeout))
+      self.adapter = adapter_class.new(end_point, options.merge(user: api_key, password: secret_key, content_type: 'application/json', read_timeout: self.read_timeout, open_timeout: self.open_timeout))
       self.perform_api_call = options.key?(:perform_api_call) ? options[:perform_api_call] : true
     end
 
