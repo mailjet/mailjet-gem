@@ -21,7 +21,7 @@ module Mailjet
     extend ActiveSupport::Concern
 
     # define here available options for filtering
-    OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key]
+    OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout]
 
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
 
