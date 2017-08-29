@@ -98,6 +98,8 @@ Mailjet.configure do |config|
   config.api_key = 'your-api-key'
   config.secret_key = 'your-secret-key'
   config.default_from = 'my_registered_mailjet_email@domain.com'
+  config.api_version = "v3.1"
+
 end
 ```
 
@@ -115,17 +117,33 @@ $ rails generate mailjet:initializer
 Find more about the Mailjet Send API in the [official guides](http://dev.mailjet.com/guides/?ruby#choose-sending-method)
 
 ``` ruby
-email = { :from_email   => "your email",
-          :from_name    => "Your name",
-          :subject      => "Hello",
-          :text_part    => "Hi",
-          :recipients   => [{:email => "recipient email"}] }
-
-test = Mailjet::Send.create(email)
-
-# retrieve the API response
-p test.attributes['Sent']
+variable = Mailjet::Send.create(messages: [{
+    'From'=> {
+        'Email'=> 'pilot@mailjet.com',
+        'Name'=> 'Mailjet Pilot'
+    },
+    'To'=> [
+        {
+            'Email'=> 'passenger1@mailjet.com',
+            'Name'=> 'passenger 1'
+        }
+    ],
+    'Subject'=> 'Your email flight plan!',
+    'TextPart'=> 'Dear passenger 1, welcome to Mailjet! May the delivery force be with you!',
+    'HTMLPart'=> '<h3>Dear passenger 1, welcome to Mailjet!</h3><br />May the delivery force be with you!'
+}]
+)
+p variable.attributes['Messages']
 ```
+In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
+
+In these modifiers, there is now the ability to add a Mailjet custom-id or Mailjet Custom payload using the following:
+```ruby
+'mj-customid' => "A useful custom ID"
+'mj-eventpayload' => '{"message": "hello world"}'
+```
+
+For more information on custom properties and available params, see the [official doc][send-api-doc].
 
 ### Send emails with ActionMailer
 A quick walkthrough to use Rails Action Mailer [here](http://guides.rubyonrails.org/action_mailer_basics.html)
@@ -364,29 +382,6 @@ Some actions are not attached to a specific resource, like /contact/managemanyco
 ``` ruby
 Mailjet::Contact_managemanycontacts.find(nil, 34062)
 ```
-
-## Send emails through API
-
-In order to send emails through the API, you just have to `create` a new `Send` resource.
-
-``` ruby
-Mailjet::Send.create(from_email: "me@example.com", to: "you@example.com", subject: "Mailjet is awesome", text_part: "Yes, it is!")
-```
-
-If you want to send it to multiple recipients, just use an array:
-``` ruby
-Mailjet::Send.create(from_email: "me@example.com", to: "you@example.com, someone-else@example.com", subject: "Mailjet is awesome", text_part: "Yes, it is!")
-```
-
-In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
-
-In these modifiers, there is now the ability to add a Mailjet custom-id or Mailjet Custom payload using the following:
-```ruby
-'mj-customid' => "A useful custom ID"
-'mj-eventpayload' => '{"message": "hello world"}'
-```
-
-For more information on custom properties and available params, see the [official doc][send-api-doc].
 
 ## Track email delivery
 
