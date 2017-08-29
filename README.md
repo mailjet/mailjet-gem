@@ -1,45 +1,23 @@
 # Mailjet
 
-[Mailjet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
+[Mailjet][mailjet]'s official Ruby wrapper.
 
 [![Build Status](https://travis-ci.org/mailjet/mailjet-gem.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-gem)
 
-<!--
-
-[![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis]
-[![Dependency Status](https://gemnasium.com/jbescoyez/mailjet.png)][gemnasium]
-[![Maintainance status](http://stillmaintained.com/jbescoyez/mailjet.png)][stillmaintained]
-![Current Version](https://img.shields.io/badge/version-1.5.0-green.svg)
-
--->
-
-[travis]: http://travis-ci.org/jbescoyez/mailjet
-[gemnasium]: https://gemnasium.com/jbescoyez/mailjet
-[stillmaintained]: http://stillmaintained.com/jbescoyez/mailjet
 [mailjet]: http://www.mailjet.com
-[rubinius]: http://rubini.us/
-[ree]: http://www.rubyenterpriseedition.com/
-[jruby]: http://jruby.org/
-[mailjetter]: https://github.com/holinnn/mailjetter/
+[mailjet_api_key]: https://app.mailjet.com/account/api_keys 
 [activeresource]: https://github.com/rails/activeresource
 [apidoc]: http://dev.mailjet.com/guides
-[apidoc-recipient]: http://mjdemo.poxx.net/~shubham/listrecipient.html?utm_source=github&utm_medium=link&utm_content=readme&utm_campaign=mailjet-gem
-[camelcase-api]: http://api.rubyonrails.org/classes/String.html#method-i-camelcase
-[underscore-api]: http://api.rubyonrails.org/classes/String.html#method-i-underscore
 [actionmailerdoc]: http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options
 [send-api-doc]: http://dev.mailjet.com/guides/?ruby#choose-sending-method
-[v1-branch]: https://github.com/mailjet/mailjet-gem/tree/v1
 [mailjet_doc]: http://dev.mailjet.com/guides/?ruby#
 [api_doc]: https://github.com/mailjet/api-documentation
 
-<!-- You can read this readme file in other languages:
-english | [french](./README.fr.md) -->
-
 This gem helps you to:
 
-* Send transactional emails through Mailjet API in Rails 3/4
+* Send transactional emails through Mailjet API in Rails 3.X and 4.X
 * Manage your lists, contacts and campaigns, and much more...
-* Track email delivery through event API
+* Track email delivery through [Event API](https://www.mailjet.com/feature/event-api)
 
 Compatibility:
 
@@ -47,13 +25,7 @@ Compatibility:
 
 Rails ActionMailer integration designed for Rails 3.X and 4.X
 
-IMPORTANT: Mailjet gem switched to API v3, the new API provided by Mailjet. For the wrapper for API v1, check the [v1 branch][v1-branch].
-
 Every code example can be found in the [Mailjet Documentation][mailjet_doc]
-
-(Please refer to the [Mailjet Documentation Repository][api_doc] to contribute to the documentation examples)
-
-
 
 ## Install
 
@@ -78,7 +50,8 @@ If you wish to use the most up to date version from Github, add the following in
 #Gemfile
 gem 'mailjet', :git => 'https://github.com/mailjet/mailjet-gem.git'
 ```
-and let the bundler magic happen
+
+and let the Bundler magic happen:
 
 ```bash
 $ bundle install
@@ -88,7 +61,7 @@ $ bundle install
 
 ### Api key
 
-You need a proper account with [Mailjet][mailjet]. You can get the API key through the [Mailjet][mailjet] interface in _Account/Master API key_
+You need a proper account with [Mailjet][mailjet]. You can get the API key here at [Mailjet][mailjet_api_key].
 
 Add the keys to an initializer:
 
@@ -108,7 +81,6 @@ But if you are using Mailjet with Rails, you can simply generate it:
 ```shell
 $ rails generate mailjet:initializer
 ```
-
 
 ### Send emails via the Send API
 
@@ -135,9 +107,9 @@ version: "v3.1"
 p variable.attributes['Messages']
 end
 ```
-In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
+In order to leverage Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
 
-In these modifiers, there is now the ability to add a Mailjet custom-id or Mailjet Custom payload using the following:
+In these modifiers, there is now the ability to add a Mailjet custom ID or Mailjet Custom payload using the following:
 ```ruby
 'mj-customid' => "A useful custom ID"
 'mj-eventpayload' => '{"message": "hello world"}'
@@ -288,9 +260,8 @@ Let's say we want to manage list recipients.
 
 By default, `.all` will retrieve only 10 resources, so, you have to specify `limit: 0` if you want to GET them all.
 
-You can refine queries using [API Filters][apidoc-recipient]`*` as well as the following parameters:
+You can refine queries using [API Filters][https://dev.mailjet.com/email-api/v3/listrecipient/] as well as the following parameters:
 
-* format: `:json, :xml, :rawxml, :html, :csv` or `:phpserialized` (default: `:json`)
 * limit: int (default: 10)
 * offset: int (default: 0)
 * sort: `[[:property, :asc], [:property, :desc]]`
@@ -437,7 +408,7 @@ Note that since it's a Rack application, any Ruby Rack framework (say: Sinatra, 
 ## Testing
 
 For maximum reliability, the gem is tested against Mailjet's server for some parts, which means that valid credentials are needed.
-Do NOT use your production account (create a new one if needed), because some tests are destructive.
+Do NOT use your production account (create a new one if needed), because some tests remove the data once done.
 
 ```yml
 # GEM_ROOT/config.yml
