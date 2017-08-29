@@ -98,8 +98,6 @@ Mailjet.configure do |config|
   config.api_key = 'your-api-key'
   config.secret_key = 'your-secret-key'
   config.default_from = 'my_registered_mailjet_email@domain.com'
-  config.api_version = "v3.1"
-
 end
 ```
 
@@ -117,7 +115,7 @@ $ rails generate mailjet:initializer
 Find more about the Mailjet Send API in the [official guides](http://dev.mailjet.com/guides/?ruby#choose-sending-method)
 
 ``` ruby
-variable = Mailjet::Send.create(messages: [{
+variable = Mailjet::Send.create({messages: [{
     'From'=> {
         'Email'=> 'pilot@mailjet.com',
         'Name'=> 'Mailjet Pilot'
@@ -131,9 +129,11 @@ variable = Mailjet::Send.create(messages: [{
     'Subject'=> 'Your email flight plan!',
     'TextPart'=> 'Dear passenger 1, welcome to Mailjet! May the delivery force be with you!',
     'HTMLPart'=> '<h3>Dear passenger 1, welcome to Mailjet!</h3><br />May the delivery force be with you!'
-}]
+}]},
+version: "v3.1"
 )
 p variable.attributes['Messages']
+end
 ```
 In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
 
