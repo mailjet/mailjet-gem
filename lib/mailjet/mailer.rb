@@ -198,7 +198,26 @@ class Mailjet::APIMailer
     payload[:Cc] = ccs if mail[:cc]
     payload[:Bcc] = bccs if mail[:bcc]
 
-    payload
+    decode_emails_V3_1!(payload)
+  end
+
+  def decode_emails_V3_1!(payload)
+    # ActionMailer may have handed us encoded email
+    # addresses, mailjet will reject. Therefore we
+    # walk through the payload to decode them back.
+    payload.each do |key, value|
+      if key == :Email
+        payload[key] = Mail::Encodings.value_decode(value)
+      elsif value.is_a?(Hash)
+        decode_emails_V3_1! value
+      elsif value.is_a?(Array)
+        value.each do |item|
+          if item.is_a?(Hash)
+            decode_emails_V3_1! item
+          end
+        end
+      end
+    end
   end
 
   def setContentV3_0(mail)
@@ -265,7 +284,7 @@ class Mailjet::APIMailer
     payload.merge(content)
     .merge(base_from)
     .merge(@delivery_method_options_v3_0)
-    end
+  end
 end
 
 ActionMailer::Base.add_delivery_method :mailjet_api, Mailjet::APIMailer
