@@ -67,7 +67,7 @@ class Mailjet::APIMailer
     version = options[:version] || Mailjet.config.api_version
 
     if (version == 'v3.1')
-      Mailjet::Send.create({ :Messages => [setContentV3_1(mail)] }, options)
+      Mailjet::Send.create({ :Messages => [setContentV3_1(mail)], SandboxMode: Mailjet.config.sandbox_mode }, options)
     else
       Mailjet::Send.create(setContentV3_0(mail), options)
     end

@@ -6,6 +6,7 @@ module Mailjet
 
     DEFAULT = {
       api_version: 'v3',
+      sandbox_mode: false,
       end_point: 'https://api.mailjet.com',
       perform_api_call: true,
     }
