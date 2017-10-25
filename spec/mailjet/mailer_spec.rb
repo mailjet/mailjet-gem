@@ -471,12 +471,14 @@ module Mailjet
         api_version: 'something',
         end_point: 'something else',
         perform_api_call: 'and else',
+        sandbox_mode: 'and something else'
       }
 
       Mailjet.configure do |config|
         config.api_version = values[:api_version]
         config.end_point = values[:end_point]
         config.perform_api_call = values[:perform_api_call]
+        config.sandbox_mode = values[:sandbox_mode]
       end
 
       Mailjet::Configuration::DEFAULT.each do |k,v|
