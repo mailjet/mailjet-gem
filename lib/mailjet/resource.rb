@@ -311,7 +311,7 @@ module Mailjet
     def formatted_payload
       payload = attributes.reject { |k,v| v.blank? }
       if persisted?
-        payload = payload.slice(*resourceprop)
+        payload = payload.slice(*resourceprop.map(&:to_s))
       end
       payload = camelcase_keys(payload)
       payload.tap { |hs| hs.delete("Persisted") }
