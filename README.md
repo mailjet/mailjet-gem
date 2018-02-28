@@ -162,20 +162,19 @@ Supported options are:
 ```ruby
 * :api_key
 * :secret_key
-* :'mj-prio'
-* :'mj-campaign'
-* :'mj-deduplicatecampaign'
-* :'mj-templatelanguage'
-* :'mj-templateerrorreporting'
-* :'mj-templateerrordeliver'
-* :'mj-templateid'
-* :'mj-trackopen'
-* :'mj-trackclick'
-* :'mj-customid'
-* :'mj-eventpayload'
-* :'vars'
-* :'headers'
-* :'recipients'
+* :'Priority'
+* :'CustomCampaign'
+* :'DeduplicateCampaign'
+* :'TemplateLanguage'
+* :'TemplateErrorReporting'
+* :'TemplateErrorDeliver'
+* :'TemplateID'
+* :'TrackOpens'
+* :'TrackClicks'
+* :'CustomID'
+* :'EventPayload'
+* :'Variables'
+* :'Headers'
 ```
 
 Otherwise, you can pass the custom Mailjet SMTP headers directly:
