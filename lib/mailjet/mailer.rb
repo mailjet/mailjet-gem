@@ -163,8 +163,13 @@ class Mailjet::APIMailer
           ccs =[{:Email=>mail[:cc].address.first}]
         end
       else
+        ccs = []
         mail[:cc].each do |cc|
-          ccs << {:Email=> cc.address, :Name=>cc.display_name}
+          if cc.display_name
+            ccs << {:Email=> cc.address, :Name=>cc.display_name}
+          else
+            ccs << {:Email=> cc.address}
+          end
         end
       end
     end
@@ -177,7 +182,8 @@ class Mailjet::APIMailer
           payload[:Bcc] = [{:Email=>mail[:bcc].address.first}]
         end
       else
-        mail[:bcc].formatted.each do |bcc|
+        bccs = []
+        mail[:bcc].each do |bcc|
           if bcc.display_name
             bccs << {:Email=> bcc.address, :Name=>bcc.display_name}
           else

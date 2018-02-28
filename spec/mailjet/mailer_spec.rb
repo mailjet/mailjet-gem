@@ -327,6 +327,8 @@ module Mailjet
         subject       "This is a nice welcome email (API v3.1)"
         body          "Test"
         content_type  "text/html"
+        cc            [recipient]
+        bcc           ["Test <#{recipient}>"]
       end
 
       message.attachments['filename.txt'] = {
