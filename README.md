@@ -158,7 +158,14 @@ class AwesomeMailer < ApplicationMailer
 end
 ```
 
-Supported options are:
+The default API version is v3.0. If you want to use v3.1, this can be set via `delivery_method_options`:
+
+```ruby
+delivery_method_options: { version: 'v3.1' }
+```
+
+Other supported options are:
+
 ```ruby
 # For v3_0 API
 
@@ -195,8 +202,6 @@ Supported options are:
 * :'Variables'
 * :'Headers'
 ```
-
-With the `:mailjet_api` delivery method set, the default email sending API is v3_0.
 
 Otherwise, you can pass the custom Mailjet SMTP headers directly:
 ```ruby
