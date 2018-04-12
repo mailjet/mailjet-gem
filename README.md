@@ -160,6 +160,25 @@ end
 
 Supported options are:
 ```ruby
+# For v3_0 API
+
+* :recipients
+* :'mj-prio'
+* :'mj-campaign'
+* :'mj-deduplicatecampaign'
+* :'mj-templatelanguage'
+* :'mj-templateerrorreporting'
+* :'mj-templateerrordeliver'
+* :'mj-templateid'
+* :'mj-trackopen'
+* :'mj-trackclick',
+* :'mj-customid'
+* :'mj-eventpayload'
+* :vars
+* :headers
+
+# For v3_1 API
+
 * :api_key
 * :secret_key
 * :'Priority'
@@ -176,6 +195,8 @@ Supported options are:
 * :'Variables'
 * :'Headers'
 ```
+
+With the `:mailjet_api` delivery method set, the default email sending API is v3_0.
 
 Otherwise, you can pass the custom Mailjet SMTP headers directly:
 ```ruby
