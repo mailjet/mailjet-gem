@@ -45,7 +45,7 @@ class Mailjet::APIMailer
   HEADER_BLACKLIST = [
     'from', 'sender', 'subject', 'to', 'cc', 'bcc', 'return-path', 'delivered-to', 'dkim-signature',
     'domainkey-status', 'received-spf', 'authentication-results', 'received', 'user-agent', 'x-mailer',
-    'x-feedback-id', 'list-id', 'date', 'x-csa-complaints', 'message-id'
+    'x-feedback-id', 'list-id', 'date', 'x-csa-complaints', 'message-id', 'reply-to'
   ]
 
   def initialize(opts = {})
