@@ -1,4 +1,6 @@
-# Mailjet
+![alt text](https://www.mailjet.com/images/email/transac/logo_header.png "Mailjet")
+
+# Official Mailjet Ruby wrapper
 
 [Mailjet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
 
