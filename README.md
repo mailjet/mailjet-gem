@@ -160,7 +160,7 @@ class AwesomeMailer < ApplicationMailer
 end
 ```
 
-The default API version is v3.0. If you want to use v3.1, this can be set via `delivery_method_options`:
+Keep in mind that to use the latest version of the Send API, you need to specify the version via `delivery_method_options`:
 
 ```ruby
 delivery_method_options: { version: 'v3.1' }
@@ -169,23 +169,6 @@ delivery_method_options: { version: 'v3.1' }
 Other supported options are:
 
 ```ruby
-# For v3_0 API
-
-* :recipients
-* :'mj-prio'
-* :'mj-campaign'
-* :'mj-deduplicatecampaign'
-* :'mj-templatelanguage'
-* :'mj-templateerrorreporting'
-* :'mj-templateerrordeliver'
-* :'mj-templateid'
-* :'mj-trackopen'
-* :'mj-trackclick',
-* :'mj-customid'
-* :'mj-eventpayload'
-* :vars
-* :headers
-
 # For v3_1 API
 
 * :api_key
@@ -203,6 +186,23 @@ Other supported options are:
 * :'EventPayload'
 * :'Variables'
 * :'Headers'
+
+# For v3_0 API
+
+* :recipients
+* :'mj-prio'
+* :'mj-campaign'
+* :'mj-deduplicatecampaign'
+* :'mj-templatelanguage'
+* :'mj-templateerrorreporting'
+* :'mj-templateerrordeliver'
+* :'mj-templateid'
+* :'mj-trackopen'
+* :'mj-trackclick',
+* :'mj-customid'
+* :'mj-eventpayload'
+* :vars
+* :headers
 ```
 
 Otherwise, you can pass the custom Mailjet SMTP headers directly:
