@@ -94,7 +94,7 @@ module Mailjet
       def create(attributes = {}, options = {})
         # if action method, ammend url to appropriate id
         opts = define_options(options)
-        self.resource_path = create_action_resource_path(attributes[:id]) if self.action
+        self.resource_path = create_action_resource_path(attributes[:id]) if (self.action and attributes[:id])
         attributes.tap { |hs| hs.delete(:id) }
 
         if Mailjet.config.default_from and self.resource_path == 'send/'
