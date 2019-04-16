@@ -277,14 +277,14 @@ class Mailjet::APIMailer
                   from_email: mail[:from].addresses.first }
 
     payload = {
-      to: mail[:to].formatted.join(', '),
+      to: mail[:to].join(', '),
       sender: mail[:sender],
       subject: mail.subject
     }
 
-    payload[:cc] = mail[:cc].formatted.join(', ') if mail[:cc]
-    payload[:reply_to] = mail[:reply_to].formatted.join(', ') if mail[:reply_to]
-    payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
+    payload[:cc] = mail[:cc].join(', ') if mail[:cc]
+    payload[:reply_to] = mail[:reply_to].join(', ') if mail[:reply_to]
+    payload[:bcc] = mail[:bcc].join(', ') if mail[:bcc]
 
     # Send the final payload to Mailjet Send API
     payload.merge(content)
