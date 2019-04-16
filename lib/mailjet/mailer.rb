@@ -42,6 +42,13 @@ class Mailjet::APIMailer
 
   CONNECTION_PERMITTED_OPTIONS = [:api_key, :secret_key]
 
+  HEADER_BLACKLIST = [
+    'from', 'sender', 'subject', 'to', 'cc', 'bcc', 'return-path', 'delivered-to', 'dkim-signature',
+    'domainkey-status', 'received-spf', 'authentication-results', 'received', 'user-agent', 'x-mailer',
+    'x-feedback-id', 'list-id', 'date', 'x-csa-complaints', 'message-id', 'reply-to', 'content-type',
+    'mime-version', 'content-transfer-encoding'
+  ]
+
   def initialize(opts = {})
     options = HashWithIndifferentAccess.new(opts)
 
@@ -110,7 +117,7 @@ class Mailjet::APIMailer
     if mail.header && mail.header.fields.any?
       content[:Headers] = {}
       mail.header.fields.each do |header|
-        if header.name.start_with?('X-') && !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet')
+        if !header.name.start_with?('X-MJ') && !header.name.start_with?('X-Mailjet') && !HEADER_BLACKLIST.include?(header.name.downcase)
           content[:Headers][header.name] = header.value
         end
       end
