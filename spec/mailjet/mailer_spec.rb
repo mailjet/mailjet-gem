@@ -198,13 +198,13 @@ module Mailjet
       from_email = 'albert@bar.com'
       recipients = 'test <test@test.com>'
 
-      message = Mail.new
+      message = Mail.new(headers: {Key: 'value'})
       message.from = "#{from_name} <#{from_email}>"
       message.to = recipients
 
       expect(Mailjet::Send).to receive(:create).with(
         hash_including(
-          :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Headers=>{}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
+          :Messages=>[{:To=>[{:Email=>"test@test.com", :Name=>"test"}], :Headers=>{'Key'=>"value"}, :From=>{:Email=>"albert@bar.com", :Name=>"Albert"}}]
         ),
         { "version" => "v3.1" }
       )
