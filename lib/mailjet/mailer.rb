@@ -126,8 +126,8 @@ class Mailjet::APIMailer
     # ReplyTo property was added in v3.1
     # Passing it as an header if mail.reply_to
 
-    if mail.reply_to
-      if mail.reply_to.respond_to?(:display_names) && mail.reply_to.display_names.first
+    if mail[:reply_to]
+      if mail[:reply_to].respond_to?(:display_names) && mail[:reply_to].display_names.first
         content[:ReplyTo] = {:Email=> mail[:reply_to].addresses.first, :Name=> mail[:reply_to].display_names.first}
       else
         content[:ReplyTo] = {:Email=> mail[:reply_to].addresses.first}
