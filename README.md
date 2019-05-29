@@ -111,6 +111,20 @@ But if you are using Mailjet with Rails, you can simply generate it:
 $ rails generate mailjet:initializer
 ```
 
+### Base URL
+
+The default base domain name for the Mailjet API is `https://api.mailjet.com`. You can modify this base URL by setting a value for `end_point` in your call:
+
+```php
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.api_version = "v3.1"
+  config.end_point = "https://api.us.mailjet.com"
+end
+```
+
+If your account has been moved to Mailjet's **US architecture**, the URL value you need to set is `https://api.us.mailjet.com`.
 
 ### Send emails via the Send API
 
