@@ -158,7 +158,7 @@ variable = Mailjet::Send.create(messages: [{
     'HTMLPart'=> '<h3>Dear passenger 1, welcome to <a href=\'https://www.mailjet.com/\'>Mailjet</a>!</h3><br />May the delivery force be with you!'
 }]
 )
-p variable.attributes['Messages']
+p variable.attributes[:messages]
 ```
 
 ## Call Configuration Specifics
