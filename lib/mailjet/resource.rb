@@ -34,6 +34,9 @@ module Mailjet
       end
 
       def self.default_connection(options = {})
+        p options[:url]
+        p options[:version]
+        p resource_path
         Mailjet::Connection.new(
           "#{options[:url]}/#{options[:version]}/#{resource_path}",
           options[:api_key] || Mailjet.config.api_key,
