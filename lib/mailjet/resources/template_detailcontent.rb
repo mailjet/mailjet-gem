@@ -4,8 +4,8 @@ module Mailjet
     self.action = 'detailcontent'
     self.resource_path = "REST/template/id/#{self.action}"
     self.public_operations = [:get,:post]
-    self.filters = [:api_key, :categories, :categories_selection_method, :edit_mode, :name, :owner_type, :purposes, :purposes_selection_method, :user]
-    self.resourceprop = [:author, :categories, :copyright, :description, :edit_mode, :is_starred, :name, :owner_type, :presets, :purposes]
+    self.filters = []
+    self.resourceprop = [:text_part, :html_part, :headers, :mjml_content]
 
   end
 end
