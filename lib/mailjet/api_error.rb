@@ -4,14 +4,15 @@ require 'active_support'
 module Mailjet
   class ApiError < StandardError
 
-    attr_accessor :code, :reason
-
+    attr_accessor :code, :reason, :response_json
 
     def initialize(code, res, request, request_path, params)
       self.code = code
       self.reason = ""
+      self.response_json = {}
       unless res.blank?
         resdec = ActiveSupport::JSON.decode(res)
+        self.response_json = resdec
         self.reason = resdec['ErrorMessage']
       end
       # code is ugly, output is pretty
