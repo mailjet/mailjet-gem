@@ -8,5 +8,21 @@ module Mailjet
 
     self.read_only = true
 
+    def self.find(id, job_id = nil, options = {})
+      opts = define_options(options)
+      self.resource_path = create_action_resource_path(id, job_id) if self.action
+
+      raw_data = parse_api_json(connection(opts)[id].get(default_headers))
+
+      raw_data.map do |entity|
+        instanciate_from_api(entity)
+      end
+    rescue Mailjet::ApiError => e
+      if e.code == 404
+        nil
+      else
+        raise e
+      end
+    end
   end
 end
