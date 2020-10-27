@@ -13,10 +13,6 @@ module Mailjet
 
       raw_data = parse_api_json(connection(opts)[id].get(default_headers))
 
-      if raw_data.count == 1
-        return instanciate_from_api(raw_data.first)
-      end
-
       raw_data.map do |entity|
         instanciate_from_api(entity)
       end
