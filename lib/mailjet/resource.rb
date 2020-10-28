@@ -294,7 +294,7 @@ module Mailjet
       save(opts)
     end
 
-    def delete(call)
+    def delete
       self.class.delete(id)
     end
 

@@ -2,8 +2,6 @@
 
 # Official Mailjet Ruby wrapper
 
-[Mailjet][mailjet]'s official Ruby wrapper, bootstraped with [Mailjetter][mailjetter].
-
 [![Build Status](https://travis-ci.org/mailjet/mailjet-gem.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-gem)
 
 <!--
@@ -37,29 +35,54 @@
 <!-- You can read this readme file in other languages:
 english | [french](./README.fr.md) -->
 
-This gem helps you to:
+## Overview
 
-* Send transactional emails through Mailjet API in Rails 3/4
-* Manage your lists, contacts and campaigns, and much more...
-* Track email delivery through event API
+This repository contains the official Ruby wrapper for the Mailjet API, bootstraped with [Mailjetter][mailjetter].
 
-Compatibility:
-
- - Ruby 2.2.X
-
-Rails ActionMailer integration designed for Rails 3.X and 4.X
-
-IMPORTANT: Mailjet gem switched to API v3, the new API provided by Mailjet. For the wrapper for API v1, check the [v1 branch][v1-branch].
-
-Every code example can be found in the [Mailjet Documentation][mailjet_doc]
-
-(Please refer to the [Mailjet Documentation Repository][api_doc] to contribute to the documentation examples)
+Check out all the resources and Ruby code examples in the [Offical Documentation](https://dev.mailjet.com/guides/?ruby#getting-started).
 
 
+## Table of contents
 
-## Install
+- [Compatibility](#compatibility)
+- [Installation](#installation)
+  - [Rubygems](#rubygems)
+  - [Bundler](#bundler)
+- [Authentication](#authentication)
+- [Make your first call](#make-your-first-call)
+- [Call configuration specifics](#call-configuration-specifics)
+  - [API versioning](#api-versioning)
+  - [Base URL](#base-url)
+- [List of resources](#list-of-resources)
+  - [Naming conventions](#naming-conventions)
+- [Request examples](#request-examples)
+  - [POST request](#post-request)
+    - [Simple POST request](#simple-post-request)
+    - [Using actions](#using-actions)
+  - [GET request](#get-request)
+    - [Retrieve all objects](#retrieve-all-objects)
+    - [Use filtering](#use-filtering)
+    - [Retrieve a single object](#retrieve-a-single-object)
+    - [Retrieve the count of objects matching the query](retrieve-the-count-of-objects-matching-the-query)
+    - [Retrieve the first object matching the query](retrieve-the-first-object-matching-the-query)
+  - [PUT request](#put-request)
+  - [DELETE request](#delete-request)
+- [Send emails with ActionMailer](#send-emails-with-actionmailer)
+- [Track email delivery](#track-email-delivery)
+- [Testing](#testing)
+- [Contribute](#contribute)
+
+## Compatibility
+
+This library requires **Ruby v2.2.X**.
+
+The Rails ActionMailer integration is designed for Rails 3.X and 4.X.
+
+## Installation
 
 ### Rubygems
+
+Use the below command to install the wrapper.
 
 ```bash
 $ gem install mailjet
@@ -74,25 +97,22 @@ Add the following in your Gemfile:
 gem 'mailjet'
 ```
 
-If you wish to use the most up to date version from Github, add the following in your Gemfile instead:
+If you wish to use the most recent release from Github, add the following in your Gemfile instead:
 
 ```ruby
 #Gemfile
 gem 'mailjet', :git => 'https://github.com/mailjet/mailjet-gem.git'
 ```
-and let the bundler magic happen
+
+Then let the bundler magic happen:
 
 ```bash
 $ bundle install
 ```
 
-## Setup
+##  Authentication
 
-### Api key
-
-You need a proper account with [Mailjet][mailjet]. You can get the API key through the [Mailjet][mailjet] interface in _Account/Master API key_
-
-Add the keys to an initializer:
+The Mailjet Email API uses your API and Secret keys for authentication. [Grab](https://app.mailjet.com/account/api_keys) and save your Mailjet API credentials by adding them to an initializer:
 
 ```ruby
 # initializers/mailjet.rb
@@ -103,7 +123,7 @@ Mailjet.configure do |config|
 end
 ```
 
-`default_from` is optional if you send emails with `:mailjet`'s SMTP (below)
+`default_from` is optional if you send emails with [`:mailjet`'s SMTP](https://github.com/mailjet/mailjet-gem#send-emails-with-actionmailer).
 
 But if you are using Mailjet with Rails, you can simply generate it:
 
@@ -111,28 +131,219 @@ But if you are using Mailjet with Rails, you can simply generate it:
 $ rails generate mailjet:initializer
 ```
 
+## Make your first call
 
-### Send emails via the Send API
+Here's an example on how to send an email:
 
-Find more about the Mailjet Send API in the [official guides](http://dev.mailjet.com/guides/?ruby#choose-sending-method)
-
-``` ruby
-email = { :from_email   => "your email",
-          :from_name    => "Your name",
-          :subject      => "Hello",
-          :text_part    => "Hi",
-          :recipients   => [{:email => "recipient email"}] }
-
-test = Mailjet::Send.create(email)
-
-# retrieve the API response
-p test.attributes['Sent']
+```ruby
+require 'mailjet'
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.api_version = "v3.1"
+end
+variable = Mailjet::Send.create(messages: [{
+    'From'=> {
+        'Email'=> '$SENDER_EMAIL',
+        'Name'=> 'Me'
+    },
+    'To'=> [
+        {
+            'Email'=> '$RECIPIENT_EMAIL',
+            'Name'=> 'You'
+        }
+    ],
+    'Subject'=> 'My first Mailjet Email!',
+    'TextPart'=> 'Greetings from Mailjet!',
+    'HTMLPart'=> '<h3>Dear passenger 1, welcome to <a href=\'https://www.mailjet.com/\'>Mailjet</a>!</h3><br />May the delivery force be with you!'
+}]
+)
+p variable.attributes[:messages]
 ```
 
-### Send emails with ActionMailer
-A quick walkthrough to use Rails Action Mailer [here](http://guides.rubyonrails.org/action_mailer_basics.html)
+## Call Configuration Specifics
+
+### API Versioning
+
+The Mailjet API is spread among three distinct versions:
+
+- `v3` - The Email API
+- `v3.1` - Email Send API v3.1, which is the latest version of our Send API
+- `v4` - SMS API (not supported in this library yet)
+
+Since most Email API endpoints are located under `v3`, it is set as the default one and does not need to be specified when making your request. For the others you need to specify the version using `api_version`. For example, if using Send API `v3.1`:
+
+```ruby
+require 'mailjet'
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.api_version = "v3.1"
+end
+```
+
+### Base URL
+
+The default base domain name for the Mailjet API is `https://api.mailjet.com`. You can modify this base URL by setting a value for `end_point` in your call:
+
+```ruby
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.api_version = "v3.1"
+  config.end_point = "https://api.us.mailjet.com"
+end
+```
+
+If your account has been moved to Mailjet's **US architecture**, the URL value you need to set is `https://api.us.mailjet.com`.
+
+## List of resources
+
+You can find the list of all available resources for this library, as well as their configuration, in [/lib/mailjet/resources](https://github.com/mailjet/mailjet-gem/tree/master/lib/mailjet/resources).
+
+### Naming conventions
+
+- Class names' first letter is capitalized followed by the rest of the resource name in lowercase (e.g. `listrecipient` will be `Listrecipient` in ruby)
+- Ruby attribute names are the underscored versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
+
+## Request examples
+
+### POST Request
+
+Use the `create` method of the Mailjet CLient (i.e. `variable = Mailjet::$resource.create($params)`).
+
+`$params` will be a list of properties used in the request payload.
+
+#### Simple POST request
+
+```ruby
+# Create a new contact:
+require 'mailjet'
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+end
+variable = Mailjet::Contact.create(email: "Mister@mailjet.com"
+)
+p variable.attributes['Data']
+```
+
+#### Using actions
+
+Some APIs allow the use of action endpoints. To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing - e.g. `Contact_managecontactslists`.
+
+Use `id` to specify the ID you want to apply a POST request to (used in case of action on a resource).
+
+```ruby
+# Manage the subscription status of a contact to multiple lists
+require 'mailjet'
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+end
+variable = Mailjet::Contact_managecontactslists.create(id: $ID, contacts_lists: [{
+    'ListID'=> '$ListID_1',
+    'Action'=> 'addnoforce'
+}, {
+    'ListID'=> '$ListID_2',
+    'Action'=> 'addforce'
+}]
+)
+p variable.attributes['Data']
+```
+
+### GET request
+
+#### Retrieve all objects
+
+Use the `.all` method of the Mailjet CLient (i.e. `Mailjet::$resource.all()`) to retrieve all objects you are looking for. By default, `.all` will retrieve only 10 objects - you have to specify `limit: 0` if you want to GET them all (up to 1000 objects).
+
+```ruby
+> recipients = Mailjet::Listrecipient.all(limit: 0)
+```
+
+#### Use filtering
+
+You can refine queries using API filters, as well as the following parameters:
+
+- `format`: `:json`, `:xml`, `:rawxml`, `:html`, `:csv` or `:phpserialized` (default: `:json`)
+- `limit`: integer (default: `10`)
+- `offset`: integer (default: `0`)
+- `sort`: `[[:property, :asc], [:property, :desc]]`
+
+```ruby
+# To retrieve all contacts from contact list ID 123:
+> variable = Mailjet::Contact.all(limit: 0, contacts_list: 123)
+```
+
+#### Retrieve a single object
+
+Use the `.find` method to retrieve a specific object. Specify the ID of the object inside the parentheses.
+
+```ruby
+# Retrieve a specific contact ID.
+require 'mailjet'
+Mailjet.configure do |config|
+  config.api_key = ENV['MJ_APIKEY_PUBLIC']
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+end
+variable = Mailjet::Contact.find($CONTACT_EMAIL)
+p variable.attributes['Data']
+```
+
+#### Retrieve the count of objects matching the query
+
+```ruby
+> Mailjet::Contact.count
+=> 83
+```
+
+#### Retrieve the first object matching the query
+
+```ruby
+> Mailjet::Contact.first
+=> #<Mailjet::Contact>
+````
+
+### PUT request
+
+A `PUT` request in the Mailjet API will work as a `PATCH` request - the update will affect only the specified properties. The other properties of an existing resource will neither be modified, nor deleted. It also means that all non-mandatory properties can be omitted from your payload.
+
+Here's an example of a PUT request:
+
+```ruby
+> recipient = Mailjet::Listrecipient.first
+=> #<Mailjet::Listrecipient>
+> recipient.is_active = false
+=> false
+> recipient.attributes
+=> {...} # attributes hash
+> recipient.save
+=> true
+> recipient.update_attributes(is_active: true)
+=> true
+```
+
+### DELETE request
+
+Here's an example of a `DELETE` request:
+
+```ruby
+> recipient = Mailjet::Listrecipient.first
+=> #<Mailjet::Listrecipient>
+> recipient.delete
+> Mailjet::Listrecipient.delete(123)
+=> #<Mailjet::Listrecipient>
+```
+
+Upon a successful `DELETE` request the response will not include a response body, but only a `204 No Content` response code.
+
+## Send emails with ActionMailer
+
+A quick walkthrough to use Rails Action Mailer [here](http://guides.rubyonrails.org/action_mailer_basics.html).
 
 First set your delivery method (here Mailjet SMTP relay servers):
+
 ```ruby
 # application.rb or config/environments specific settings, which take precedence
 config.action_mailer.delivery_method = :mailjet
@@ -140,12 +351,13 @@ config.action_mailer.delivery_method = :mailjet
 ```
 
 Or if you prefer sending messages through [Mailjet Send API](http://dev.mailjet.com/guides/#send-transactional-email):
+
 ```ruby
 # application.rb
 config.action_mailer.delivery_method = :mailjet_api
 ```
 
-You can use mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc](http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options):
+You can use Mailjet specific options with `delivery_method_options` as detailed in the official [ActionMailer doc](http://guides.rubyonrails.org/action_mailer_basics.html#sending-emails-with-dynamic-delivery-options):
 
 ```ruby
 class AwesomeMailer < ApplicationMailer
@@ -271,150 +483,6 @@ UserMailer.welcome_email.deliver_now!
 
 For more information on `ActionMailer::MessageDelivery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
 
-## Manage your campaigns
-
-This gem provide a convenient wrapper for consuming the mailjet API. The wrapper is highly inspired by [ActiveResource][activeresource] even though it does not depend on it.
-
-You can find out all the resources you can access to in the [Official API docs][apidocs].
-
-Let's have a look at the power of this thin wrapper
-
-### Naming conventions
-
-* Class names' first letter is capitalized followed by the rest of the resource name in lowercase (e.g. `listrecipient` will be `Listrecipient` in ruby)
-* Ruby attribute names are the [underscored][underscore-api] versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
-
-### Wrapper REST API
-
-Let's say we want to manage list recipients.
-
-#### GET all the recipients in one query:
-
-```ruby
-> recipients = Mailjet::Listrecipient.all(limit: 0)
-=> [#<Mailjet::Listrecipient>, #<Mailjet::Listrecipient>]
-```
-
-By default, `.all` will retrieve only 10 resources, so, you have to specify `limit: 0` if you want to GET them all.
-
-You can refine queries using [API Filters][apidoc-recipient]`*` as well as the following parameters:
-
-* format: `:json, :xml, :rawxml, :html, :csv` or `:phpserialized` (default: `:json`)
-* limit: int (default: 10)
-* offset: int (default: 0)
-* sort: `[[:property, :asc], [:property, :desc]]`
-
-#### GET the resources count
-
-```ruby
-> Mailjet::Listrecipient.count
-=> 83
-```
-
-#### GET the first resource matching a query
-
-```ruby
-> Mailjet::Listrecipient.first
-=> #<Mailjet::Listrecipient>
-```
-
-#### GET a resource from its id
-
-```ruby
-> recipient = Mailjet::Listrecipient.find(id)
-=> #<Mailjet::Listrecipient>
-```
-
-#### Updating a resource
-
-```ruby
-> recipient = Mailjet::Listrecipient.first
-=> #<Mailjet::Listrecipient>
-> recipient.is_active = false
-=> false
-> recipient.attributes
-=> {...} # attributes hash
-> recipient.save
-=> true
-> recipient.update_attributes(is_active: true)
-=> true
-```
-
-#### Deleting a resource
- ```ruby
-> recipient = Mailjet::Listrecipient.first
-=> #<Mailjet::Listrecipient>
-> recipient.delete
-> Mailjet::Listrecipient.delete(123)
-=> #<Mailjet::Listrecipient>
- ```
-
-### Action Endpoints
-
-Some APIs allow the use of action endpoints:
-* [/newsletter](http://dev.mailjet.com/email-api/v3/newsletter/)
-* [/contact](http://dev.mailjet.com/email-api/v3/contact/)
-* [/contactslist](http://dev.mailjet.com/email-api/v3/contactslist/)
-
-To use them in this wrapper, the API endpoint is in the beginning, followed by an underscore, followed by the action you are performing.
-
-For example, the following performs `managemanycontacts` on the `contactslist` endpoint:
-where 4 is the `listid` and 3025 is the `jobid`
-``` ruby
-Mailjet::Contactslist_managemanycontacts.find(4, 3025)
-```
-
-Each action endpoint requires the ID of the object you are changing.  To 'create' (POST), pass the ID as a variable like such:
-``` ruby
-Mailjet::Contactslist_managecontact.create(id: 1, action: "unsub", email: "example@me.com", name: "tyler")
-```
-
-To 'find' (GET), pass the ID as a variable like such:
-``` ruby
-Mailjet::Contact_getcontactslists.find(1)
-# will return all the lists containing the contact with id 1
-```
-
-Managing large amount of contacts asyncronously, uploading many contacts and returns a `job_id`
-``` ruby
-managecontactslists = Mailjet::Contact_managemanycontacts.create(contacts_lists: [{:ListID => 39, :action => "addnoforce"}], contacts: [{Email: 'mr-smith@mailjet.com'}])
-
-```
-
-To 'find' (GET) with also a job ID, pass two parameters - first, the ID of the object; second, the job ID:
-``` ruby
-Mailjet::Contactslist_managemanycontacts.find(1, 34062)
-# where 1 is the contactlist id and 34062 is the job id
-```
-
-Some actions are not attached to a specific resource, like /contact/managemanycontacts. In these cases when there is a job ID but no ID for the object when 'find'ing, pass `nil` as the first parameter:
-``` ruby
-Mailjet::Contact_managemanycontacts.find(nil, 34062)
-```
-
-## Send emails through API
-
-In order to send emails through the API, you just have to `create` a new `Send` resource.
-
-``` ruby
-Mailjet::Send.create(from_email: "me@example.com", to: "you@example.com", subject: "Mailjet is awesome", text_part: "Yes, it is!")
-```
-
-If you want to send it to multiple recipients, just use an array:
-``` ruby
-Mailjet::Send.create(from_email: "me@example.com", to: "you@example.com, someone-else@example.com", subject: "Mailjet is awesome", text_part: "Yes, it is!")
-```
-
-In order to Mailjet modifiers, you cannot use the regular form of Ruby 2 hashes. Instead, use a String `e.g.: 'mj-prio' => 2` or a quoted symbol `e.g.: 'mj-prio' => 2`.
-
-In these modifiers, there is now the ability to add a Mailjet custom-id or Mailjet Custom payload using the following:
-```ruby
-'mj-customid' => "A useful custom ID"
-'mj-eventpayload' => '{"message": "hello world"}'
-```
-
-For more information on custom properties and available params, see the [official doc][send-api-doc].
-
 ## Track email delivery
 
 You can setup your Rack application in order to receive feedback on emails you sent (clicks, etc.)
@@ -485,12 +553,21 @@ Then at the root of the gem, simply run:
 bundle
 bundle exec rake
 ```
-## Send a pull request
+
+## Contribute
+
+Mailjet loves developers. You can be part of this project!
+
+This wrapper is a great introduction to the open source world, check out the code!
+
+Feel free to ask anything, and contribute:
 
  - Fork the project.
- - Create a topic branch.
+ - Create a new branch.
  - Implement your feature or bug fix.
- - Add documentation for your feature or bug fix.
+ - Add documentation for it.
  - Add specs for your feature or bug fix.
  - Commit and push your changes.
  - Submit a pull request. Please do not include changes to the gemspec, or version file.
+
+ If you have suggestions on how to improve the guides, please submit an issue in our [Official API Documentation repo](https://github.com/mailjet/api-documentation).
