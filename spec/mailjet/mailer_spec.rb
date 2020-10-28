@@ -446,47 +446,4 @@ module Mailjet
       expect(message.attributes['Messages'].first['To'].first['Email']).to eq(ENV['TEST_EMAIL'])
     end
   end
-
-  RSpec.describe Configuration do
-    def reset_config
-      # reset Mailjet::Configuration
-      Mailjet.send(:remove_const, :Configuration) if Mailjet.const_defined?(:Configuration)
-      load 'mailjet/configuration.rb'
-    end
-
-    before(:each) do
-      reset_config
-    end
-
-    after(:each) do
-      reset_config
-    end
-
-    it 'default configuration settings should be set' do
-      Mailjet::Configuration::DEFAULT.each do |k,v|
-        expect(Mailjet.config.send(k)).to eq(v)
-      end
-    end
-
-    it 'default configuration settings should be override-able' do
-      values = {
-        api_version: 'something',
-        end_point: 'something else',
-        perform_api_call: 'and else',
-        sandbox_mode: 'and something else'
-      }
-
-      Mailjet.configure do |config|
-        config.api_version = values[:api_version]
-        config.end_point = values[:end_point]
-        config.perform_api_call = values[:perform_api_call]
-        config.sandbox_mode = values[:sandbox_mode]
-      end
-
-      Mailjet::Configuration::DEFAULT.each do |k,v|
-        expect(Mailjet.config.send(k)).not_to eq(v)
-        expect(Mailjet.config.send(k)).to eq(values[k])
-      end
-    end
-  end
 end
