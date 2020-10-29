@@ -1,6 +1,6 @@
 require "mailjet_spec_helper"
 
-RSpec.describe "Mailjet::Contact", :vcr do
+RSpec.describe Mailjet::Contact, :vcr do
   it "returns all contacts" do
     contacts = Mailjet::Contact.all()
     expect(contacts.count).to eq 4
