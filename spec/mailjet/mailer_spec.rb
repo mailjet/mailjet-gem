@@ -255,19 +255,12 @@ module Mailjet
       )
     end
 
-    it "should send email with HTML body and an attachment with API v3.0" do
-      Mailjet.configure do |config|
-        config.api_key = ENV['MJ_APIKEY_PUBLIC']
-        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-        config.api_version = "v3"
-      end
-
-      from_email = ENV['TEST_EMAIL']
-      recipient  = ENV['TEST_EMAIL']
+    it "sends email with HTML body and an attachment with API v3.0", :vcr do
+      Mailjet.config.api_version = "v3"
 
       message = Mail.new do
-        from          from_email
-        to            recipient
+        from          "pilot@example.com"
+        to            "passenger@example.com"
         subject       "This is a nice welcome email (API v3.0)"
         body          "Test"
         content_type  "text/html"
@@ -278,9 +271,10 @@ module Mailjet
         content: "hello world"
       }
 
-      sent = APIMailer.new.deliver!(message)
+      res = APIMailer.new.deliver!(message)
+      receiver = res.attributes["Sent"].first["Email"]
 
-      expect(sent.attributes["Sent"].first["Email"]).to eq(ENV['TEST_EMAIL'])
+      expect(receiver).to eq "passenger@example.com"
     end
 
     it "should send email with Text body and an attachment with API v3.0" do
