@@ -7,6 +7,11 @@ RSpec.describe Mailjet::Messagehistory, :vcr do
       expect(history.count).to eq 6
     end
 
+    it "returns empty list when no records found" do
+      history = Mailjet::Messagehistory.find(123)
+      expect(history).to eq []
+    end
+
     it "returns collection when there is only one record" do
       history = Mailjet::Messagehistory.find(288230381068036023)
       puts history.first.attributes
