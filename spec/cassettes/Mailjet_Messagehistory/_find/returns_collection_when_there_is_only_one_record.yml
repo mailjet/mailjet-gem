@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/messagehistory/288230381068036023
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2020 22:56:56 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '156'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "Comment" : "", "EventAt" : 1603783635,
+        "EventType" : "sent", "State" : "", "Useragent" : "", "UseragentID" : 0 }],
+        "Total" : 1 }'
+    http_version: null
+  recorded_at: Thu, 29 Oct 2020 22:56:56 GMT
+recorded_with: VCR 5.1.0
