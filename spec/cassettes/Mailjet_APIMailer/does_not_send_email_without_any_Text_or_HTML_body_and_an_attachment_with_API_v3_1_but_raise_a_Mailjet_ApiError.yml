@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3.1/send
+    body:
+      encoding: UTF-8
+      string: '{"Messages":[{"To":[{"Email":"passenger@example.com"}],"Attachments":[{"ContentType":"text/plain","Filename":"filename.txt","Base64Content":"aGVsbG8gd29ybGQ=\n"}],"InlinedAttachments":[],"Headers":{},"From":{"Email":"pilot@example.com"},"Subject":"This
+        is a nice welcome email (API v3.1)"}]}'
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '291'
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Content-Length:
+      - '287'
+      Content-Type:
+      - application/json; charset=UTF-8
+      X-Mj-Request-Guid:
+      - e3dad2d3-35d8-4b98-a244-7d94d96d8b9c
+      Date:
+      - Thu, 29 Oct 2020 22:23:06 GMT
+    body:
+      encoding: UTF-8
+      string: '{"Messages":[{"Status":"error","Errors":[{"ErrorIdentifier":"611f2471-fd20-474c-8928-b22f27bff0c5","ErrorCode":"send-0003","StatusCode":400,"ErrorMessage":"At
+        least \"HTMLPart\", \"TextPart\" or \"TemplateID\" must be provided.","ErrorRelatedTo":["TextPart","HTMLPart","TemplateID"]}]}]}'
+    http_version: null
+  recorded_at: Thu, 29 Oct 2020 22:23:06 GMT
+recorded_with: VCR 5.1.0

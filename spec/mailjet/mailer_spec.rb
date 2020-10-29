@@ -212,20 +212,6 @@ module Mailjet
       APIMailer.new.deliver!(message, { "version" => "v3.1" })
     end
 
-    #it 'fails to send' do
-    #  from_name = 'Albert'
-    #  from_email = 'albert@bar.com'
-    #  recipients = ''
-    #  message = Mail.new do
-    #    from       ""
-    #    to         recipients
-    #  end
-
-    #  expect { raise NoMethodError }.to raise_error
-
-    #  APIMailer.new.deliver!(message)
-    #end
-
     it 'should test content id set on inline attachments' do
       from_name = 'Albert'
       from_email = 'albert@bar.com'
@@ -299,15 +285,11 @@ module Mailjet
       expect(receiver).to eq "passenger@example.com"
     end
 
-    it "should send email with HTML body and an attachment with API v3.1" do
-      Mailjet.configure do |config|
-        config.api_key = ENV['MJ_APIKEY_PUBLIC']
-        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-        config.api_version = "v3.1"
-      end
+    it "sends email with HTML body and an attachment with API v3.1", :vcr do
+      Mailjet.config.api_version = "v3.1"
 
-      from_email = ENV['TEST_EMAIL']
-      recipient  = ENV['TEST_EMAIL']
+      from_email = "pilot@example.com"
+      recipient  = "passenger@example.com"
 
       message = Mail.new do
         from          from_email
@@ -324,24 +306,18 @@ module Mailjet
         content: "hello world"
       }
 
-      sent = APIMailer.new.deliver!(message)
+      res = APIMailer.new.deliver!(message)
+      status = res.attributes["Messages"].first["Status"]
 
-      expect(sent.attributes["Messages"].first["Status"]).to eq("success")
+      expect(status).to eq("success")
     end
 
-    it "should send email with Text body and an attachment with API v3.1" do
-      Mailjet.configure do |config|
-        config.api_key = ENV['MJ_APIKEY_PUBLIC']
-        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-        config.api_version = "v3.1"
-      end
-
-      from_email = ENV['TEST_EMAIL']
-      recipient  = ENV['TEST_EMAIL']
+    it "sends email with Text body and an attachment with API v3.1", :vcr do
+      Mailjet.config.api_version = "v3.1"
 
       message = Mail.new do
-        from          from_email
-        to            recipient
+        from          "pilot@example.com"
+        to            "passenger@example.com"
         subject       "This is a nice welcome email (API v3.1)"
         body          "Test"
         content_type  "text/plain"
@@ -352,24 +328,18 @@ module Mailjet
         content: "hello world"
       }
 
-      sent = APIMailer.new.deliver!(message)
+      res = APIMailer.new.deliver!(message)
+      status = res.attributes["Messages"].first["Status"]
 
-      expect(sent.attributes["Messages"].first["Status"]).to eq("success")
+      expect(status).to eq("success")
     end
 
-    it "should not send email without any Text or HTML body and an attachment with API v3.1 but raise a Mailjet::ApiError" do
-      Mailjet.configure do |config|
-        config.api_key = ENV['MJ_APIKEY_PUBLIC']
-        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-        config.api_version = "v3.1"
-      end
-
-      from_email = ENV['TEST_EMAIL']
-      recipient  = ENV['TEST_EMAIL']
+    it "does not send email without any Text or HTML body and an attachment with API v3.1 but raise a Mailjet::ApiError", :vcr do
+      Mailjet.config.api_version = "v3.1"
 
       message = Mail.new do
-        from          from_email
-        to            recipient
+        from          "pilot@example.com"
+        to            "passenger@example.com"
         subject       "This is a nice welcome email (API v3.1)"
       end
 
@@ -381,18 +351,13 @@ module Mailjet
       expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::ApiError)
     end
 
-    it 'should return data in attribute "Sent" using Send API v3.0' do
+    it 'returns data in attribute "Sent" using Send API v3.0', :vcr do
+      Mailjet.config.api_version = "v3"
 
-      Mailjet.configure do |config|
-        config.api_key = ENV['MJ_APIKEY_PUBLIC']
-        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-        config.api_version = "v3"
-      end
-
-      recipient = { 'Email': ENV['TEST_EMAIL'] }
+      recipient = { "Email": "passenger@example.com" }
 
       message = Mailjet::Send.create(
-        from_email: ENV['TEST_EMAIL'],
+        from_email: "pilot@example.com",
         from_name: 'Mailjet Ruby Wrapper CI',
         subject: 'Mailjet Ruby Wrapper CI Send API v3.0 spec',
         text_part: 'Mailjet Ruby Wrapper CI content',
@@ -403,23 +368,18 @@ module Mailjet
       expect(message.attributes['Sent'].first).to include(recipient)
     end
 
-    it 'should return data in attribute "Sent" using API v3.1' do
-
-      Mailjet.configure do |config|
-        config.api_key = ENV['MJ_APIKEY_PUBLIC']
-        config.secret_key = ENV['MJ_APIKEY_PRIVATE']
-        config.api_version = "v3.1"
-      end
+    it 'returns data in attribute "Sent" using API v3.1', :vcr do
+      Mailjet.config.api_version = "v3.1"
 
       recipient = {
-        'Email' => ENV['TEST_EMAIL'],
+        'Email' => "passenger@example.com",
         'Name' => 'test'
       }
 
       message = Mailjet::Send.create(
         messages: [{
           'From' => {
-            'Email' => ENV['TEST_EMAIL'],
+            'Email' => "pilot@example.com",
             'Name' => 'Mailjet Ruby Wrapper CI'
           },
           'To' => [
@@ -431,7 +391,7 @@ module Mailjet
           }]
       )
 
-      expect(message.attributes['Messages'].first['To'].first['Email']).to eq(ENV['TEST_EMAIL'])
+      expect(message.attributes['Messages'].first['To'].first['Email']).to eq "passenger@example.com"
     end
   end
 end

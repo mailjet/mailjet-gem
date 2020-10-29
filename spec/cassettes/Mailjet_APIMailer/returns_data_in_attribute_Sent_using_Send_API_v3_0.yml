@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3/send
+    body:
+      encoding: UTF-8
+      string: '{"FromEmail":"pilot@example.com","FromName":"Mailjet Ruby Wrapper CI","Subject":"Mailjet
+        Ruby Wrapper CI Send API v3.0 spec","Text-part":"Mailjet Ruby Wrapper CI content","Html-part":"\u003Ch3\u003EMailjet
+        Ruby Wrapper CI content\u003C/h3\u003E","Recipients":[{"Email":"passenger@example.com"}]}'
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '295'
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2020 22:24:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '143'
+    body:
+      encoding: UTF-8
+      string: |
+        { "Sent" : [{ "Email" : "passenger@example.com", "MessageID" : 576460757258503077, "MessageUUID" : "5cbb186a-f6cb-4ff7-8b73-69f929184ddd" }] }
+    http_version: null
+  recorded_at: Thu, 29 Oct 2020 22:24:23 GMT
+recorded_with: VCR 5.1.0
