@@ -22,6 +22,8 @@ VCR.configure do |c|
     :match_requests_on => [:uri, :method, :body],
   }
 
+  c.debug_logger = STDOUT
+
   c.filter_sensitive_data("<BASIC>") do |interaction|
     interaction.request.headers["Authorization"].first
   end
