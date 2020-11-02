@@ -361,7 +361,7 @@ module Mailjet
         from_name: 'Mailjet Ruby Wrapper CI',
         subject: 'Mailjet Ruby Wrapper CI Send API v3.0 spec',
         text_part: 'Mailjet Ruby Wrapper CI content',
-        html_part: '<h3>Mailjet Ruby Wrapper CI content</h3>',
+        html_part: 'HTML Mailjet Ruby Wrapper CI content',
         recipients: [recipient]
       )
 
@@ -387,7 +387,7 @@ module Mailjet
           ],
             'Subject' => 'Mailjet Ruby Wrapper CI Send API v3.1 spec',
             'TextPart' => 'Mailjet Ruby Wrapper CI content',
-            'HTMLPart' => '<h3>Mailjet Ruby Wrapper CI content</h3>'
+            'HTMLPart' => 'HTML Mailjet Ruby Wrapper CI content'
           }]
       )
 

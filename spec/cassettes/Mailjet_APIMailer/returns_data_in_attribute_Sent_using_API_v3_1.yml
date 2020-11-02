@@ -7,8 +7,8 @@ http_interactions:
       encoding: UTF-8
       string: '{"Messages":[{"From":{"Email":"pilot@example.com","Name":"Mailjet Ruby
         Wrapper CI"},"To":[{"Email":"passenger@example.com","Name":"test"}],"Subject":"Mailjet
-        Ruby Wrapper CI Send API v3.1 spec","TextPart":"Mailjet Ruby Wrapper CI content","HTMLPart":"\u003Ch3\u003EMailjet
-        Ruby Wrapper CI content\u003C/h3\u003E"}]}'
+        Ruby Wrapper CI Send API v3.1 spec","TextPart":"Mailjet Ruby Wrapper CI content","HTMLPart":"HTML
+        Mailjet Ruby Wrapper CI content"}]}'
     headers:
       Accept:
       - application/json
@@ -19,7 +19,7 @@ http_interactions:
       Content-Type:
       - application/json
       Content-Length:
-      - '315'
+      - '291'
       Host:
       - api.mailjet.com
       Authorization:
@@ -30,16 +30,16 @@ http_interactions:
       message: OK
     headers:
       Content-Length:
-      - '266'
+      - '268'
       Content-Type:
       - application/json; charset=UTF-8
       X-Mj-Request-Guid:
-      - 70cc6849-ba5c-4da2-8146-23f63ebfd29b
+      - 73c652ad-9a9e-4e6a-b5da-11888ee13eac
       Date:
-      - Thu, 29 Oct 2020 22:25:28 GMT
+      - Mon, 02 Nov 2020 04:08:12 GMT
     body:
       encoding: UTF-8
-      string: '{"Messages":[{"Status":"success","CustomID":"","To":[{"Email":"passenger@example.com","MessageUUID":"68348eb4-5026-41af-a3f4-a8696dbe95fd","MessageID":288230381105242182,"MessageHref":"https://api.mailjet.com/v3/REST/message/288230381105242182"}],"Cc":[],"Bcc":[]}]}'
+      string: '{"Messages":[{"Status":"success","CustomID":"","To":[{"Email":"passenger@example.com","MessageUUID":"23ba1150-6546-4e6d-b896-34713f0374ea","MessageID":1152921509597813712,"MessageHref":"https://api.mailjet.com/v3/REST/message/1152921509597813712"}],"Cc":[],"Bcc":[]}]}'
     http_version: null
-  recorded_at: Thu, 29 Oct 2020 22:25:28 GMT
+  recorded_at: Mon, 02 Nov 2020 04:08:12 GMT
 recorded_with: VCR 5.1.0
