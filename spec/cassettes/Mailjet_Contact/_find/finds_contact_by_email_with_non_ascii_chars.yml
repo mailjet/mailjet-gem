@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contact/non%C3%A7ascii@example.com
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 04 Nov 2020 23:37:59 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '423'
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyAiQ291bnQiIDogMSwgIkRhdGEiIDogW3sgIkNyZWF0ZWRBdCIgOiAiMjAy
+        MC0xMS0wM1QwOTo1NTo1MFoiLCAiRGVsaXZlcmVkQ291bnQiIDogMCwgIkVt
+        YWlsIiA6ICJub27Dp2FzY2lpQGV4YW1wbGUuY29tIiwgIkV4Y2x1c2lvbkZy
+        b21DYW1wYWlnbnNVcGRhdGVkQXQiIDogIjIwMjAtMTEtMDNUMDk6NTU6NTBa
+        IiwgIklEIiA6IDE2ODMyODk1NywgIklzRXhjbHVkZWRGcm9tQ2FtcGFpZ25z
+        IiA6IHRydWUsICJJc09wdEluUGVuZGluZyIgOiBmYWxzZSwgIklzU3BhbUNv
+        bXBsYWluaW5nIiA6IGZhbHNlLCAiTGFzdEFjdGl2aXR5QXQiIDogIiIsICJM
+        YXN0VXBkYXRlQXQiIDogIiIsICJOYW1lIiA6ICJub3QgYXNjaWkgbmFtZSIs
+        ICJVbnN1YnNjcmliZWRBdCIgOiAiIiwgIlVuc3Vic2NyaWJlZEJ5IiA6ICIi
+        IH1dLCAiVG90YWwiIDogMSB9
+    http_version: null
+  recorded_at: Wed, 04 Nov 2020 23:37:59 GMT
+recorded_with: VCR 5.1.0

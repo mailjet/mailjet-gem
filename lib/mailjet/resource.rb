@@ -76,11 +76,17 @@ module Mailjet
       end
 
       def find(id, job_id = nil, options = {})
+        normalized_id = if id.is_a? String
+          URI.encode_www_form_component(id)
+        else
+          id
+        end
+
         # if action method, ammend url to appropriate id
         opts = define_options(options)
-        self.resource_path = create_action_resource_path(id, job_id) if self.action
+        self.resource_path = create_action_resource_path(normalized_id, job_id) if self.action
         #
-        attributes = parse_api_json(connection(opts)[id].get(default_headers)).first
+        attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
         instanciate_from_api(attributes)
 
       rescue Mailjet::ApiError => e
@@ -140,17 +146,17 @@ module Mailjet
       end
 
       def create_action_resource_path(id, job_id = nil)
-         url_elements = self.resource_path.split("/")
-         url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
+        url_elements = self.resource_path.split("/")
+        url_elements.delete_at(url_elements.length-1) if url_elements.last.to_i > 0 #if there is a trailing number for the job id from last call, delete it
 
-         if !(url_elements[1] == "contacts" && self.action == "managemanycontacts")
-           url_elements[2] = id.to_s
-         end
+        if !(url_elements[1] == "contacts" && self.action == "managemanycontacts")
+          url_elements[2] = id.to_s
+        end
 
-         url_elements << job_id.to_s if job_id #if job_id exists, amend it to end of the URI
-         url = url_elements.join("/")
+        url_elements << job_id.to_s if job_id #if job_id exists, amend it to end of the URI
+        url = url_elements.join("/")
 
-         return url
+        return url
       end
 
 
