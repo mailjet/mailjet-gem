@@ -53,4 +53,14 @@ describe "Mailjet API Resource" do
       expect { subject.all(limit: 0) }.to raise_error Mailjet::ApiError
     end
   end
+
+  context "API responds with non JSON content type" do
+    require 'pry'
+
+    before { Mailjet.config.api_version = "v3.1" }
+
+    it "raises an error", :vcr do
+      expect { subject.all }.to raise_error Mailjet::ApiError
+    end
+  end
 end
