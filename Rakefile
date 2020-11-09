@@ -9,6 +9,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
     "spec/resources/messagehistory_spec.rb",
     "spec/resources/getcontactslists_spec.rb",
     "spec/resources/template_detailcontent_spec.rb",
+    "spec/resources/integration_spec.rb",
   ]
 end
 
