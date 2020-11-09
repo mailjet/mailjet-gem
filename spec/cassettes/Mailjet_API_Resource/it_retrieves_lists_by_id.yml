@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contactslist/38778
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 06 Nov 2020 13:44:33 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '186'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "Address" : "twkgdlfxg", "CreatedAt" : "2020-11-06T13:38:49Z",
+        "ID" : 38778, "IsDeleted" : false, "Name" : "Test List", "SubscriberCount"
+        : 0 }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Fri, 06 Nov 2020 13:44:33 GMT
+recorded_with: VCR 5.1.0

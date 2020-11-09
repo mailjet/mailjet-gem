@@ -1,0 +1,110 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contactslist/38778
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 09 Nov 2020 03:17:08 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '186'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "Address" : "twkgdlfxg", "CreatedAt" : "2020-11-06T13:38:49Z",
+        "ID" : 38778, "IsDeleted" : false, "Name" : "Test List", "SubscriberCount"
+        : 0 }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Mon, 09 Nov 2020 03:17:08 GMT
+- request:
+    method: delete
+    uri: https://api.mailjet.com/v3/REST/contactslist/38778
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 204
+      message: No content
+    headers:
+      Date:
+      - Mon, 09 Nov 2020 03:17:09 GMT
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: null
+  recorded_at: Mon, 09 Nov 2020 03:17:09 GMT
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contactslist/38778
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 09 Nov 2020 03:17:09 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '185'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "Address" : "twkgdlfxg", "CreatedAt" : "2020-11-06T13:38:49Z",
+        "ID" : 38778, "IsDeleted" : true, "Name" : "Test List", "SubscriberCount"
+        : 0 }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Mon, 09 Nov 2020 03:17:09 GMT
+recorded_with: VCR 5.1.0
