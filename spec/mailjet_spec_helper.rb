@@ -26,5 +26,15 @@ VCR.configure do |c|
     interaction.request.headers["Authorization"].first
   end
 
+  c.filter_sensitive_data("<PUBLIC_KEY>") do |interaction|
+    body = JSON.parse(interaction.response.body)
+    body["Data"].first["APIKey"]
+  end
+
+  c.filter_sensitive_data("<PRIVATE_KEY>") do |interaction|
+    body = JSON.parse(interaction.response.body)
+    body["Data"].first["SecretKey"]
+  end
+
   c.configure_rspec_metadata!
 end
