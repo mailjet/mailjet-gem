@@ -33,7 +33,7 @@ MESSAGE
 
       expect {
         Mailjet::ApiError.new(404, response, "request details", "example.com/resource", {})
-      }.to raise_error MultiJson::ParseError
+      }.to raise_error ActiveSupport::JSON.parse_error
     end
   end
 end
