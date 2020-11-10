@@ -26,14 +26,38 @@ MESSAGE
     end
   end
 
-  context "non JSON response body" do
-    it "throws an error" do
-      response = "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body bgcolor=\"white\">\r\n<center><h1>404
-        Not Found</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+  context "plain HTML response body" do
+    it "does not throws an error" do
+      response = "<html></html>"
 
       expect {
         Mailjet::ApiError.new(404, response, "request details", "example.com/resource", {})
-      }.to raise_error ActiveSupport::JSON.parse_error
+      }.to_not raise_error
+    end
+
+    it "adds original body to error message" do
+      response = <<-HTML.chomp
+<html>
+<head><title>404 Not Found</title></head>
+<body bgcolor="white">
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+HTML
+
+      exception = Mailjet::ApiError.new(404, response, "request details", "example.com/resource", {})
+
+      expect(exception.code).to eq 404
+      expect(exception.reason).to eq "<html>\n<head><title>404 Not Found</title></head>\n<body bgcolor=\"white\">\n<center><h1>404 Not Found</h1></center>\n<hr><center>nginx</center>\n</body>\n</html>"
+      expect(exception.message).to eq <<-MESSAGE
+error 404 while sending "request details" to example.com/resource with {}
+
+"<html>\\n<head><title>404 Not Found</title></head>\\n<body bgcolor=\\"white\\">\\n<center><h1>404 Not Found</h1></center>\\n<hr><center>nginx</center>\\n</body>\\n</html>"
+
+Please see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers.
+
+MESSAGE
     end
   end
 end

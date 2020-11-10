@@ -90,7 +90,7 @@ module Mailjet
       http_body = if e.http_headers[:content_type] == "application/json"
         e.http_body
       else
-        ""
+        "{}"
       end
 
       raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)
