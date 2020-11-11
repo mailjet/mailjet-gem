@@ -1,10 +1,8 @@
-# encoding: utf-8
 require "json"
 
 module Mailjet
   class ApiError < StandardError
-
-    attr_accessor :code, :reason
+    attr_reader :code, :reason
 
     # @param code [Integer] HTTP response status code
     # @param body [String] JSON response body
@@ -12,13 +10,12 @@ module Mailjet
     # @param url [String] request URL
     # @param params [Hash] request headers and parameters
     def initialize(code, body, request, url, params)
-      self.code = code
-      self.reason = ""
-      begin
+      @code = code
+      @reason = begin
         resdec = JSON.parse(body)
-        self.reason = resdec['ErrorMessage']
+        resdec['ErrorMessage']
       rescue JSON::ParserError
-        self.reason = body
+        body
       end
 
       message = "error #{code} while sending #{request.inspect} to #{url} with #{params.inspect}"
