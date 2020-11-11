@@ -55,8 +55,6 @@ describe "Mailjet API Resource" do
   end
 
   context "API responds with non JSON content type" do
-    require 'pry'
-
     before { Mailjet.config.api_version = "v3.1" }
 
     it "raises an error", :vcr do
