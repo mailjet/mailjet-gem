@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3.1/send
+    body:
+      encoding: UTF-8
+      string: '{"Messages":[{"To":[{"Email":"passenger@example.com"}],"TextPart":"Test","Attachments":[{"ContentType":"text/plain","Filename":"filename.txt","Base64Content":"aGVsbG8gd29ybGQ=\n"}],"InlinedAttachments":[],"Headers":{},"From":{"Email":"pilot@example.com"},"Subject":"This
+        is a nice welcome email (API v3.1)"}]}'
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '309'
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '266'
+      Content-Type:
+      - application/json; charset=UTF-8
+      X-Mj-Request-Guid:
+      - a821e7c6-10ff-403c-ad03-4d8d5cb1250c
+      Date:
+      - Thu, 29 Oct 2020 22:21:17 GMT
+    body:
+      encoding: UTF-8
+      string: '{"Messages":[{"Status":"success","CustomID":"","To":[{"Email":"passenger@example.com","MessageUUID":"9d554404-dc99-404f-8173-6e2717e6c39c","MessageID":288230381105225683,"MessageHref":"https://api.mailjet.com/v3/REST/message/288230381105225683"}],"Cc":[],"Bcc":[]}]}'
+    http_version: null
+  recorded_at: Thu, 29 Oct 2020 22:21:17 GMT
+recorded_with: VCR 5.1.0

@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contact?countrecords=1&limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.5.4
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 15 Oct 2020 06:24:20 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '389'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "CreatedAt" : "2020-09-16T10:35:56Z", "DeliveredCount"
+        : 0, "Email" : "passenger1@example.com", "ExclusionFromCampaignsUpdatedAt"
+        : "", "ID" : 124409882, "IsExcludedFromCampaigns" : false, "IsOptInPending"
+        : false, "IsSpamComplaining" : false, "LastActivityAt" : "", "LastUpdateAt"
+        : "", "Name" : "", "UnsubscribedAt" : "", "UnsubscribedBy" : "" }], "Total"
+        : 4 }'
+    http_version: null
+  recorded_at: Thu, 15 Oct 2020 06:24:20 GMT
+recorded_with: VCR 5.1.0

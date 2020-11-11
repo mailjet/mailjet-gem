@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contact?InvalidParameter=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.5.4
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 15 Oct 2020 06:11:16 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1550'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 4, "Data" : [{ "CreatedAt" : "2020-09-16T10:35:56Z", "DeliveredCount"
+        : 0, "Email" : "passenger1@example.com", "ExclusionFromCampaignsUpdatedAt"
+        : "", "ID" : 124409882, "IsExcludedFromCampaigns" : false, "IsOptInPending"
+        : false, "IsSpamComplaining" : false, "LastActivityAt" : "", "LastUpdateAt"
+        : "", "Name" : "", "UnsubscribedAt" : "", "UnsubscribedBy" : "" }, { "CreatedAt"
+        : "2020-09-23T07:56:12Z", "DeliveredCount" : 0, "Email" : "passenger2@example.com",
+        "ExclusionFromCampaignsUpdatedAt" : "2020-09-26T17:06:21Z", "ID" : 129898592,
+        "IsExcludedFromCampaigns" : false, "IsOptInPending" : false, "IsSpamComplaining"
+        : false, "LastActivityAt" : "2020-09-26T17:06:21Z", "LastUpdateAt" : "2020-09-26T17:06:21Z",
+        "Name" : "", "UnsubscribedAt" : "", "UnsubscribedBy" : "" }, { "CreatedAt"
+        : "2020-09-26T16:24:28Z", "DeliveredCount" : 0, "Email" : "passenger3@example.com",
+        "ExclusionFromCampaignsUpdatedAt" : "", "ID" : 134544499, "IsExcludedFromCampaigns"
+        : false, "IsOptInPending" : false, "IsSpamComplaining" : false, "LastActivityAt"
+        : "2020-09-26T16:24:28Z", "LastUpdateAt" : "2020-09-26T16:24:28Z", "Name"
+        : "", "UnsubscribedAt" : "", "UnsubscribedBy" : "" }, { "CreatedAt" : "2020-10-08T06:36:28Z",
+        "DeliveredCount" : 0, "Email" : "passenger4@example.com", "ExclusionFromCampaignsUpdatedAt"
+        : "", "ID" : 146167188, "IsExcludedFromCampaigns" : false, "IsOptInPending"
+        : false, "IsSpamComplaining" : false, "LastActivityAt" : "", "LastUpdateAt"
+        : "", "Name" : "NaedDCBRlB", "UnsubscribedAt" : "", "UnsubscribedBy" : ""
+        }], "Total" : 4 }'
+    http_version: null
+  recorded_at: Thu, 15 Oct 2020 06:11:16 GMT
+recorded_with: VCR 5.1.0

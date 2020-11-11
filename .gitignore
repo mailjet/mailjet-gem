@@ -22,8 +22,6 @@ doc
 .yardoc
 pkg
 
-/spec/cassettes/
-
 /config.yml
 
 .env
