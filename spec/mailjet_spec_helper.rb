@@ -27,13 +27,25 @@ VCR.configure do |c|
   end
 
   c.filter_sensitive_data("<PUBLIC_KEY>") do |interaction|
-    body = JSON.parse(interaction.response.body)
-    body["Data"].first["APIKey"]
+    begin
+      body = JSON.parse(interaction.response.body)
+      data = body.fetch("Data", []).first || {}
+
+      data["APIKey"]
+    rescue
+      nil
+    end
   end
 
   c.filter_sensitive_data("<PRIVATE_KEY>") do |interaction|
-    body = JSON.parse(interaction.response.body)
-    body["Data"].first["SecretKey"]
+    begin
+      body = JSON.parse(interaction.response.body)
+      data = body.fetch("Data", []).first || {}
+
+      data["SecretKey"]
+    rescue
+      nil
+    end
   end
 
   c.configure_rspec_metadata!

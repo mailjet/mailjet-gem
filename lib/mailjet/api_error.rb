@@ -29,5 +29,3 @@ module Mailjet
     end
   end
 end
-
-
