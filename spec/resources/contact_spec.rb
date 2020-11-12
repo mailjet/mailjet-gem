@@ -23,19 +23,26 @@ RSpec.describe Mailjet::Contact, :vcr do
     expect(contact.attributes["email"]).to eq "passenger1@example.com"
   end
 
-  it "finds contact by ID" do
-    contact = Mailjet::Contact.find(124409882)
-    expect(contact.attributes["email"]).to eq "passenger1@example.com"
-  end
+  describe ".find" do
+    it "finds contact by ID" do
+      contact = Mailjet::Contact.find(124409882)
+      expect(contact.attributes["email"]).to eq "passenger1@example.com"
+    end
 
-  it "finds contact by email" do
-    contact = Mailjet::Contact.find("passenger1@example.com")
-    expect(contact.attributes["email"]).to eq "passenger1@example.com"
-  end
+    it "finds contact by email" do
+      contact = Mailjet::Contact.find("passenger1@example.com")
+      expect(contact.attributes["email"]).to eq "passenger1@example.com"
+    end
 
-  it "returns nil when contact not found" do
-    contact = Mailjet::Contact.find("unknown@example.com")
-    expect(contact).to be_nil
+    it "finds contact by email with non ascii chars" do
+      contact = Mailjet::Contact.find("nonçascii@example.com")
+      expect(contact.attributes["email"]).to eq "nonçascii@example.com"
+    end
+
+    it "returns nil when contact not found" do
+      contact = Mailjet::Contact.find("unknown@example.com")
+      expect(contact).to be_nil
+    end
   end
 
   xit "returns total amount of contacts" do
