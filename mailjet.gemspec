@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "activesupport", ">= 3.1.0"
   s.add_dependency "rack", ">= 1.4.0"
-  s.add_dependency "rest-client"
+  s.add_dependency "rest-client", ">= 2.0.0"
   s.add_development_dependency "actionmailer", ">= 3.0.9"
   s.add_development_dependency "minitest"
   s.add_development_dependency "minitest-matchers"
@@ -51,4 +51,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-expectations" #added this
   s.add_development_dependency "dotenv" #added this
 
+  s.required_ruby_version = ">= 2.2.0"
 end
