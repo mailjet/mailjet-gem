@@ -8,7 +8,7 @@ RSpec.describe Mailjet::Newsletter, :vcr do
     expect(newsletter.segmentation_id).to eq 5329
   end
 
-  it "updates :segmentation_id attribue" do
+  it "updates :segmentation_id attribute" do
     newsletter = Mailjet::Newsletter.find(54218)
     newsletter.update_attributes(segmentation_id: 5330)
     newsletter = Mailjet::Newsletter.find(54218)
