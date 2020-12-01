@@ -1,95 +1,111 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require "mailjet_spec_helper"
 
-describe Mailjet::Resource do
-
-  let(:resource_path) { "test" }
-  let(:connection){ MiniTest::Mock.new }
+RSpec.describe Mailjet::Resource do
+  let(:connection) { double("Connection") }
 
   subject do
     class TestResource
       include Mailjet::Resource
       self.resource_path = "test"
     end
+
     TestResource.connection = connection
+
     TestResource
   end
 
   context "connection is not defined" do
-    before(:each) do
+    before do
       subject.connection = nil
     end
 
     describe ".connection" do
-      it "returns a Mailjet::Connection referring to the \"test\" resource" do
+      it "returns a Mailjet::Connection referring to the 'test' resource" do
         connection = subject.connection
-        connection.must_be_instance_of Mailjet::Connection
-        connection.url.must_match "#{Mailjet.config.end_point}/#{resource_path}"
+
+        expect(connection).to be_kind_of Mailjet::Connection
+        expect(connection.url).to eq "https://api.mailjet.com/test"
       end
     end
   end
 
-  context "connection is defined" do
-
-    context "GET /test?Limit=1 returns '{\"Data\" : [{ \"Test\" : \"Value\" }]}'" do
-      before(:each) do
-        @response = '{"Data" : [{ "Test" : "Value" }]}'
-        connection.expect :get, @response, [params: {limit: 1}]
-      end
-
-      describe ".first" do
-        it "creates a new TestResource object" do
-          instance = subject.first
-          instance.must_be_instance_of TestResource
-        end
-
-        it "populates object with attributes returned by the API" do
-          instance = subject.first
-          instance.test.must_equal "Value"
-        end
-      end
+  describe ".first" do
+    before  do
+      allow(connection).to receive(:get).with(
+        {
+          :accept => :json,
+          :accept_encoding => :deflate,
+          :content_type => :json,
+          :params => { "Limit" => 1 },
+          :user_agent => "mailjet-api-v3-ruby/1.6.0"
+        }
+      ).and_return('{"Data" : [{ "Test" : "Value" }]}')
     end
 
-    context "GET /test returns '{\"Data\" : [{ \"Test1\" : \"Value1\", \"Test1\" : \"Value1\" }]}'" do
-      before(:each) do
-        @response = '{"Data" : [{ "Test" : "Value1" }, { "Test" : "Value2" }]}'
-        connection.expect :get, @response, [params: {}]
-      end
-
-      describe ".all" do
-        it "creates an array of TestResource objects" do
-          instances = subject.all
-          instances.each{ |instance| instance.must_be_instance_of TestResource }
-        end
-
-        it "populates objects with attributes returned by the API" do
-          instances = subject.all
-          instances[0].test.must_equal "Value1"
-          instances[1].test.must_equal "Value2"
-        end
-      end
+    it "creates a new TestResource object" do
+      instance = subject.first
+      expect(instance).to be_kind_of TestResource
     end
 
-    context "GET /test/id returns '{\"Data\" : [{ \"ID\" : 1, \"Test1\" : \"Value1\"}]}'" do
-      before(:each) do
-        @id = 1
-        @response = "{\"Data\" : [{ \"ID\" : #{@id}, \"Test\" : \"Value1\" }]}"
-        connection.expect :[], connection, [@id]
-        connection.expect :get, @response
-      end
+    it "populates object with attributes returned by the API" do
+      instance = subject.first
+      expect(instance.test).to eq "Value"
+    end
+  end
 
-      describe ".find(id)" do
+  it ".first returns collection"
 
-        it "creates an array of TestResource objects" do
-          instance = subject.find(@id)
-        instance.must_be_instance_of TestResource
-        end
+  describe ".all" do
+    before  do
+      allow(connection).to receive(:get).with(
+        {
+          :accept => :json,
+          :accept_encoding => :deflate,
+          :content_type => :json,
+          :params => {},
+          :user_agent => "mailjet-api-v3-ruby/1.6.0"
+        }
+      ).and_return('{"Data" : [{ "Test" : "Value1" }, { "Test" : "Value2" }]}')
+    end
 
-        it "populates object with attributes returned by the API" do
-          instance = subject.find(@id)
-          instance.id.must_equal @id
-          instance.test.must_equal "Value1"
-        end
-      end
+    it "creates an array of TestResource objects" do
+      instances = subject.all
+      expect(instances).to all(be_kind_of TestResource)
+    end
+
+    it "populates objects with attributes returned by the API" do
+      instances = subject.all
+
+      expect(instances[0].test).to eq "Value1"
+      expect(instances[1].test).to eq "Value2"
+    end
+  end
+
+  describe ".find" do
+    before do
+      allow(connection).to receive(:[]).with(id).and_return(connection)
+      allow(connection).to receive(:get).with(
+        {
+          :accept => :json,
+          :accept_encoding => :deflate,
+          :content_type => :json,
+          :user_agent => "mailjet-api-v3-ruby/1.6.0"
+        }
+      ).and_return("{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}")
+    end
+
+    let(:id) { 1 }
+
+    it "returns TestResource object" do
+      instance = subject.find(id)
+      expect(instance).to be_kind_of TestResource
+    end
+
+    it "populates object with attributes returned by the API" do
+      instance = subject.find(id)
+
+      expect(instance.id).to eq id
+      expect(instance.test).to eq "Value1"
     end
   end
 end
