@@ -108,4 +108,109 @@ RSpec.describe Mailjet::Resource do
       expect(instance.test).to eq "Value1"
     end
   end
+
+  describe ".define_options" do
+    it "returns default values" do
+      options = subject.define_options
+
+      expect(options).to eq ({
+        perform_api_call: true,
+        url: "https://api.mailjet.com",
+        version: "v3"
+      })
+    end
+
+    it "overrides default options" do
+      options = subject.define_options({
+        "url" => "fake.host",
+        version: "v0",
+        "perform_api_call" => false
+      })
+
+      expect(options).to eq ({
+        perform_api_call: false,
+        url: "fake.host",
+        version: "v0"
+      })
+    end
+
+    it "filters out unpermitted options" do
+      options = subject.define_options({
+        "invalid_option" => "value",
+        "version" => "v0",
+      })
+
+      expect(options).to eq ({
+        perform_api_call: true,
+        url: "https://api.mailjet.com",
+        version: "v0"
+      })
+    end
+  end
+
+  describe ".camelcase_keys" do
+    it "converts keys to camel case" do
+      input = {
+        "text_part" => "value1",
+        "html_part" => "value2",
+        "inline_attachments" => "value3",
+        "other_key" => "value4"
+      }
+
+      normalized = subject.camelcase_keys(input)
+
+      expect(normalized).to eq ({
+        "Text-part" => "value1",
+        "Html-part" => "value2",
+        "Inline_attachments" => "value3",
+        "OtherKey" => "value4"
+      })
+    end
+  end
+
+  describe ".underscore_keys" do
+    it "converts keys to snake case" do
+      input = {
+        "text_part" => "value1",
+        "html_part" => "value2",
+        "inline_attachments" => "value3",
+        "OtherKey" => "value4"
+      }
+
+      normalized = subject.underscore_keys(input)
+
+      expect(normalized).to eq ({
+        "Text-part" => "value1",
+        "Html-part" => "value2",
+        "Inline_attachments" => "value3",
+        "other_key" => "value4"
+      })
+    end
+  end
+
+  describe ".format_params" do
+    it "converts attributes to CamelCase" do
+      params = subject.format_params({
+        test: "value"
+      })
+
+      expect(params).to eq({
+        "Test" => "value"
+      })
+    end
+
+    it "formats sort attribute" do
+      params = subject.format_params({
+        attr: "value1",
+        other_attr: "value2",
+        sort: { attr: "acs", other_attr: "desc" }
+      })
+
+      expect(params).to eq({
+        "Attr" => "value1",
+        "OtherAttr" => "value2",
+        "Sort" => "Attr ACS, OtherAttr DESC"
+      })
+    end
+  end
 end
