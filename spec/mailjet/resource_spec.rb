@@ -213,4 +213,64 @@ RSpec.describe Mailjet::Resource do
       })
     end
   end
+
+  describe ".parse_api_json" do
+    let(:raw_json) {
+      '{ "Count" : 1, "Data" : [{ "ACL" : "", "APIKey" : "qwerty123", "CreatedAt"
+      : "2020-09-16T10:33:54Z", "ID" : 1404561, "IsActive" : true, "IsMaster" :
+      true, "Name" : "user", "QuarantineValue" : 0, "RegionID" : 0, "Runlevel" :
+      "Normal", "SecretKey" : "qwerty123", "Skipspamd" : 1, "TrackHost" : "xkw6j.mjt.lu",
+      "UserID" : 1389226 }], "Total" : 1 }'
+    }
+
+    it "parses string json to hash" do
+      hash = subject.parse_api_json(raw_json)
+
+      expect(hash).to eq(
+        [{
+          "acl"=>"",
+          "api_key"=>"qwerty123",
+          "created_at"=>"Wed, 16 Sep 2020 10:33:54 +0000",
+          "id"=>1404561,
+          "is_active"=>true,
+          "is_master"=>true,
+          "name"=>"user",
+          "quarantine_value"=>0,
+          "region_id"=>0,
+          "runlevel"=>"Normal",
+          "secret_key"=>"qwerty123",
+          "skipspamd"=>1,
+          "track_host"=>"xkw6j.mjt.lu",
+          "user_id"=>1389226
+        }]
+      )
+    end
+  end
+
+  describe ".convert_dates_from" do
+    test_table = [
+      ["2020-09-16T10:33:54Z", "Wed, 16 Sep 2020 10:33:54 +0000"],
+      [nil, nil],
+      [
+        ["2020-09-16T10:33:54Z", "2020-09-16T10:35:28Z"],
+        ["Wed, 16 Sep 2020 10:33:54 +0000", "Wed, 16 Sep 2020 10:35:28 +0000"]
+      ],
+      [
+        { attr: "2020-09-16T10:33:54Z" },
+        { attr: "Wed, 16 Sep 2020 10:33:54 +0000" },
+      ],
+      [
+        { root: { nested: "2020-09-16T10:33:54Z" }},
+        { root: { nested: "Wed, 16 Sep 2020 10:33:54 +0000" }},
+      ],
+      ["invalid date", "invalid date"]
+    ]
+
+    test_table.each_with_index do |t, i|
+      it "converts ##{i}" do
+        converted = subject.convert_dates_from(t.first)
+        expect(converted).to eq t.last
+      end
+    end
+  end
 end
