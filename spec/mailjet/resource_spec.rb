@@ -6,7 +6,7 @@ RSpec.describe Mailjet::Resource do
   subject do
     class TestResource
       include Mailjet::Resource
-      self.resource_path = "test"
+      self.resource_path = "REST/test"
     end
 
     TestResource.connection = connection
@@ -24,7 +24,7 @@ RSpec.describe Mailjet::Resource do
         connection = subject.connection
 
         expect(connection).to be_kind_of Mailjet::Connection
-        expect(connection.url).to eq "https://api.mailjet.com/test"
+        expect(connection.url).to eq "https://api.mailjet.com/REST/test"
       end
     end
   end
@@ -244,6 +244,83 @@ RSpec.describe Mailjet::Resource do
           "user_id"=>1389226
         }]
       )
+    end
+  end
+
+  describe ".create_action_resource_path" do
+    it "returns url with resource ID" do
+      url = subject.create_action_resource_path(1)
+      expect(url).to eq "REST/test/1"
+    end
+
+    it "returns url with resource ID and job ID" do
+      url = subject.create_action_resource_path(1, 2)
+      expect(url).to eq "REST/test/1/2"
+    end
+
+    it "returns url with job ID when path already contains ID" do
+      subject.resource_path = "REST/test/123"
+
+      url = subject.create_action_resource_path(1, 2)
+
+      expect(url).to eq "REST/test/1/2"
+    end
+
+    it "returns url with resource ID when path already contains ID" do
+      subject.resource_path = "REST/test/123"
+
+      url = subject.create_action_resource_path(1)
+
+      expect(url).to eq "REST/test/1"
+    end
+
+    it "returns url with job ID when path already contains ID" do
+      subject.resource_path = "REST/test/123"
+
+      url = subject.create_action_resource_path(1, 2)
+
+      expect(url).to eq "REST/test/1/2"
+    end
+
+    context "path contacts and action managemanycontacts" do
+      before do
+        subject.resource_path = "REST/contacts"
+        subject.action = "managemanycontacts"
+      end
+
+      it "returns url without" do
+        url = subject.create_action_resource_path(1)
+        expect(url).to eq "REST/contacts"
+      end
+
+      it "returns url with job ID" do
+        url = subject.create_action_resource_path(1, 2)
+        expect(url).to eq "REST/contacts/2"
+      end
+
+      it "returns url with job ID when path already contains ID" do
+        subject.resource_path = "REST/contacts/123"
+
+        url = subject.create_action_resource_path(1, 2)
+
+        expect(url).to eq "REST/contacts/2"
+      end
+
+      it "returns url without resource ID when path already contains ID" do
+        subject.resource_path = "REST/contacts/123"
+
+        url = subject.create_action_resource_path(1)
+
+        expect(url).to eq "REST/contacts"
+      end
+
+      it "returns url with job ID when path already contains ID" do
+        subject.resource_path = "REST/contacts/123"
+
+        url = subject.create_action_resource_path(1, 2)
+
+        expect(url).to eq "REST/contacts/2"
+      end
     end
   end
 
