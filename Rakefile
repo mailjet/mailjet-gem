@@ -5,6 +5,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
     "spec/mailjet/api_error_spec.rb",
     "spec/mailjet/apikey_spec.rb",
     "spec/mailjet/mailer_spec.rb",
+    "spec/mailjet/resource_spec.rb",
     "spec/configuration_spec.rb",
     "spec/mailjet_spec.rb",
     "spec/resources/contact_spec.rb",
