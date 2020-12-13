@@ -1,6 +1,8 @@
 require "mailjet_spec_helper"
 
 RSpec.describe Mailjet::Resource do
+  before { Mailjet.config.api_version = "v3" }
+
   let(:connection) { double("Connection") }
 
   subject do
@@ -15,12 +17,10 @@ RSpec.describe Mailjet::Resource do
   end
 
   context "connection is not defined" do
-    before do
-      subject.connection = nil
-    end
+    before { subject.connection = nil }
 
     describe ".connection" do
-      it "returns a Mailjet::Connection referring to the 'test' resource" do
+      xit "returns a Mailjet::Connection referring to the 'test' resource" do
         connection = subject.connection
 
         expect(connection).to be_kind_of Mailjet::Connection
@@ -106,6 +106,95 @@ RSpec.describe Mailjet::Resource do
 
       expect(instance.id).to eq id
       expect(instance.test).to eq "Value1"
+    end
+  end
+
+  describe "#save" do
+    subject do
+      class TestContact
+        include Mailjet::Resource
+        self.resource_path = 'REST/contact'
+        self.public_operations = [:get, :put, :post]
+        self.filters = [:campaign, :contacts_list, :is_unsubscribed, :last_activity_at, :recipient, :status]
+        self.resourceprop = [:created_at, :delivered_count, :email, :id, :is_opt_in_pending, :is_spam_complaining, :last_activity_at, :last_update_at, :name, :unsubscribed_at, :unsubscribed_by]
+      end
+
+      TestContact
+    end
+
+    it "updates resource" do
+      VCR.use_cassette("resource/test_contact/update") do
+        c = subject.new("is_active" => true, "id" => 123)
+
+        contact = subject.find(196009940)
+        allow(subject).to receive(:default_connection).and_call_original
+
+        contact.name = "Joe Doe"
+        res = contact.save
+
+        expect(subject).to have_received(:default_connection)
+          .with({
+            perform_api_call: true,
+            url: "https://api.mailjet.com",
+            version: "v3"
+          })
+        expect(contact.attributes).to eq ({
+          "created_at" => "Thu, 10 Dec 2020 17:35:35 +0000",
+          "delivered_count" => 0,
+          "email" => "save_resource_test@example.com",
+          "exclusion_from_campaigns_updated_at" => "Thu, 10 Dec 2020 17:35:35 +0000",
+          "id" => 196009940,
+          "is_excluded_from_campaigns" => true,
+          "is_opt_in_pending" => false,
+          "is_spam_complaining" => false,
+          "last_activity_at" => "",
+          "last_update_at" => "",
+          "name" => "Joe Doe",
+          "persisted" => true,
+          "unsubscribed_at" => "",
+          "unsubscribed_by" => "",
+        })
+        expect(res).to eq true
+      end
+    end
+
+    it "creates resource" do
+      VCR.use_cassette("resource/test_contact/create") do
+        allow(subject).to receive(:default_connection).and_call_original
+
+        contact = subject.new(
+          name: "Create Resource",
+          email: "create_resource_test@example.com"
+        )
+        allow(contact).to receive(:parse_api_json).and_call_original
+
+        res = contact.save
+
+        expect(subject).to have_received(:default_connection)
+          .with({
+            perform_api_call: true,
+            url: "https://api.mailjet.com",
+            version: "v3"
+          })
+        expect(contact).to have_received(:parse_api_json)
+        expect(contact.attributes).to eq ({
+          "created_at" => "Fri, 11 Dec 2020 00:59:48 +0000",
+          "delivered_count" => 0,
+          "email" => "create_resource_test@example.com",
+          "exclusion_from_campaigns_updated_at" => "",
+          "id" => 196355328,
+          "is_excluded_from_campaigns" => false,
+          "is_opt_in_pending" => false,
+          "is_spam_complaining" => false,
+          "last_activity_at" => "",
+          "last_update_at" => "",
+          "name" => "Create Resource",
+          "persisted" => false,
+          "unsubscribed_at" => "",
+          "unsubscribed_by" => "",
+        })
+        expect(res).to eq true
+      end
     end
   end
 

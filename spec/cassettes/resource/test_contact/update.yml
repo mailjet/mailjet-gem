@@ -1,0 +1,86 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contact/196009940
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 10 Dec 2020 17:37:27 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '430'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "CreatedAt" : "2020-12-10T17:35:35Z", "DeliveredCount"
+        : 0, "Email" : "save_resource_test@example.com", "ExclusionFromCampaignsUpdatedAt"
+        : "2020-12-10T17:35:35Z", "ID" : 196009940, "IsExcludedFromCampaigns" : true,
+        "IsOptInPending" : false, "IsSpamComplaining" : false, "LastActivityAt" :
+        "", "LastUpdateAt" : "", "Name" : "Save Resource", "UnsubscribedAt" : "",
+        "UnsubscribedBy" : "" }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Thu, 10 Dec 2020 17:37:27 GMT
+- request:
+    method: put
+    uri: https://api.mailjet.com/v3/REST/contact/196009940
+    body:
+      encoding: UTF-8
+      string: '{"CreatedAt":"2020-12-10T17:35:35.000Z","DeliveredCount":0,"Email":"save_resource_test@example.com","Id":196009940,"Name":"Joe
+        Doe"}'
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '132'
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 10 Dec 2020 17:37:27 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '444'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "CreatedAt" : "2020-12-10T17:35:35Z", "DeliveredCount"
+        : 0, "Email" : "save_resource_test@example.com", "ExclusionFromCampaignsUpdatedAt"
+        : "2020-12-10T17:35:35Z", "ID" : 196009940, "IsExcludedFromCampaigns" : true,
+        "IsOptInPending" : false, "IsSpamComplaining" : false, "LastActivityAt" :
+        "", "LastUpdateAt" : "2020-12-10T17:37:27Z", "Name" : "Joe Doe", "UnsubscribedAt"
+        : "", "UnsubscribedBy" : "" }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Thu, 10 Dec 2020 17:37:27 GMT
+recorded_with: VCR 5.1.0
