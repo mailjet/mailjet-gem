@@ -41,7 +41,7 @@ describe "Mailjet API Resource" do
     list.delete
 
     list = subject.find(subject_id)
-    expect(list.is_deleted?).to be_truthy
+    expect(list.is_deleted).to be_truthy
   end
 
   context "the resource path does not exist" do
