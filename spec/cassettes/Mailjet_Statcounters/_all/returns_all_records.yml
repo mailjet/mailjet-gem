@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/statcounters?CounterResolution=Lifetime&CounterSource=Sender&CounterTiming=Message&SourceId=52387
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 20 Dec 2020 13:01:33 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '613'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "APIKeyID" : 1404561, "EventClickDelay"
+        : 0, "EventClickedCount" : 0, "EventOpenDelay" : 31806, "EventOpenedCount"
+        : 36, "EventSpamCount" : 0, "EventUnsubscribedCount" : 0, "EventWorkflowExitedCount"
+        : 0, "MessageBlockedCount" : 10, "MessageClickedCount" : 0, "MessageDeferredCount"
+        : 0, "MessageHardBouncedCount" : 0, "MessageOpenedCount" : 12, "MessageQueuedCount"
+        : 0, "MessageSentCount" : 44, "MessageSoftBouncedCount" : 0, "MessageSpamCount"
+        : 0, "MessageUnsubscribedCount" : 0, "MessageWorkFlowExitedCount" : 0, "SourceID"
+        : 52387, "Timeslice" : "", "Total" : 54 }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Sun, 20 Dec 2020 13:01:33 GMT
+recorded_with: VCR 5.1.0
