@@ -114,7 +114,7 @@ module Mailjet
 
         self.new(attributes).tap do |resource|
           resource.save!(opts)
-          resource.persisted = true
+          resource.attributes[:persisted] = true
         end
 
       end
