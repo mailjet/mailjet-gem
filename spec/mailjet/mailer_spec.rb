@@ -350,48 +350,5 @@ module Mailjet
 
       expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::ApiError)
     end
-
-    it 'returns data in attribute "Sent" using Send API v3.0', :vcr do
-      Mailjet.config.api_version = "v3"
-
-      recipient = { "Email": "passenger@example.com" }
-
-      message = Mailjet::Send.create(
-        from_email: "pilot@example.com",
-        from_name: 'Mailjet Ruby Wrapper CI',
-        subject: 'Mailjet Ruby Wrapper CI Send API v3.0 spec',
-        text_part: 'Mailjet Ruby Wrapper CI content',
-        html_part: 'HTML Mailjet Ruby Wrapper CI content',
-        recipients: [recipient]
-      )
-
-      expect(message.attributes['Sent'].first).to include(recipient)
-    end
-
-    it 'returns data in attribute "Sent" using API v3.1', :vcr do
-      Mailjet.config.api_version = "v3.1"
-
-      recipient = {
-        'Email' => "passenger@example.com",
-        'Name' => 'test'
-      }
-
-      message = Mailjet::Send.create(
-        messages: [{
-          'From' => {
-            'Email' => "pilot@example.com",
-            'Name' => 'Mailjet Ruby Wrapper CI'
-          },
-          'To' => [
-            recipient
-          ],
-            'Subject' => 'Mailjet Ruby Wrapper CI Send API v3.1 spec',
-            'TextPart' => 'Mailjet Ruby Wrapper CI content',
-            'HTMLPart' => 'HTML Mailjet Ruby Wrapper CI content'
-          }]
-      )
-
-      expect(message.attributes['Messages'].first['To'].first['Email']).to eq "passenger@example.com"
-    end
   end
 end

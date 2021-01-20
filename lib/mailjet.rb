@@ -7,7 +7,7 @@ require 'mailjet/api_error'
 require 'mailjet/resource'
 require 'mailjet/message_delivery'
 
-Dir[File.expand_path("../mailjet/resources/*.rb", __FILE__)].each do |file|
+Dir[File.expand_path("../mailjet/resources/**/*.rb", __FILE__)].each do |file|
   require file
 end
 
