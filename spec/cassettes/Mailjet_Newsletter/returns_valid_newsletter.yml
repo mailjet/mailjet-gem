@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/newsletter/54218
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 12 Nov 2020 17:43:50 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '852'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "AXFraction" : 0, "AXFractionName" : "",
+        "Callback" : "", "ContactsListID" : 38778, "CreatedAt" : "2020-11-12T17:33:11Z",
+        "DeliveredAt" : "", "EditMode" : "tool", "EditType" : "full", "Footer" : "default",
+        "FooterAddress" : "", "FooterWYSIWYGType" : 0, "HeaderFilename" : "", "HeaderLink"
+        : "", "HeaderText" : "", "HeaderUrl" : "", "ID" : 54218, "Ip" : "", "IsHandled"
+        : false, "IsStarred" : false, "IsTextPartIncluded" : false, "Locale" : "en_US",
+        "ModifiedAt" : "", "Permalink" : "default", "PermalinkHost" : "", "PermalinkWYSIWYGType"
+        : 0, "PolitenessMode" : 0, "SegmentationID" : 5329, "Sender" : "MisterMailjet",
+        "SenderEmail" : "mister@mailjet.com", "SenderName" : "", "Status" : 0, "Subject"
+        : "Greetings from Mailjet", "TestAddress" : "", "Title" : "Mailjet greets
+        every contact over 40", "Url" : "" }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Thu, 12 Nov 2020 17:43:50 GMT
+recorded_with: VCR 5.1.0

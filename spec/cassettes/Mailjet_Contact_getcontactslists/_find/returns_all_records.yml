@@ -1,0 +1,41 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contact/124409882/getcontactslists
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2020 23:27:24 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '241'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 2, "Data" : [{ "IsActive" : true, "IsUnsub" : false, "ListID"
+        : 32964, "SubscribedAt" : "2020-10-22T08:04:45Z" }, { "IsActive" : true, "IsUnsub"
+        : false, "ListID" : 33952, "SubscribedAt" : "2020-10-22T08:07:33Z" }], "Total"
+        : 2 }'
+    http_version: null
+  recorded_at: Thu, 29 Oct 2020 23:27:24 GMT
+recorded_with: VCR 5.1.0

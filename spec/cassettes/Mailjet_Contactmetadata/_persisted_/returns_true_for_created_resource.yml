@@ -1,0 +1,41 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3/REST/contactmetadata
+    body:
+      encoding: UTF-8
+      string: '{"Datatype":"str","Name":"middle_name","NameSpace":"static"}'
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '60'
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Sun, 20 Dec 2020 13:41:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '125'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "Datatype" : "str", "ID" : 65942, "Name"
+        : "middle_name", "NameSpace" : "static" }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Sun, 20 Dec 2020 13:41:24 GMT
+recorded_with: VCR 5.1.0

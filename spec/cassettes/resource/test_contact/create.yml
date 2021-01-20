@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3/REST/contact
+    body:
+      encoding: UTF-8
+      string: '{"Name":"Create Resource","Email":"create_resource_test@example.com"}'
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '69'
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Fri, 11 Dec 2020 00:59:48 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '415'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "CreatedAt" : "2020-12-11T00:59:48Z", "DeliveredCount"
+        : 0, "Email" : "create_resource_test@example.com", "ExclusionFromCampaignsUpdatedAt"
+        : "", "ID" : 196355328, "IsExcludedFromCampaigns" : false, "IsOptInPending"
+        : false, "IsSpamComplaining" : false, "LastActivityAt" : "", "LastUpdateAt"
+        : "", "Name" : "Create Resource", "UnsubscribedAt" : "", "UnsubscribedBy"
+        : "" }], "Total" : 1 }'
+    http_version: null
+  recorded_at: Fri, 11 Dec 2020 00:59:48 GMT
+recorded_with: VCR 5.1.0

@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/messagehistory/576460757221292748
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Oct 2020 22:49:17 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '766'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 6, "Data" : [{ "Comment" : "", "EventAt" : 1603783745,
+        "EventType" : "sent", "State" : "", "Useragent" : "", "UseragentID" : 0 },
+        { "Comment" : "", "EventAt" : 1603784101, "EventType" : "opened", "State"
+        : "", "Useragent" : "", "UseragentID" : 1675 }, { "Comment" : "", "EventAt"
+        : 1603784103, "EventType" : "opened", "State" : "", "Useragent" : "", "UseragentID"
+        : 1675 }, { "Comment" : "", "EventAt" : 1603784108, "EventType" : "opened",
+        "State" : "", "Useragent" : "", "UseragentID" : 1675 }, { "Comment" : "",
+        "EventAt" : 1603790878, "EventType" : "opened", "State" : "", "Useragent"
+        : "", "UseragentID" : 1675 }, { "Comment" : "", "EventAt" : 1603793094, "EventType"
+        : "opened", "State" : "", "Useragent" : "", "UseragentID" : 1675 }], "Total"
+        : 6 }'
+    http_version: null
+  recorded_at: Thu, 29 Oct 2020 22:49:17 GMT
+recorded_with: VCR 5.1.0

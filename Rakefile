@@ -1,17 +1,22 @@
-#!/usr/bin/env rake
-require 'rake/testtask'
-require 'bundler'
-Bundler::GemHelper.install_tasks
+require "rspec/core/rake_task"
 
-$:.push File.expand_path("../lib", __FILE__)
-
-Rake::TestTask.new(:spec) do |t|
-  t.libs << 'lib'
-  t.libs << 'spec'
-  # t.pattern = 'spec/**/*_spec.rb'
-  t.verbose = true
-  t.test_files = Dir['spec/**/*_spec.rb']
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.pattern = [
+    "spec/mailjet/api_error_spec.rb",
+    "spec/mailjet/apikey_spec.rb",
+    "spec/mailjet/mailer_spec.rb",
+    "spec/mailjet/resource_spec.rb",
+    "spec/configuration_spec.rb",
+    "spec/mailjet_spec.rb",
+    "spec/resources/contact_spec.rb",
+    "spec/resources/contactmetadata_spec.rb",
+    "spec/resources/messagehistory_spec.rb",
+    "spec/resources/getcontactslists_spec.rb",
+    "spec/resources/template_detailcontent_spec.rb",
+    "spec/resources/integration_spec.rb",
+    "spec/resources/newsletter_spec.rb",
+    "spec/resources/statcounters_spec.rb",
+  ]
 end
 
-
-task :default => :spec
+task default: [:spec]

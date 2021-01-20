@@ -87,7 +87,13 @@ module Mailjet
       formatted_payload = (additional_headers[:content_type] == :json) ? JSON.parse(payload) : payload
       params = params.merge(formatted_payload)
 
-      raise Mailjet::ApiError.new(e.http_code, e.http_body, @adapter, @adapter.url, params)
+      http_body = if e.http_headers[:content_type] == "application/json"
+        e.http_body
+      else
+        "{}"
+      end
+
+      raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)
     end
 
   end

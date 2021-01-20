@@ -27,28 +27,19 @@ Gem::Specification.new do |s|
 
 }
 
-
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "activesupport", ">= 3.1.0"
   s.add_dependency "rack", ">= 1.4.0"
-  s.add_dependency "rest-client"
+  s.add_dependency "rest-client", ">= 2.0.0"
   s.add_development_dependency "actionmailer", ">= 3.0.9"
-  s.add_development_dependency "minitest"
-  s.add_development_dependency "minitest-matchers"
-  s.add_development_dependency "minitest-spec-context"
-  s.add_development_dependency "turn"
   s.add_development_dependency "rake"
   s.add_development_dependency "json"
-  s.add_development_dependency "mocha"
   s.add_development_dependency "webmock"
   s.add_development_dependency "vcr"
-  s.add_development_dependency 'guard'
-  s.add_development_dependency 'guard-minitest'
-  # s.add_development_dependency 'debugger' #removed for compatability reasons
-  s.add_development_dependency "rspec" #added this
-  s.add_development_dependency "rspec-expectations" #added this
-  s.add_development_dependency "dotenv" #added this
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "dotenv"
 
+  s.required_ruby_version = ">= 2.2.0"
 end
