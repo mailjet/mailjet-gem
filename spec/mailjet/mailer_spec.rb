@@ -241,157 +241,154 @@ module Mailjet
       )
     end
 
-    it "sends email with HTML body and an attachment with API v3.0", :vcr do
-      Mailjet.config.api_version = "v3"
+    context "v3.1" do
+      context "text body" do
+        it "sends email and attachment with API set in config" do
+          VCR.use_cassette("api_mailer/send_text_email_v31") do
+            Mailjet.config.api_version = "v3.1"
 
-      message = Mail.new do
-        from          "pilot@example.com"
-        to            "passenger@example.com"
-        subject       "This is a nice welcome email (API v3.0)"
-        body          "Test"
-        content_type  "text/html"
+            message = Mail.new do
+              from          "pilot@example.com"
+              to            "passenger@example.com"
+              subject       "This is a nice welcome email (API v3.1)"
+              body          "Test"
+              content_type  "text/plain"
+            end
+
+            message.attachments['filename.txt'] = {
+              mime_type: 'text/plain',
+              content: "hello world"
+            }
+
+            res = APIMailer.new.deliver!(message)
+            status = res.attributes["Messages"].first["Status"]
+
+            expect(status).to eq("success")
+          end
+        end
+
+        it "sends email and attachment with API set in deliver"  do
+          VCR.use_cassette("api_mailer/send_text_email_v31") do
+            message = Mail.new do
+              from          "pilot@example.com"
+              to            "passenger@example.com"
+              subject       "This is a nice welcome email (API v3.1)"
+              body          "Test"
+              content_type  "text/plain"
+            end
+
+            message.attachments['filename.txt'] = {
+              mime_type: 'text/plain',
+              content: "hello world"
+            }
+
+            res = APIMailer.new.deliver!(message, version: 'v3.1')
+            status = res.attributes["Messages"].first["Status"]
+
+            expect(status).to eq("success")
+          end
+        end
       end
 
-      message.attachments['filename.txt'] = {
-        mime_type: 'text/plain',
-        content: "hello world"
-      }
+      context "html body" do
+        it "sends email and attachment with API set in config" do
+          VCR.use_cassette("api_mailer/send_html_email_v31") do
+            Mailjet.config.api_version = "v3.1"
 
-      res = APIMailer.new.deliver!(message)
-      receiver = res.attributes["Sent"].first["Email"]
+            from_email = "pilot@example.com"
+            recipient  = "passenger@example.com"
 
-      expect(receiver).to eq "passenger@example.com"
-    end
+            message = Mail.new do
+              from          from_email
+              to            recipient
+              subject       "This is a nice welcome email (API v3.1)"
+              body          "Test"
+              content_type  "text/html"
+              cc            [recipient]
+              bcc           ["Test <#{recipient}>"]
+            end
 
-    it "sends email with Text body and an attachment with API v3.0", :vcr do
-      Mailjet.config.api_version = "v3"
+            message.attachments['filename.txt'] = {
+              mime_type: 'text/plain',
+              content: "hello world"
+            }
 
-      message = Mail.new do
-        from          "pilot@example.com"
-        to            "passenger@example.com"
-        subject       "This is a nice welcome email (API v3.0)"
-        body          "Test"
-        content_type  "text/plain"
+            res = APIMailer.new.deliver!(message)
+            status = res.attributes["Messages"].first["Status"]
+
+            expect(status).to eq("success")
+          end
+        end
       end
 
-      message.attachments['filename.txt'] = {
-        mime_type: 'text/plain',
-        content: "hello world"
-      }
+      it "raises Mailjet::ApiError", :vcr do
+        VCR.use_cassette("api_mailer/raise_error_v31") do
+          Mailjet.config.api_version = "v3.1"
 
-      res = APIMailer.new.deliver!(message)
-      receiver = res.attributes["Sent"].first["Email"]
+          message = Mail.new do
+            from          "pilot@example.com"
+            to            "passenger@example.com"
+            subject       "This is a nice welcome email (API v3.1)"
+          end
 
-      expect(receiver).to eq "passenger@example.com"
+          message.attachments['filename.txt'] = {
+            mime_type: 'text/plain',
+            content: "hello world"
+          }
+
+          expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::ApiError)
+        end
+      end
     end
 
-    it "sends email with HTML body and an attachment with API v3.1", :vcr do
-      Mailjet.config.api_version = "v3.1"
+    context "v3" do
+      it "sends text email and attachment" do
+        VCR.use_cassette("api_mailer/send_text_email_v3") do
+          Mailjet.config.api_version = "v3"
 
-      from_email = "pilot@example.com"
-      recipient  = "passenger@example.com"
+          message = Mail.new do
+            from          "pilot@example.com"
+            to            "passenger@example.com"
+            subject       "This is a nice welcome email (API v3.0)"
+            body          "Test"
+            content_type  "text/plain"
+          end
 
-      message = Mail.new do
-        from          from_email
-        to            recipient
-        subject       "This is a nice welcome email (API v3.1)"
-        body          "Test"
-        content_type  "text/html"
-        cc            [recipient]
-        bcc           ["Test <#{recipient}>"]
+          message.attachments['filename.txt'] = {
+            mime_type: 'text/plain',
+            content: "hello world"
+          }
+
+          res = APIMailer.new.deliver!(message)
+          receiver = res.attributes["Sent"].first["Email"]
+
+          expect(receiver).to eq "passenger@example.com"
+        end
       end
 
-      message.attachments['filename.txt'] = {
-        mime_type: 'text/plain',
-        content: "hello world"
-      }
+      it "sends html email and attachment", :vcr do
+        VCR.use_cassette("api_mailer/send_html_email_v3") do
+          Mailjet.config.api_version = "v3"
 
-      res = APIMailer.new.deliver!(message)
-      status = res.attributes["Messages"].first["Status"]
+          message = Mail.new do
+            from          "pilot@example.com"
+            to            "passenger@example.com"
+            subject       "This is a nice welcome email (API v3.0)"
+            body          "Test"
+            content_type  "text/html"
+          end
 
-      expect(status).to eq("success")
-    end
+          message.attachments['filename.txt'] = {
+            mime_type: 'text/plain',
+            content: "hello world"
+          }
 
-    it "sends email with Text body and an attachment with API v3.1", :vcr do
-      Mailjet.config.api_version = "v3.1"
+          res = APIMailer.new.deliver!(message)
+          receiver = res.attributes["Sent"].first["Email"]
 
-      message = Mail.new do
-        from          "pilot@example.com"
-        to            "passenger@example.com"
-        subject       "This is a nice welcome email (API v3.1)"
-        body          "Test"
-        content_type  "text/plain"
+          expect(receiver).to eq "passenger@example.com"
+        end
       end
-
-      message.attachments['filename.txt'] = {
-        mime_type: 'text/plain',
-        content: "hello world"
-      }
-
-      res = APIMailer.new.deliver!(message)
-      status = res.attributes["Messages"].first["Status"]
-
-      expect(status).to eq("success")
-    end
-
-    it "does not send email without any Text or HTML body and an attachment with API v3.1 but raise a Mailjet::ApiError", :vcr do
-      Mailjet.config.api_version = "v3.1"
-
-      message = Mail.new do
-        from          "pilot@example.com"
-        to            "passenger@example.com"
-        subject       "This is a nice welcome email (API v3.1)"
-      end
-
-      message.attachments['filename.txt'] = {
-        mime_type: 'text/plain',
-        content: "hello world"
-      }
-
-      expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::ApiError)
-    end
-
-    it 'returns data in attribute "Sent" using Send API v3.0', :vcr do
-      Mailjet.config.api_version = "v3"
-
-      recipient = { "Email": "passenger@example.com" }
-
-      message = Mailjet::Send.create(
-        from_email: "pilot@example.com",
-        from_name: 'Mailjet Ruby Wrapper CI',
-        subject: 'Mailjet Ruby Wrapper CI Send API v3.0 spec',
-        text_part: 'Mailjet Ruby Wrapper CI content',
-        html_part: 'HTML Mailjet Ruby Wrapper CI content',
-        recipients: [recipient]
-      )
-
-      expect(message.attributes['Sent'].first).to include(recipient)
-    end
-
-    it 'returns data in attribute "Sent" using API v3.1', :vcr do
-      Mailjet.config.api_version = "v3.1"
-
-      recipient = {
-        'Email' => "passenger@example.com",
-        'Name' => 'test'
-      }
-
-      message = Mailjet::Send.create(
-        messages: [{
-          'From' => {
-            'Email' => "pilot@example.com",
-            'Name' => 'Mailjet Ruby Wrapper CI'
-          },
-          'To' => [
-            recipient
-          ],
-            'Subject' => 'Mailjet Ruby Wrapper CI Send API v3.1 spec',
-            'TextPart' => 'Mailjet Ruby Wrapper CI content',
-            'HTMLPart' => 'HTML Mailjet Ruby Wrapper CI content'
-          }]
-      )
-
-      expect(message.attributes['Messages'].first['To'].first['Email']).to eq "passenger@example.com"
     end
   end
 end

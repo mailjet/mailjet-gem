@@ -16,6 +16,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
     "spec/resources/integration_spec.rb",
     "spec/resources/newsletter_spec.rb",
     "spec/resources/statcounters_spec.rb",
+    "spec/resources/send_spec.rb",
   ]
 end
 
