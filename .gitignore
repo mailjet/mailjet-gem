@@ -10,9 +10,11 @@ tmtags
 \#*
 .\#*
 
-
 ## VIM
 *.swp
+
+## INTELLIJ
+.idea
 
 ## PROJECT::GENERAL
 tags

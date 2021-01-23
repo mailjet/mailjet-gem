@@ -372,6 +372,43 @@ class AwesomeMailer < ApplicationMailer
 end
 ```
 
+You also can override default settings using [ActionMailer after callback](https://guides.rubyonrails.org/action_mailer_basics.html#action-mailer-callbacks):
+
+```ruby
+class ApplicationMailer < ActionMailer::Base
+  before_action :set_user
+  after_action  :override_mailjet_defaults
+
+  def awesome_mail
+    mail(to: @user.email)
+  end
+
+  private
+
+  def set_user
+    @user = params[:user]
+  end
+
+  def override_mailjet_defaults
+    mailjet_api_key    = params[:mailjet_api_key].presence
+    mailjet_secret_key = params[:mailjet_secret_key].presence
+
+    unless mailjet_api_key.nil? || mailjet_secret_key.nil?
+      mail.delivery_method.settings.merge!(
+        user_name: mailjet_api_key,
+        password:  mailjet_secret_key
+      )
+    end
+  end
+end
+
+# using default settings from initializer
+ApplicationMailer.with(user: user).awesome_email.deliver_now
+
+# temporary using other settings
+ApplicationMailer.with(user: user, mailjet_api_key: 'api_key', mailjet_secret_key: 'secret_key').awesome_email.deliver_now
+```
+
 Keep in mind that to use the latest version of the Send API, you need to specify the version via `delivery_method_options`:
 
 ```ruby
