@@ -21,7 +21,7 @@ module Mailjet
   end
 end
 
-if defined?(ActionMailer)
+ActiveSupport.on_load(:action_mailer) do
   require 'action_mailer/version'
   require 'mailjet/mailer' if ActionMailer::Base.respond_to?(:add_delivery_method)
 end
