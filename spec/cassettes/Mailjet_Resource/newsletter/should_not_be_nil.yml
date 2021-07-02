@@ -1,0 +1,83 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/newsletter?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:44:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '41'
+    body:
+      encoding: UTF-8
+      string: '{
+        "Count": 1,
+        "Data": [
+          {
+            "AXFraction": "0",
+            "AXFractionName": "Version1",
+            "AXTesting": "123456",
+            "Callback": "https://www.example.com/123/",
+            "EditMode": "tool",
+            "EditType": "full",
+            "Footer": "default",
+            "FooterAddress": "All Rights Reserved, My Company, 123 Main Street, New York, New York",
+            "FooterWYSIWYGType": 2,
+            "HeaderFilename": "https://r.mailjet.com/E_5Au.png",
+            "HeaderLink": "https://www.example.com/",
+            "HeaderText": "Insert Header Text Here",
+            "HeaderUrl": "https://www.example.com/",
+            "Ip": "127.0.0.1",
+            "IsStarred": false,
+            "IsTextPartIncluded": true,
+            "Permalink": "default",
+            "PermalinkHost": "",
+            "PermalinkWYSIWYGType": 1,
+            "PolitenessMode": 1,
+            "ReplyEmail": "copilot@mailjet.com",
+            "SenderName": "Your Mailjet Pilot",
+            "Status": 2,
+            "TemplateID": 1234,
+            "TestAddress": "tester@mailjet.com",
+            "Title": "My Newsletter",
+            "Url": "https://123h45y.mjt.lu/123uso/ia834.html",
+            "CampaignID": 123456789,
+            "ContactsListID": 123456,
+            "CreatedAt": "2018-01-01T00:00:00",
+            "DeliveredAt": "2018-01-01T00:00:00",
+            "ID": 987654321,
+            "IsHandled": true,
+            "Locale": "en_US",
+            "ModifiedAt": "2018-01-01T00:00:00",
+            "SegmentationID": 123,
+            "Sender": "1234",
+            "SenderEmail": "pilot@mailjet.com",
+            "Subject": "Your email flight plan!"
+          }
+        ],
+        "Total": 1
+      }'
+  recorded_at: Mon, 28 Jun 2021 11:44:07 GMT
+recorded_with: VCR 6.0.0

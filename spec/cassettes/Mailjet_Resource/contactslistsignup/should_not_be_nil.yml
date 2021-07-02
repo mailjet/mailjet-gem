@@ -1,0 +1,57 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/contactslistsignup?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:04:39 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '41'
+      Connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{
+        "Count": 1,
+        "Data": [
+          {
+            "ConfirmAt": 1514764800,
+            "ConfirmIp": "127.0.0.1",
+            "ContactID": 123456789,
+            "Email": "passenger@mailjet.com",
+            "ID": 987654,
+            "ListID": 123456,
+            "SignupAt": 1514764800,
+            "SignupIp": "127.0.0.1",
+            "SignupKey": "987654321a0bc9876d5432109e87fg65",
+            "SourceId": 654321,
+            "Source": "mj_widget"
+          }
+        ],
+        "Total": 1
+      }'
+  recorded_at: Mon, 28 Jun 2021 11:04:39 GMT
+recorded_with: VCR 6.0.0

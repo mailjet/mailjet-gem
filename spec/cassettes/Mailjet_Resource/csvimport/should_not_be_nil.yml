@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/csvimport?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:05:34 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '476'
+    body:
+      encoding: UTF-8
+      string: '{
+        "Count": 1,
+        "Data": [
+          {
+            "ErrTreshold": 1,
+            "ImportOptions": "",
+            "Method": "addnoforce",
+            "AliveAt": "2018-01-01T00:00:00",
+            "ContactsListID": 123456,
+            "Count": 12,
+            "Current": 10,
+            "DataID": 98765432123456780,
+            "Errcount": 0,
+            "ID": 987654,
+            "JobEnd": "2018-01-01T00:00:00",
+            "JobStart": "2018-01-01T00:00:00",
+            "RequestAt": "2018-01-01T00:00:00",
+            "Status": "Upload"
+          }
+        ],
+        "Total": 1
+      }'
+  recorded_at: Mon, 28 Jun 2021 11:05:34 GMT
+recorded_with: VCR 6.0.0
