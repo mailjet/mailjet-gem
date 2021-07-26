@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/myprofile?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:42:57 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '523'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "AddressCity" : "", "AddressCountry" : "A",
+        "AddressPostalCode" : "", "AddressState" : "", "AddressStreet" : "", "BillingEmail"
+        : "", "BirthdayAt" : "", "CompanyName" : "Name", "CompanyNumOfEmployees"
+        : "", "ContactPhone" : "", "EstimatedVolume" : 6000, "Features" : "", "Firstname"
+        : "Value", "ID" : 123, "Industry" : "123", "JobTitle" : "", "Lastname"
+        : "Value", "UserID" : 123, "VAT" : 0, "VATNumber" : "", "Website" :
+        "https:\/\/www.value.com\/uk-ua" }], "Total" : 1 }'
+  recorded_at: Mon, 28 Jun 2021 11:42:58 GMT
+recorded_with: VCR 6.0.0

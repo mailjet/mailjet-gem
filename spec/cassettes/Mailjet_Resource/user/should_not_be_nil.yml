@@ -1,0 +1,41 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/user?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 12:23:31 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '377'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "ACL" : "", "CreatedAt" : "2021-06-20T09:19:01Z",
+        "Email" : "email@email.com", "FirstIp" : "143.123.123.123", "ID" :
+        1600083, "LastIp" : "123.123.123.123", "LastLoginAt" : "2021-06-28T09:49:03Z",
+        "Locale" : "en_US", "MaxAllowedAPIKeys" : 2, "Timezone" : "Europe\/Paris",
+        "Username" : "name", "WarnedRatelimitAt" : "" }], "Total" : 1 }'
+  recorded_at: Mon, 28 Jun 2021 12:23:31 GMT
+recorded_with: VCR 6.0.0
