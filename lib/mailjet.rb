@@ -1,4 +1,4 @@
-require 'active_support'
+require 'json/ext'
 require 'ostruct'
 require 'mailjet/core_extensions/ostruct'
 require 'mailjet/configuration'

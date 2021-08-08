@@ -5,7 +5,6 @@ require 'active_support/core_ext/hash'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
 require 'active_support/concern'
-require 'active_support/json/decoding'
 #require 'mail'
 require 'json'
 
@@ -18,40 +17,42 @@ require 'json'
 
 module Mailjet
   module Resource
-    extend ActiveSupport::Concern
 
     # define here available options for filtering
     OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
 
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
 
-    included do
-      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
-      cattr_writer :connection
+    def self.included(base)
+      base.extend ClassMethods
+      base.class_eval do
+        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
+        cattr_writer :connection
 
-      def self.connection(options = {})
-        class_variable_get(:@@connection) || default_connection(options)
-      end
-
-      def self.default_connection(options = {})
-        Mailjet::Connection.new(
-          "#{options[:url]}/#{options[:version]}/#{resource_path}",
-          options[:api_key] || Mailjet.config.api_key,
-          options[:secret_key] || Mailjet.config.secret_key,
-          public_operations: public_operations,
-          read_only: read_only,
-          perform_api_call: options[:perform_api_call],
-          open_timeout: options[:open_timeout],
-          read_timeout: options[:read_timeout])
-      end
-
-      def self.default_headers
-        if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
-          default_headers = { accept: :json, accept_encoding: :deflate }
-        else
-          default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
+        def self.connection(options = {})
+          class_variable_get(:@@connection) || default_connection(options)
         end
-        return default_headers.merge(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
+
+        def self.default_connection(options = {})
+          Mailjet::Connection.new(
+            "#{options[:url]}/#{options[:version]}/#{resource_path}",
+            options[:api_key] || Mailjet.config.api_key,
+            options[:secret_key] || Mailjet.config.secret_key,
+            public_operations: public_operations,
+            read_only: read_only,
+            perform_api_call: options[:perform_api_call],
+            open_timeout: options[:open_timeout],
+            read_timeout: options[:read_timeout])
+        end
+
+        def self.default_headers
+          if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
+            default_headers = { accept: :json, accept_encoding: :deflate }
+          else
+            default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
+          end
+          return default_headers.merge(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
+        end
       end
     end
 
@@ -322,7 +323,9 @@ module Mailjet
       payload = camelcase_keys(payload)
       payload.tap { |hs| hs.delete("Persisted") }
       payload.inject({}) do |h, (k, v)|
-        v = v.utc.as_json if v.respond_to? :utc
+        if v.respond_to? :utc
+          v = v.utc.as_json
+        end
         h.merge!({k => v})
       end
     end
