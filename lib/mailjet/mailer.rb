@@ -65,6 +65,13 @@ class Mailjet::APIMailer
     @delivery_method_options_v3_1 = options.slice(*V3_1_PERMITTED_OPTIONS)
   end
 
+  def settings
+    {
+      v3_0: @delivery_method_options_v3_0,
+      v3_1: @delivery_method_options_v3_1
+    }
+  end
+
   def deliver!(mail, opts = {})
     options = HashWithIndifferentAccess.new(opts)
 
