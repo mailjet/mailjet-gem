@@ -340,55 +340,5 @@ module Mailjet
         end
       end
     end
-
-    context "v3" do
-      it "sends text email and attachment" do
-        VCR.use_cassette("api_mailer/send_text_email_v3") do
-          Mailjet.config.api_version = "v3"
-
-          message = Mail.new do
-            from          "pilot@example.com"
-            to            "passenger@example.com"
-            subject       "This is a nice welcome email (API v3.0)"
-            body          "Test"
-            content_type  "text/plain"
-          end
-
-          message.attachments['filename.txt'] = {
-            mime_type: 'text/plain',
-            content: "hello world"
-          }
-
-          res = APIMailer.new.deliver!(message)
-          receiver = res.attributes["Sent"].first["Email"]
-
-          expect(receiver).to eq "passenger@example.com"
-        end
-      end
-
-      it "sends html email and attachment", :vcr do
-        VCR.use_cassette("api_mailer/send_html_email_v3") do
-          Mailjet.config.api_version = "v3"
-
-          message = Mail.new do
-            from          "pilot@example.com"
-            to            "passenger@example.com"
-            subject       "This is a nice welcome email (API v3.0)"
-            body          "Test"
-            content_type  "text/html"
-          end
-
-          message.attachments['filename.txt'] = {
-            mime_type: 'text/plain',
-            content: "hello world"
-          }
-
-          res = APIMailer.new.deliver!(message)
-          receiver = res.attributes["Sent"].first["Email"]
-
-          expect(receiver).to eq "passenger@example.com"
-        end
-      end
-    end
   end
 end

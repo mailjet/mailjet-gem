@@ -6,6 +6,7 @@ module Mailjet
     self.public_operations = [:get]
     self.filters = []
     self.resourceprop = []
+    self.supported_versions = ['v3']
 
     def self.find(id, job_id = nil, options = {})
       opts = define_options(options)

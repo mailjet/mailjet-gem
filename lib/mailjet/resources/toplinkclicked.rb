@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:clicked_count, :id, :link_id, :url]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end

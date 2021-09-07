@@ -29,5 +29,6 @@ module Mailjet
       :total,
     ]
     self.read_only = true
+    self.supported_versions = ['v3']
   end
 end

@@ -5,6 +5,6 @@ module Mailjet
     self.public_operations = [:get, :put, :post, :delete]
     self.filters = [:data_type, :namespace]
     self.resourceprop = [:datatype, :id, :name, :name_space]
-
+    self.supported_versions = ['v3']
   end
 end

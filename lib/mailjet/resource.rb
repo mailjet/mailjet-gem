@@ -26,7 +26,7 @@ module Mailjet
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
 
     included do
-      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
+      cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version, :supported_versions
       cattr_writer :connection
 
       def self.connection(options = {})
@@ -62,6 +62,7 @@ module Mailjet
 
       def all(params = {}, options = {})
         opts = define_options(options)
+        validate_api_version(opts, self.supported_versions)
         params = format_params(params)
         response = connection(opts).get(default_headers.merge(params: params))
         attribute_array = parse_api_json(response)
@@ -70,6 +71,7 @@ module Mailjet
 
       def count(options = {})
         opts = define_options(options)
+        validate_api_version(opts, self.supported_versions)
         response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
         response_hash = ActiveSupport::JSON.decode(response_json)
         response_hash['Total']
@@ -81,9 +83,9 @@ module Mailjet
         else
           id
         end
-
         # if action method, ammend url to appropriate id
         opts = define_options(options)
+        validate_api_version(opts, self.supported_versions)
         self.resource_path = create_action_resource_path(normalized_id, job_id) if self.action
         #
         attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
@@ -100,6 +102,7 @@ module Mailjet
       def create(attributes = {}, options = {})
         # if action method, ammend url to appropriate id
         opts = define_options(options)
+        validate_api_version(opts, self.supported_versions)
         self.resource_path = create_action_resource_path(attributes[:id]) if (self.action and attributes[:id])
         attributes.tap { |hs| hs.delete(:id) }
 
@@ -120,10 +123,11 @@ module Mailjet
       end
 
       def delete(id, options = {})
-         # if action method, ammend url to appropriate id
-         opts = define_options(options)
-         self.resource_path = create_action_resource_path(id) if self.action
-         connection(opts)[id].delete(default_headers)
+        # if action method, ammend url to appropriate id
+        opts = define_options(options)
+        validate_api_version(opts, self.supported_versions)
+        self.resource_path = create_action_resource_path(id) if self.action
+        connection(opts)[id].delete(default_headers)
       end
 
       def instanciate_from_api(attributes = {})
@@ -230,6 +234,14 @@ module Mailjet
           perform_api_call: Mailjet.config.perform_api_call
         }
         .merge(options.symbolize_keys.slice(*OPTIONS))
+      end
+
+      def validate_api_version(opts, supported_versions)
+        return if supported_versions.nil?
+        current_version = opts[:version] || Mailjet.config.api_version
+        unless supported_versions.include?(current_version.downcase)
+          raise "API version is not supported by this endpoint. Supported versions: #{supported_versions.join(',')}"
+        end
       end
 
     end

@@ -5,6 +5,6 @@ module Mailjet
     self.public_operations = [:get]
     self.filters = []
     self.resourceprop = [:id, :isCheckInProgress, :DKIMStatus, :DKIMValue, :DKIMName, :format, :lastCheckedAt, :SPFStatus, :SPFValue, :ownershipToken]
-
+    self.supported_versions = ['v3']
   end
 end

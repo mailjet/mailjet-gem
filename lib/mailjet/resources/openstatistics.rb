@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:opened_count, :opened_delay, :processed_count]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end

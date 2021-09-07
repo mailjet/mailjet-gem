@@ -5,6 +5,6 @@ module Mailjet
     self.public_operations = [:get, :put]
     self.filters = [:user]
     self.resourceprop = [:address_city, :address_country, :address_postal_code, :address_street, :billing_email, :birthday_at, :company_name, :contact_phone, :estimated_volume, :features, :firstname, :id, :industry, :lastname, :user, :vat, :vat_number, :website]
-
+    self.supported_versions = ['v3']
   end
 end

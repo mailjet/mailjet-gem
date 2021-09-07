@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:active_count, :active_unsubscribed_count, :address, :blocked_count, :bounced_count, :clicked_count, :created_at, :delivered_count, :id, :is_deleted, :last_activity_at, :name, :opened_count, :spam_complaint_count, :subscriber_count, :unsubscribed_count]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end

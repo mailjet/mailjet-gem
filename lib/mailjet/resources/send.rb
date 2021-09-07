@@ -4,5 +4,6 @@ module Mailjet
 
     self.resource_path = 'send'
     self.public_operations = [:post]
+    self.supported_versions = ['v3.1']
   end
 end

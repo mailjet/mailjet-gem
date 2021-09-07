@@ -6,5 +6,6 @@ module Mailjet
     self.public_operations = [:post]
     self.filters = []
     self.resourceprop = [:contacts_lists, 'ListID', :list_id, :action] #need 'ListID' and :action in a subpacket
+    self.supported_versions = ['v3']
   end
 end

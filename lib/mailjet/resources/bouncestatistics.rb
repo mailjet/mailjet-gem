@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:bounced_at, :campaign, :contact, :id, :is_blocked, :is_state_permanent, :state]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end

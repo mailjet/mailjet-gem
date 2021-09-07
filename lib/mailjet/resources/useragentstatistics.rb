@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:count, :distinct_count, :platform, :user_agent]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end

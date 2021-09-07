@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:campaign, :click_tracked_count, :contact, :created_at, :id, :message_size, :open_tracked_count, :queued_count, :send_end_at, :sent_count, :spam_assassin_rules, :spam_assassin_score]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end

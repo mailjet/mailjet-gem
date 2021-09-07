@@ -6,5 +6,6 @@ module Mailjet
     self.public_operations = [:post, :get] #GET is for when job_id is there
     self.filters = []
     self.resourceprop = [:action, :contacts, :email, :name, :properties]
+    self.supported_versions = ['v3']
   end
 end

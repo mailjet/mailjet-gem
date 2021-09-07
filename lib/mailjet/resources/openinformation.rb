@@ -7,6 +7,6 @@ module Mailjet
     self.resourceprop = [:arrived_at, :campaign, :contact, :id, :message_id, :opened_at, :user_agent, :user_agent_full]
 
     self.read_only = true
-
+    self.supported_versions = ['v3']
   end
 end
