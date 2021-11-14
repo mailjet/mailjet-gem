@@ -40,6 +40,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "vcr"
   s.add_development_dependency "rspec"
   s.add_development_dependency "dotenv"
+  s.add_development_dependency 'nokogiri'
 
   s.required_ruby_version = ">= 2.2.0"
 end

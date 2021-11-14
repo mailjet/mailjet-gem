@@ -2,6 +2,8 @@ require 'rest_client'
 require 'mailjet/gem_extensions/rest_client'
 require 'active_support/core_ext/module/delegation'
 require 'json'
+require 'nokogiri'
+
 
 module Mailjet
   class Connection
@@ -89,8 +91,10 @@ module Mailjet
 
       http_body = if e.http_headers[:content_type] == "application/json"
         e.http_body
+      elsif e.http_headers[:content_type] == 'text/html'
+        Nokogiri::HTML.parse(e.http_body).title
       else
-        "{}"
+        '{}'
       end
 
       raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)

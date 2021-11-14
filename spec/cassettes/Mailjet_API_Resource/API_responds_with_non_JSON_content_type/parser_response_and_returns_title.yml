@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3.1/REST/contactslist
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Sun, 14 Nov 2021 09:33:11 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '162'
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body bgcolor=\"white\">\r\n<center><h1>404
+        Not Found</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"
+  recorded_at: Sun, 14 Nov 2021 09:33:11 GMT
+recorded_with: VCR 6.0.0

@@ -60,5 +60,12 @@ describe "Mailjet API Resource" do
     it "raises an error", :vcr do
       expect { subject.all }.to raise_error Mailjet::ApiError
     end
+
+    it 'parser response and returns title', :vcr do
+      parsed_mock = double
+      expect(Nokogiri::HTML).to receive(:parse).and_return(parsed_mock)
+      expect(parsed_mock).to receive(:title).and_return('404 Not Found')
+      expect { subject.all }.to raise_error Mailjet::ApiError
+    end
   end
 end
