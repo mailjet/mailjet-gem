@@ -1,6 +1,4 @@
-require 'active_support'
 require 'rack/request'
-
 
 module Mailjet
   module Rack
