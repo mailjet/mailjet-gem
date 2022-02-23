@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/message?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:40:03 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '609'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "ArrivedAt" : "2021-06-28T10:45:08Z", "AttachmentCount"
+        : 0, "AttemptCount" : 0, "CampaignID" : 7390730, "ContactAlt" : "", "ContactID"
+        : 254509966, "Delay" : 0, "DestinationID" : 124879, "FilterTime" : 0, "ID"
+        : 95420017985181303, "IsClickTracked" : true, "IsHTMLPartIncluded" : false,
+        "IsOpenTracked" : true, "IsTextPartIncluded" : false, "IsUnsubTracked" : false,
+        "MessageSize" : 18953, "SenderID" : 46935, "SpamassassinScore" : 0, "SpamassRules"
+        : "", "StatePermanent" : false, "Status" : "sent", "Subject" : "", "UUID"
+        : "606434fb-5cf2-4ee8-adaf-fd8dcf60890a" }], "Total" : 1 }'
+  recorded_at: Mon, 28 Jun 2021 11:40:03 GMT
+recorded_with: VCR 6.0.0

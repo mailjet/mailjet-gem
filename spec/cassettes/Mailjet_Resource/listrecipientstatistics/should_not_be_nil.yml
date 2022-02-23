@@ -1,0 +1,42 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/listrecipientstatistics?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:37:42 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '428'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "BlockedCount" : 0, "BouncedCount" : 0,
+        "ClickedCount" : 0, "DeferredCount" : 2, "DeliveredCount" : 2, "HardBouncedCount"
+        : 0, "LastActivityAt" : "2021-06-28T10:45:09Z", "ListRecipientID" : 225690164,
+        "OpenedCount" : 0, "PreQueuedCount" : 0, "ProcessedCount" : 2, "QueuedCount"
+        : 2, "SoftBouncedCount" : 0, "SpamComplaintCount" : 0, "UnsubscribedCount"
+        : 0, "WorkFlowExitedCount" : 0 }], "Total" : 1 }'
+  recorded_at: Mon, 28 Jun 2021 11:37:42 GMT
+recorded_with: VCR 6.0.0

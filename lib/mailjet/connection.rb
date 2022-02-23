@@ -1,6 +1,5 @@
 require 'rest_client'
 require 'mailjet/gem_extensions/rest_client'
-require 'active_support/core_ext/module/delegation'
 require 'json'
 
 module Mailjet
@@ -8,8 +7,6 @@ module Mailjet
 
     attr_accessor :adapter, :public_operations, :read_only, :perform_api_call, :read_timeout, :open_timeout
     alias :read_only? :read_only
-
-    delegate :options, :concat_urls, :url, to: :adapter
 
     def [](suburl, &new_block)
       broken_url = url.split("/")
@@ -56,6 +53,18 @@ module Mailjet
 
     def delete(additional_headers = {}, &block)
       handle_api_call(:delete, additional_headers, &block)
+    end
+
+    def options
+      self.adapter.options
+    end
+
+    def concat_urls(*options)
+      self.adapter.concat_urls(*options)
+    end
+
+    def url
+      self.adapter.url
     end
 
     private

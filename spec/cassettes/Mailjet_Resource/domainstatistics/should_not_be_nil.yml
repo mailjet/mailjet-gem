@@ -1,0 +1,40 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/domainstatistics?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:32:52 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '278'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "BlockedCount" : 0, "BouncedCount" : 0,
+        "ClickedCount" : 0, "DeliveredCount" : 1, "Domain" : "softserveinc.com", "ID"
+        : -1, "OpenedCount" : 0, "ProcessedCount" : 1, "QueuedCount" : 0, "SpamComplaintCount"
+        : 0, "UnsubscribedCount" : 0 }], "Total" : 1 }'
+  recorded_at: Mon, 28 Jun 2021 11:32:52 GMT
+recorded_with: VCR 6.0.0

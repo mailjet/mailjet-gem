@@ -2,6 +2,7 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = [
+    "spec/mailjet/rack/endpoint_spec.rb",
     "spec/mailjet/api_error_spec.rb",
     "spec/mailjet/apikey_spec.rb",
     "spec/mailjet/mailer_spec.rb",
@@ -16,6 +17,8 @@ RSpec::Core::RakeTask.new(:spec) do |t|
     "spec/resources/integration_spec.rb",
     "spec/resources/newsletter_spec.rb",
     "spec/resources/statcounters_spec.rb",
+    "spec/resources/send_spec.rb",
+    "spec/resources/resource_spec.rb",
   ]
 end
 

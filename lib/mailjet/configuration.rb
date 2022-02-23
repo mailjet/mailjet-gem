@@ -1,8 +1,60 @@
-require 'active_support/core_ext/module/attribute_accessors'
-
 module Mailjet
   module Configuration
-    mattr_accessor :api_key, :secret_key, :default_from
+    def self.api_key
+      @api_key
+    end
+
+    def self.api_key=(api_key)
+      @api_key = api_key
+    end
+
+    def self.secret_key
+      @secret_key
+    end
+
+    def self.secret_key=(secret_key)
+      @secret_key = secret_key
+    end
+
+    def self.default_from
+      @default_from
+    end
+
+    def self.default_from=(default_from)
+      @default_from = default_from
+    end
+
+    def self.api_version
+      @api_version
+    end
+
+    def self.api_version=(api_version)
+      @api_version = api_version
+    end
+
+    def self.sandbox_mode
+      @sandbox_mode
+    end
+
+    def self.sandbox_mode=(sandbox_mode)
+      @sandbox_mode = sandbox_mode
+    end
+
+    def self.end_point
+      @end_point
+    end
+
+    def self.end_point=(end_point)
+      @end_point = end_point
+    end
+
+    def self.perform_api_call
+      @perform_api_call
+    end
+
+    def self.perform_api_call=(perform_api_call)
+      @perform_api_call = perform_api_call
+    end
 
     DEFAULT = {
       api_version: 'v3',
@@ -12,7 +64,6 @@ module Mailjet
     }
 
     DEFAULT.each do |param, default_value|
-      mattr_accessor param
       self.send("#{param}=", default_value)
     end
   end

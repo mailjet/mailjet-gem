@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/messagestatistics?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:42:14 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '501'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "AverageClickDelay" : 0, "AverageClickedCount"
+        : 0, "AverageOpenDelay" : 0, "AverageOpenedCount" : 0, "BlockedCount" : 0,
+        "BouncedCount" : 0, "CampaignCount" : 1, "ClickedCount" : 0, "DeferredCount"
+        : 0, "DeliveredCount" : 1, "HardBouncedCount" : 0, "OpenedCount" : 0, "ProcessedCount"
+        : 1, "QueuedCount" : 0, "SoftBouncedCount" : 0, "SpamComplaintCount" : 0,
+        "TotalClicksCount" : 0, "TotalOpensCount" : 0, "TransactionalCount" : 0, "UnsubscribedCount"
+        : 0 }], "Total" : 1 }'
+  recorded_at: Mon, 28 Jun 2021 11:42:14 GMT
+recorded_with: VCR 6.0.0

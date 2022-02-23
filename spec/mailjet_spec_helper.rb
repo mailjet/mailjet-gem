@@ -1,6 +1,5 @@
 require "bundler/setup"
 require "mailjet"
-require "active_support/core_ext"
 require "dotenv"
 require "vcr"
 Bundler.setup

@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/openinformation?Limit=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.6.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 28 Jun 2021 11:57:06 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '41'
+    body:
+      encoding: UTF-8
+      string: '{
+        "Count": 1,
+        "Data": [
+          {
+            "ArrivedAt": "2018-01-01T00:00:00",
+            "CampaignID": 1234567890,
+            "ContactID": 987654,
+            "ID": -1,
+            "MessageID": 1234567890987654400,
+            "OpenedAt": "2018-01-01T00:00:00",
+            "UserAgentFull": "Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)",
+            "UserAgentID": 1234
+          }
+        ],
+        "Total": 1
+      }'
+  recorded_at: Mon, 28 Jun 2021 11:57:06 GMT
+recorded_with: VCR 6.0.0
