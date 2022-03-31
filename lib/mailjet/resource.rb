@@ -1,6 +1,7 @@
 require 'mailjet/connection'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
+require 'active_support/hash_with_indifferent_access'
 #require 'mail'
 require 'json'
 
@@ -68,7 +69,7 @@ module Mailjet
       def count(options = {})
         opts = define_options(options)
         response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
-        response_hash = ActiveSupport::JSON.decode(response_json)
+        response_hash = JSON.parse(response_json)
         response_hash['Total']
       end
 
@@ -128,7 +129,7 @@ module Mailjet
       end
 
       def parse_api_json(response_json)
-        response_hash = ActiveSupport::JSON.decode(response_json)
+        response_hash = JSON.parse(response_json)
 
         #Take the response from the API and put it through a method -- taken from the ActiveSupport library -- which converts
         #the date-time from "2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
@@ -255,7 +256,7 @@ module Mailjet
       if opts[:perform_api_call] && !persisted?
         # get attributes only for entity creation
         self.attributes = if self.resource_path == 'send'
-          ActiveSupport::JSON.decode(response)
+          JSON.parse(response)
         else
           parse_api_json(response).first
         end
@@ -320,7 +321,7 @@ module Mailjet
       payload.tap { |hs| hs.delete("Persisted") }
       payload.inject({}) do |h, (k, v)|
         if v.respond_to? :utc
-          v = v.utc.as_json
+          v = v.utc.to_s
         end
         h.merge!({k => v})
       end

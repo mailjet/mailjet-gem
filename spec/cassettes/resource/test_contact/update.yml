@@ -45,7 +45,7 @@ http_interactions:
     uri: https://api.mailjet.com/v3/REST/contact/196009940
     body:
       encoding: UTF-8
-      string: '{"CreatedAt":"2020-12-10T17:35:35.000Z","DeliveredCount":0,"Email":"save_resource_test@example.com","Id":196009940,"Name":"Joe
+      string: '{"CreatedAt":"2020-12-10 17:35:35 UTC","DeliveredCount":0,"Email":"save_resource_test@example.com","Id":196009940,"Name":"Joe
         Doe"}'
     headers:
       Accept:

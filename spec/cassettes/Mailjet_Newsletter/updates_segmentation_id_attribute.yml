@@ -50,7 +50,7 @@ http_interactions:
     uri: https://api.mailjet.com/v3/REST/newsletter/54218
     body:
       encoding: UTF-8
-      string: '{"CreatedAt":"2020-11-12T17:33:11.000Z","EditMode":"tool","EditType":"full","Footer":"default","FooterWysiwygType":0,"Id":54218,"Locale":"en_US","Permalink":"default","PermalinkWysiwygType":0,"PolitenessMode":0,"SegmentationId":5330,"Sender":"MisterMailjet","SenderEmail":"mister@mailjet.com","Status":0,"Subject":"Greetings
+      string: '{"CreatedAt":"2020-11-12 17:33:11 UTC","EditMode":"tool","EditType":"full","Footer":"default","FooterWysiwygType":0,"Id":54218,"Locale":"en_US","Permalink":"default","PermalinkWysiwygType":0,"PolitenessMode":0,"SegmentationId":5330,"Sender":"MisterMailjet","SenderEmail":"mister@mailjet.com","Status":0,"Subject":"Greetings
         from Mailjet","Title":"Mailjet greets every contact over 40","ContactsListId":38778}'
     headers:
       Accept:
