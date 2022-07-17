@@ -2,6 +2,9 @@ require 'mailjet/connection'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
 #require 'mail'
+require 'active_support/hash_with_indifferent_access'
+require 'active_support/core_ext/hash'
+require 'active_support/json/decoding'
 require 'json'
 
 
