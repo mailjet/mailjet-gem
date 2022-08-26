@@ -1,8 +1,6 @@
 require 'mailjet/connection'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/module/delegation'
-require 'active_support/hash_with_indifferent_access'
-require 'active_support/core_ext/hash'
 #require 'mail'
 require 'json'
 
@@ -24,7 +22,7 @@ module Mailjet
     def self.included(base)
       base.extend ClassMethods
       base.class_eval do
-        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
+        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
         cattr_writer :connection
 
         def self.connection(options = {})
@@ -317,7 +315,6 @@ module Mailjet
       payload = attributes.reject { |k,v| v.blank? }
       if persisted?
         payload = payload.slice(*resourceprop.map(&:to_s))
-          .except(*read_only_attributes.map(&:to_s))
       end
       payload = camelcase_keys(payload)
       payload.tap { |hs| hs.delete("Persisted") }
