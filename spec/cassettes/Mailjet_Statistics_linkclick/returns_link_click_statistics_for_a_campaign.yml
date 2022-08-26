@@ -1,0 +1,39 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/statistics/link-click?CampaignId=43810
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.7.0
+      Accept-Encoding:
+      - deflate
+      Content-Type:
+      - application/json
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '330'
+      Content-Type:
+      - application/json; charset=UTF-8
+      X-Mj-Request-Guid:
+      - 52e8973d-0442-4162-9814-877d752f9fa6
+      Date:
+      - Sun, 17 Jul 2022 10:36:54 GMT
+    body:
+      encoding: UTF-8
+      string: '{"Count":3,"Data":[{"URL":"https://www.example.com","PositionIndex":2,"ClickedMessagesCount":2,"ClickedEventsCount":3},{"URL":"https://www.example.com","PositionIndex":1,"ClickedMessagesCount":1,"ClickedEventsCount":2},{"URL":"https://www.example.com","PositionIndex":3,"ClickedMessagesCount":1,"ClickedEventsCount":2}],"Total":3}'
+  recorded_at: Sun, 17 Jul 2022 10:36:54 GMT
+recorded_with: VCR 6.0.0
