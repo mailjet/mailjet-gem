@@ -96,13 +96,26 @@ module Mailjet
       formatted_payload = (additional_headers[:content_type] == :json) ? JSON.parse(payload) : payload
       params = params.merge(formatted_payload)
 
-      http_body = if e.http_headers[:content_type] == "application/json"
+      http_body = if e.http_headers[:content_type].include?("application/json")
         e.http_body
       else
         "{}"
       end
 
-      raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)
+      if sent_invalid_email?(e.http_body, @adapter.url)
+        return e.http_body
+      else
+        raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)
+      end
+    end
+
+    def sent_invalid_email?(error_http_body, url)
+      return false unless url.include?('v3.1/send')
+      return unless error_http_body
+
+      parsed_body = JSON.parse(error_http_body)
+      error_message = parsed_body['Messages']&.first&.dig('Errors')&.first&.dig('ErrorMessage')
+      error_message.include?('is an invalid email address.')
     end
 
   end
