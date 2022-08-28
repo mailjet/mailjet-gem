@@ -19,5 +19,6 @@ module Mailjet
       :is_excluded_from_campaigns
     ]
     self.read_only_attributes = [:created_at, :last_activity_at, :last_update_at, :unsubscribed_at]
+
   end
 end
