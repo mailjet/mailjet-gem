@@ -25,7 +25,7 @@ module Mailjet
     def self.included(base)
       base.extend ClassMethods
       base.class_eval do
-        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :action, :non_json_urls, :version
+        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
         cattr_writer :connection
 
         def self.connection(options = {})
