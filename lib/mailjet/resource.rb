@@ -28,6 +28,8 @@ module Mailjet
         cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
         cattr_writer :connection
 
+        self.read_only_attributes = []
+
         def self.connection(options = {})
           class_variable_get(:@@connection) || default_connection(options)
         end
