@@ -114,8 +114,10 @@ module Mailjet
       return unless error_http_body
 
       parsed_body = JSON.parse(error_http_body)
-      error_message = parsed_body['Messages']&.first&.dig('Errors')&.first&.dig('ErrorMessage')
-      error_message&.include?('is an invalid email address.')
+      error_message = parsed_body.dig('Messages')&.first&.dig('Errors')&.first&.dig('ErrorMessage') || []
+      error_message.include?('is an invalid email address.')
+    rescue
+      false
     end
 
   end
