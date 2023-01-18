@@ -169,7 +169,7 @@ module Mailjet
           nil
        when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
           begin
-            DateTime.parse(data)
+            DateTime.iso8601(data)
           rescue ArgumentError
             data
           end
