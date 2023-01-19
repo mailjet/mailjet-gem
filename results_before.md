@@ -625,3 +625,11 @@ retained objects by class
          3  Module
          1  I18n::Locale::Fallbacks
 ```
+
+After improvement Date.parse
+```
+➜  mailjet-gem git:(memory_profile) be ruby memory_profile.rb
+Total allocated: 2593946 bytes (29823 objects)
+Total retained:  18347 bytes (105 objects)
+```
+

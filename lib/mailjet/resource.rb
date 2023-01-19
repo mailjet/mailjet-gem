@@ -5,7 +5,8 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/hash_with_indifferent_access'
 require 'active_support/core_ext/hash'
 require 'active_support/json/decoding'
-require 'json'
+require 'yajl/json_gem'
+
 
 
 # This option automatically transforms the date output by the API into something a bit more readable.

@@ -1,7 +1,8 @@
 require 'action_mailer'
 require 'mail'
 require 'base64'
-require 'json'
+require 'yajl/json_gem'
+
 
 # Mailjet::Mailer enables to send a Mail::Message via Mailjet SMTP relay servers
 # User is the API key, and password the API secret

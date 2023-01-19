@@ -1,6 +1,6 @@
 require 'rest_client'
 require 'mailjet/gem_extensions/rest_client'
-require 'json'
+require 'yajl/json_gem'
 
 module Mailjet
   class Connection
