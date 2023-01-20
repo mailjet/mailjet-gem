@@ -1,11 +1,8 @@
 require 'mailjet/connection'
-require 'active_support/core_ext/string'
-require 'active_support/core_ext/module/delegation'
-#require 'mail'
-require 'active_support/hash_with_indifferent_access'
-require 'active_support/core_ext/hash'
-require 'active_support/json/decoding'
 require 'yajl/json_gem'
+require 'active_support'
+require 'active_support/core_ext/string'
+require 'active_support/core_ext/hash/indifferent_access'
 
 
 
@@ -168,7 +165,7 @@ module Mailjet
         case data
         when nil
           nil
-       when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
+        when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
           begin
             DateTime.iso8601(data)
           rescue ArgumentError
