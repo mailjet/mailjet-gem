@@ -16,7 +16,7 @@ class Mailjet::Mailer < ::Mail::SMTP
       user_name: options.delete(:api_key) || Mailjet.config.api_key,
       password: options.delete(:secret_key) || Mailjet.config.secret_key,
       enable_starttls_auto: true
-    }.merge(options))
+    }.merge!(options))
   end
 end
 
@@ -203,9 +203,7 @@ class Mailjet::APIMailer
 
     payload = {
       :To=> to,
-    }.merge(content)
-    .merge(base_from)
-    .merge(@delivery_method_options_v3_1)
+    }.merge!(content, base_from, @delivery_method_options_v3_1)
 
     payload[:Subject] = mail.subject if !mail.subject.blank?
     payload[:Sender] = mail[:sender] if !mail[:sender].blank?
@@ -295,9 +293,7 @@ class Mailjet::APIMailer
     payload[:bcc] = mail[:bcc].formatted.join(', ') if mail[:bcc]
 
     # Send the final payload to Mailjet Send API
-    payload.merge(content)
-    .merge(base_from)
-    .merge(@delivery_method_options_v3_0)
+    payload.merge!(content, base_from, @delivery_method_options_v3_0)
   end
 end
 

@@ -48,7 +48,7 @@ module Mailjet
           else
             default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
           end
-          return default_headers.merge(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
+          return default_headers.merge!(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
         end
       end
     end
@@ -61,14 +61,14 @@ module Mailjet
       def all(params = {}, options = {})
         opts = define_options(options)
         params = format_params(params)
-        response = connection(opts).get(default_headers.merge(params: params))
+        response = connection(opts).get(default_headers.merge!(params: params))
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       end
 
       def count(options = {})
         opts = define_options(options)
-        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
+        response_json = connection(opts).get(default_headers.merge!(params: {limit: 1, countrecords: 1}))
         response_hash = JSON.parse(response_json)
         response_hash['Total']
       end
@@ -125,7 +125,7 @@ module Mailjet
       end
 
       def instanciate_from_api(attributes = {})
-        self.new(attributes.merge(persisted: true))
+        self.new(attributes.merge!(persisted: true))
       end
 
       def parse_api_json(response_json)
