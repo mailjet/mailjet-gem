@@ -633,3 +633,9 @@ Total allocated: 2593946 bytes (29823 objects)
 Total retained:  18347 bytes (105 objects)
 ```
 
+After all improvements
+```
+➜  mailjet-gem git:(memory_profile) ✗ be ruby memory_profile.rb
+Total allocated: 2440485 bytes (28959 objects)
+Total retained:  14265 bytes (74 objects)
+```
