@@ -1,6 +1,4 @@
 require 'json/ext'
-require 'ostruct'
-require 'mailjet/core_extensions/ostruct'
 require 'mailjet/configuration'
 require 'mailjet/api_error'
 

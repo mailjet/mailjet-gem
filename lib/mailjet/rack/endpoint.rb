@@ -1,5 +1,5 @@
 require 'rack/request'
-require 'json'
+require 'yajl/json_gem'
 
 module Mailjet
   module Rack

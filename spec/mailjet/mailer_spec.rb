@@ -223,7 +223,7 @@ module Mailjet
       end
 
       content = 'FooBar'
-      content_id = "FooBarId"
+      content_id = "<FooBarId>"
       file_name = "TestFileName"
       message.attachments.inline[file_name] = {
         mime_type: 'text/plain',

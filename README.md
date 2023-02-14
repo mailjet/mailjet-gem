@@ -76,7 +76,7 @@ Check out all the resources and Ruby code examples in the [Offical Documentation
 
 This library requires **Ruby v2.2.X**.
 
-The Rails ActionMailer integration is designed for Rails 3.X and 4.X.
+The Rails ActionMailer integration is designed for Rails >= 5.
 
 ## Installation
 
@@ -139,7 +139,7 @@ Here's an example on how to send an email:
 require 'mailjet'
 Mailjet.configure do |config|
   config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
   config.api_version = "v3.1"
 end
 variable = Mailjet::Send.create(messages: [{
@@ -177,7 +177,7 @@ Since most Email API endpoints are located under `v3`, it is set as the default 
 require 'mailjet'
 Mailjet.configure do |config|
   config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
   config.api_version = "v3.1"
 end
 ```
@@ -189,7 +189,7 @@ The default base domain name for the Mailjet API is `https://api.mailjet.com`. Y
 ```ruby
 Mailjet.configure do |config|
   config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
   config.api_version = "v3.1"
   config.end_point = "https://api.us.mailjet.com"
 end
@@ -221,7 +221,7 @@ Use the `create` method of the Mailjet CLient (i.e. `variable = Mailjet::$resour
 require 'mailjet'
 Mailjet.configure do |config|
   config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
 end
 variable = Mailjet::Contact.create(email: "Mister@mailjet.com"
 )
@@ -239,7 +239,7 @@ Use `id` to specify the ID you want to apply a POST request to (used in case of 
 require 'mailjet'
 Mailjet.configure do |config|
   config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
 end
 variable = Mailjet::Contact_managecontactslists.create(id: $ID, contacts_lists: [{
     'ListID'=> '$ListID_1',
@@ -285,7 +285,7 @@ Use the `.find` method to retrieve a specific object. Specify the ID of the obje
 require 'mailjet'
 Mailjet.configure do |config|
   config.api_key = ENV['MJ_APIKEY_PUBLIC']
-  config.secret_key = ENV['MJ_APIKEY_PRIVATE']  
+  config.secret_key = ENV['MJ_APIKEY_PRIVATE']
 end
 variable = Mailjet::Contact.find($CONTACT_EMAIL)
 p variable.attributes['Data']
