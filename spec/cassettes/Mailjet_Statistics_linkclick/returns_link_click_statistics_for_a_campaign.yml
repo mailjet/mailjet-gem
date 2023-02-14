@@ -10,7 +10,7 @@ http_interactions:
       Accept:
       - application/json
       User-Agent:
-      - mailjet-api-v3-ruby/1.7.1
+      - mailjet-api-v3-ruby/1.7.4
       Accept-Encoding:
       - deflate
       Content-Type:

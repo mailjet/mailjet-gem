@@ -37,7 +37,7 @@ RSpec.describe Mailjet::Resource do
           :accept_encoding => :deflate,
           :content_type => :json,
           :params => { "Limit" => 1 },
-          :user_agent => "mailjet-api-v3-ruby/1.7.1"
+          :user_agent => "mailjet-api-v3-ruby/1.7.4"
         }
       ).and_return('{"Data" : [{ "Test" : "Value" }]}')
     end
@@ -89,7 +89,7 @@ RSpec.describe Mailjet::Resource do
           :accept => :json,
           :accept_encoding => :deflate,
           :content_type => :json,
-          :user_agent => "mailjet-api-v3-ruby/1.7.1"
+          :user_agent => "mailjet-api-v3-ruby/1.7.4"
         }
       ).and_return("{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}")
     end
