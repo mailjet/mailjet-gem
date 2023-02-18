@@ -1,6 +1,5 @@
 require 'rest_client'
-require 'mailjet/gem_extensions/rest_client'
-require 'json'
+require 'yajl/json_gem'
 
 module Mailjet
   class Connection
@@ -94,7 +93,7 @@ module Mailjet
     def handle_exception(e, additional_headers, payload = {})
       params = additional_headers[:params] || {}
       formatted_payload = (additional_headers[:content_type] == :json) ? JSON.parse(payload) : payload
-      params = params.merge(formatted_payload)
+      params = params.merge!(formatted_payload)
 
       http_body = if e.http_headers[:content_type].include?("application/json")
         e.http_body
