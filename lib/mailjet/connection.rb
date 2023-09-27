@@ -104,8 +104,22 @@ module Mailjet
       if sent_invalid_email?(e.http_body, @adapter.url)
         return e.http_body
       else
-        raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)
+        raise communication_error(e)
       end
+    end
+
+    def communication_error(e)
+      if e.respond_to?(:response) && e.response
+        return case e.response.code
+        when Unauthorized::CODE
+          Unauthorized.new(e.message, e.response)
+        when BadRequest::CODE
+          BadRequest.new(e.message, e.response)
+        else
+          CommunicationError.new(e.message, e.response)
+        end
+      end
+      CommunicationError.new(e.message)
     end
 
     def sent_invalid_email?(error_http_body, url)

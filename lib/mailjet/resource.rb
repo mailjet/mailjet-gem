@@ -268,8 +268,22 @@ module Mailjet
       if e.code.to_s == "304"
         return true # When you save a record twice it should not raise error
       else
-        raise e
+        raise communication_error e
       end
+    end
+
+    def communication_error(e)
+      if e.respond_to?(:response) && e.response
+        return case e.response.code
+        when Unauthorized::CODE
+          Unauthorized.new(e.message, e.response)
+        when BadRequest::CODE
+          BadRequest.new(e.message, e.response)
+        else
+          CommunicationError.new(e.message, e.response)
+        end
+      end
+      CommunicationError.new(e.message)
     end
 
     def save!(options = {})
