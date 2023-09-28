@@ -15,7 +15,7 @@ module Mailjet
       attributes = parse_api_json(response).first
 
       instanciate_from_api(attributes)
-    rescue Mailjet::ApiError => e
+    rescue Mailjet::CommunicationError => e
       if e.code == 404
         nil
       else

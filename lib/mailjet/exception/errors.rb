@@ -48,17 +48,18 @@ module Mailjet
                 response.code
               end
 
-      begin
-        api_message = JSON.parse(response.body)['message']
+      api_message = begin
+        JSON.parse(response.body)['ErrorMessage']
       rescue Yajl::ParseError
-        api_message = response.body
+        response.body
       rescue NoMethodError
-        api_message = "Unknown API error"
+        "Unknown API error"
       rescue
-        api_message = 'Unknown API error'
+        'Unknown API error'
       end
 
-      message = message || ''
+      message ||=  ''
+      api_message ||= ''
       message = message + ': ' + api_message
 
       super(message, response)

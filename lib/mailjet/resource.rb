@@ -14,7 +14,6 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 module Mailjet
   module Resource
-
     # define here available options for filtering
     OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
 
@@ -25,6 +24,7 @@ module Mailjet
       base.class_eval do
         cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
         cattr_writer :connection
+        self.read_only_attributes = []
 
         def self.connection(options = {})
           class_variable_get(:@@connection) || default_connection(options)
@@ -87,7 +87,7 @@ module Mailjet
         attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
         instanciate_from_api(attributes)
 
-      rescue Mailjet::ApiError => e
+      rescue Mailjet::CommunicationError => e
         if e.code == 404
           nil
         else
@@ -268,22 +268,8 @@ module Mailjet
       if e.code.to_s == "304"
         return true # When you save a record twice it should not raise error
       else
-        raise communication_error e
+        raise e
       end
-    end
-
-    def communication_error(e)
-      if e.respond_to?(:response) && e.response
-        return case e.response.code
-        when Unauthorized::CODE
-          Unauthorized.new(e.message, e.response)
-        when BadRequest::CODE
-          BadRequest.new(e.message, e.response)
-        else
-          CommunicationError.new(e.message, e.response)
-        end
-      end
-      CommunicationError.new(e.message)
     end
 
     def save!(options = {})
