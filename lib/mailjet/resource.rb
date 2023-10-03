@@ -14,7 +14,6 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 module Mailjet
   module Resource
-
     # define here available options for filtering
     OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
 
@@ -25,6 +24,7 @@ module Mailjet
       base.class_eval do
         cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
         cattr_writer :connection
+        self.read_only_attributes = []
 
         self.read_only_attributes = []
 
@@ -89,7 +89,7 @@ module Mailjet
         attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
         instanciate_from_api(attributes)
 
-      rescue Mailjet::ApiError => e
+      rescue Mailjet::CommunicationError => e
         if e.code == 404
           nil
         else

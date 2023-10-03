@@ -17,7 +17,7 @@ module Mailjet
       raw_data.map do |entity|
         instanciate_from_api(entity)
       end
-    rescue Mailjet::ApiError => e
+    rescue Mailjet::CommunicationError => e
       if e.code == 404
         nil
       else
