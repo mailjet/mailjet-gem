@@ -483,6 +483,12 @@ UserMailer.welcome_email.deliver_now!
 
 For more information on `ActionMailer::MessageDelivery`, see the documentation [HERE](http://edgeapi.rubyonrails.org/classes/ActionMailer/MessageDelivery.html)
 
+#### Manage contacts via CSV Upload
+Create the CSV content in a format compatible with the Mailjet API, see the documentation [HERE](https://dev.mailjet.com/email/guides/contact-management/#manage-contacts-via-csv-upload)
+```ruby
+Mailjet::ContactslistCsv.send_data(ID_CONTACTLIST, File.open('some_csvdata.csv', 'r'))
+```
+
 ## Track email delivery
 
 You can setup your Rack application in order to receive feedback on emails you sent (clicks, etc.)

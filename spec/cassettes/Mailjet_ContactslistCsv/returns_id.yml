@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3/DATA/contactslist/1/CSVData/text:plain
+    body:
+      encoding: UTF-8
+      string: |-
+        "email","age"
+        "foo@example.org",42
+        "bar@example.com",13
+        "sam@ple.co.uk",37
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - mailjet-api-v3-ruby/1.7.5
+      Content-Type:
+      - text/plain
+      Content-Length:
+      - '74'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 09 Oct 2023 11:43:36 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '18'
+    body:
+      encoding: UTF-8
+      string: '{ "ID": 2 }'
+  recorded_at: Mon, 09 Oct 2023 11:43:36 GMT
+recorded_with: VCR 6.2.0

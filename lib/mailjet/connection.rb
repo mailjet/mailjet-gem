@@ -91,9 +91,11 @@ module Mailjet
     end
 
     def handle_exception(e, additional_headers, payload = {})
+      return e.http_body if e.http_headers[:content_type].include?("text/plain")
+
       params = additional_headers[:params] || {}
       formatted_payload = (additional_headers[:content_type] == :json) ? JSON.parse(payload) : payload
-      params = params.merge!(formatted_payload)
+      params = params.merge!(formatted_payload) if formatted_payload.is_a?(Hash)
 
       http_body = if e.http_headers[:content_type].include?("application/json")
         e.http_body
