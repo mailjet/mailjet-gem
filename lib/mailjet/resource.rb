@@ -18,13 +18,13 @@ module Mailjet
     OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
 
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
+    DATA_URL = 'CSVData/text:plain' # url for send binary data
 
     def self.included(base)
       base.extend ClassMethods
       base.class_eval do
         cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
         cattr_writer :connection
-        self.read_only_attributes = []
 
         self.read_only_attributes = []
 
@@ -47,6 +47,8 @@ module Mailjet
         def self.default_headers
           if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
             default_headers = { accept: :json, accept_encoding: :deflate }
+          elsif self.resource_path.include?(DATA_URL)
+            default_headers = { content_type: "text/plain" }
           else
             default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
           end
@@ -116,7 +118,6 @@ module Mailjet
           resource.save!(opts)
           resource.attributes[:persisted] = true
         end
-
       end
 
       def delete(id, options = {})
@@ -124,6 +125,14 @@ module Mailjet
          opts = define_options(options)
          self.resource_path = create_action_resource_path(id) if self.action
          connection(opts)[id].delete(default_headers)
+      end
+
+      def send_data(id, binary_data = nil, options = {})
+        opts = define_options(options)
+        self.resource_path = create_action_resource_path(id) if self.action
+
+        response_hash = JSON.parse(connection(opts).post(binary_data, default_headers))
+        response_hash['ID'] ? response_hash['ID'] : response_hash
       end
 
       def instanciate_from_api(attributes = {})

@@ -91,6 +91,13 @@ RSpec.describe Mailjet::Resource, :vcr do
     end
   end
 
+  context '/DATA/contactslist' do
+    it 'should not be nil' do
+      call =  Mailjet::ContactslistCsv.send_data(1, File.open('./spec/test.csv', 'r'))
+      expect(call).to_not be_nil
+    end
+  end
+
   context '/contactslistsignup' do
     it 'should not be nil' do
       call = Mailjet::Contactslistsignup.first
