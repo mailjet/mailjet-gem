@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/DATA/BatchJob/99999/CSVError/text:csv
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - mailjet-api-v3-ruby/1.7.5
+      Content-Type:
+      - text/csv
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - api.mailjet.com
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 404
+      message: Source object not found
+    headers:
+      Date:
+      - Thu, 26 Oct 2023 14:45:46 GMT
+      Content-Type:
+      - text/csv
+      Content-Length:
+      - '84'
+    body:
+      encoding: UTF-8
+      string: '{ "ErrorInfo" : "", "ErrorMessage" : "Source object not found", "StatusCode"
+        : 404 }'
+  recorded_at: Thu, 26 Oct 2023 14:45:46 GMT
+recorded_with: VCR 6.2.0
