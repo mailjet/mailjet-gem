@@ -18,7 +18,7 @@ module Mailjet
     OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
 
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
-    DATA_URL = 'CSVData/text:plain' # url for send binary data
+    DATA_URLS = ['plain', 'csv'] # url for send binary data , 'CSVError/text:csv'
 
     def self.included(base)
       base.extend ClassMethods
@@ -47,8 +47,9 @@ module Mailjet
         def self.default_headers
           if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
             default_headers = { accept: :json, accept_encoding: :deflate }
-          elsif self.resource_path.include?(DATA_URL)
-            default_headers = { content_type: "text/plain" }
+          elsif DATA_URLS.any? { |data_type| default_headers = { content_type: "text/#{data_type}" } if
+                                                                                self.resource_path.include?(data_type)
+                               }
           else
             default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
           end
@@ -87,7 +88,7 @@ module Mailjet
         # if action method, ammend url to appropriate id
         opts = define_options(options)
         self.resource_path = create_action_resource_path(normalized_id, job_id) if self.action
-        #
+
         attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
         instanciate_from_api(attributes)
 
@@ -133,6 +134,14 @@ module Mailjet
 
         response_hash = JSON.parse(connection(opts).post(binary_data, default_headers))
         response_hash['ID'] ? response_hash['ID'] : response_hash
+      end
+
+      def find_by_id(id, options = {})
+        # if action method, ammend url to appropriate id
+        opts = define_options(options)
+        self.resource_path = create_action_resource_path(id) if self.action
+
+        connection(opts).get(default_headers)
       end
 
       def instanciate_from_api(attributes = {})
