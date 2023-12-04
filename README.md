@@ -489,6 +489,11 @@ Create the CSV content in a format compatible with the Mailjet API, see the docu
 Mailjet::ContactslistCsv.send_data(ID_CONTACTLIST, File.open('some_csvdata.csv', 'r'))
 ```
 
+#### [Delete the Contact](https://dev.mailjet.com/email/guides/contact-management/#gdpr-delete-contacts)
+```ruby
+Mailjet::ContactPii.delete(contact_ID)
+```
+
 ## Track email delivery
 
 You can setup your Rack application in order to receive feedback on emails you sent (clicks, etc.)
