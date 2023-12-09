@@ -27,6 +27,11 @@ module Mailjet
         body
       end
 
+      if request.respond_to?(:options)
+        request.options[:user] = '***'
+        request.options[:password] = '***'
+      end
+
       message = "error #{code} while sending #{request.inspect} to #{url} with #{params.inspect}"
       error_details = body.inspect
       hint = "Please see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers."
