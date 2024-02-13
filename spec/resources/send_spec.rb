@@ -68,7 +68,7 @@ RSpec.describe Mailjet::Send do
           }]
         }
 
-      expect{ described_class.create(message, version: 'v3.1') }.to raise_error(Mailjet::ApiError, /401/)
+      expect{ described_class.create(message, version: 'v3.1') }.to raise_error(Mailjet::Unauthorized, /401 Unauthorized/)
     end
   end
 end

@@ -30,12 +30,12 @@ Gem::Specification.new do |s|
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "activesupport", ">= 3.1.0"
+  s.add_dependency "activesupport", ">= 5.0.0"
   s.add_dependency "rack", ">= 1.4.0"
-  s.add_dependency "rest-client", ">= 2.0.0"
-  s.add_development_dependency "actionmailer", ">= 3.0.9"
+  s.add_dependency "rest-client", ">= 2.1.0"
+  s.add_dependency "yajl-ruby"
+  s.add_development_dependency "actionmailer", ">= 5.0.0"
   s.add_development_dependency "rake"
-  s.add_development_dependency "json"
   s.add_development_dependency "webmock"
   s.add_development_dependency "vcr"
   s.add_development_dependency "rspec"

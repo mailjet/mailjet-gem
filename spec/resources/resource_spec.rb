@@ -3,7 +3,7 @@ require "mailjet_spec_helper"
 RSpec.describe Mailjet::Resource, :vcr do
   context '/invalid_credentials' do
     it 'should raise api connection error' do
-      expect{ Mailjet::Apikey.first }.to raise_error(Mailjet::ApiError, /401/)
+      expect{ Mailjet::Apikey.first }.to raise_error(Mailjet::Unauthorized, /401 Unauthorized/)
     end
   end
 
@@ -87,6 +87,13 @@ RSpec.describe Mailjet::Resource, :vcr do
   context '/contactslist' do
     it 'should not be nil' do
       call = Mailjet::Contactslist.first
+      expect(call).to_not be_nil
+    end
+  end
+
+  context '/DATA/contactslist' do
+    it 'should not be nil' do
+      call =  Mailjet::ContactslistCsv.send_data(1, File.open('./spec/test.csv', 'r'))
       expect(call).to_not be_nil
     end
   end

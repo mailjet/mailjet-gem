@@ -1,6 +1,5 @@
 require 'rest_client'
-require 'mailjet/gem_extensions/rest_client'
-require 'json'
+require 'yajl/json_gem'
 
 module Mailjet
   class Connection
@@ -92,9 +91,11 @@ module Mailjet
     end
 
     def handle_exception(e, additional_headers, payload = {})
+      return e.http_body if e.http_headers[:content_type].include?("text/plain")
+
       params = additional_headers[:params] || {}
       formatted_payload = (additional_headers[:content_type] == :json) ? JSON.parse(payload) : payload
-      params = params.merge(formatted_payload)
+      params = params.merge!(formatted_payload) if formatted_payload.is_a?(Hash)
 
       http_body = if e.http_headers[:content_type].include?("application/json")
         e.http_body
@@ -105,8 +106,22 @@ module Mailjet
       if sent_invalid_email?(e.http_body, @adapter.url)
         return e.http_body
       else
-        raise Mailjet::ApiError.new(e.http_code, http_body, @adapter, @adapter.url, params)
+        raise communication_error(e)
       end
+    end
+
+    def communication_error(e)
+      if e.respond_to?(:response) && e.response
+        return case e.response.code
+        when Unauthorized::CODE
+          Unauthorized.new(e.message, e.response)
+        when BadRequest::CODE
+          BadRequest.new(e.message, e.response)
+        else
+          CommunicationError.new(e.message, e.response)
+        end
+      end
+      CommunicationError.new(e.message)
     end
 
     def sent_invalid_email?(error_http_body, url)

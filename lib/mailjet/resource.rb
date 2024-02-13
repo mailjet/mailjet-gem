@@ -1,11 +1,9 @@
 require 'mailjet/connection'
+require 'yajl/json_gem'
+require 'active_support'
 require 'active_support/core_ext/string'
-require 'active_support/core_ext/module/delegation'
-#require 'mail'
-require 'active_support/hash_with_indifferent_access'
-require 'active_support/core_ext/hash'
-require 'active_support/json/decoding'
-require 'json'
+require 'active_support/core_ext/hash/indifferent_access'
+
 
 
 # This option automatically transforms the date output by the API into something a bit more readable.
@@ -16,11 +14,11 @@ require 'json'
 
 module Mailjet
   module Resource
-
     # define here available options for filtering
     OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
 
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
+    DATA_URLS = ['plain', 'csv'] # url for send binary data , 'CSVError/text:csv'
 
     def self.included(base)
       base.extend ClassMethods
@@ -49,10 +47,13 @@ module Mailjet
         def self.default_headers
           if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
             default_headers = { accept: :json, accept_encoding: :deflate }
+          elsif DATA_URLS.any? { |data_type| default_headers = { content_type: "text/#{data_type}" } if
+                                                                                self.resource_path.include?(data_type)
+                               }
           else
             default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
           end
-          return default_headers.merge(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
+          return default_headers.merge!(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
         end
       end
     end
@@ -67,7 +68,7 @@ module Mailjet
       def all(params = {}, options = {})
         opts = define_options(options)
         params = format_params(params)
-        response = connection(opts).get(default_headers.merge(params: params))
+        response = connection(opts).get(default_headers.merge!(params: params))
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       rescue Mailjet::ApiError => error
@@ -76,7 +77,7 @@ module Mailjet
 
       def count(options = {})
         opts = define_options(options)
-        response_json = connection(opts).get(default_headers.merge(params: {limit: 1, countrecords: 1}))
+        response_json = connection(opts).get(default_headers.merge!(params: {limit: 1, countrecords: 1}))
         response_hash = JSON.parse(response_json)
         response_hash['Total']
       rescue Mailjet::ApiError => error
@@ -93,11 +94,11 @@ module Mailjet
         # if action method, ammend url to appropriate id
         opts = define_options(options)
         self.resource_path = create_action_resource_path(normalized_id, job_id) if self.action
-        #
+
         attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
         instanciate_from_api(attributes)
 
-      rescue Mailjet::ApiError => e
+      rescue Mailjet::CommunicationError => e
         if e.code == 404
           nil
         else
@@ -124,7 +125,6 @@ module Mailjet
           resource.save!(opts)
           resource.attributes[:persisted] = true
         end
-
       end
 
       def delete(id, options = {})
@@ -136,8 +136,24 @@ module Mailjet
         raise error
       end
 
+      def send_data(id, binary_data = nil, options = {})
+        opts = define_options(options)
+        self.resource_path = create_action_resource_path(id) if self.action
+
+        response_hash = JSON.parse(connection(opts).post(binary_data, default_headers))
+        response_hash['ID'] ? response_hash['ID'] : response_hash
+      end
+
+      def find_by_id(id, options = {})
+        # if action method, ammend url to appropriate id
+        opts = define_options(options)
+        self.resource_path = create_action_resource_path(id) if self.action
+
+        connection(opts).get(default_headers)
+      end
+
       def instanciate_from_api(attributes = {})
-        self.new(attributes.merge(persisted: true))
+        self.new(attributes.merge!(persisted: true))
       end
 
       def parse_api_json(response_json)
@@ -177,9 +193,9 @@ module Mailjet
         case data
         when nil
           nil
-       when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
+        when /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{1,2}-\d{1,2}[T \t]+\d{1,2}:\d{2}:\d{2}(\.[0-9]*)?(([ \t]*)Z|[-+]\d{2}?(:\d{2})?))$/
           begin
-            DateTime.parse(data)
+            DateTime.iso8601(data)
           rescue ArgumentError
             data
           end

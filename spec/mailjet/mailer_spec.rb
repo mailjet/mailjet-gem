@@ -223,7 +223,7 @@ module Mailjet
       end
 
       content = 'FooBar'
-      content_id = "FooBarId"
+      content_id = "<FooBarId>"
       file_name = "TestFileName"
       message.attachments.inline[file_name] = {
         mime_type: 'text/plain',
@@ -321,7 +321,7 @@ module Mailjet
         end
       end
 
-      it "raises Mailjet::ApiError", :vcr do
+      it "raises Mailjet::BadRequest", :vcr do
         VCR.use_cassette("api_mailer/raise_error_v31") do
           Mailjet.config.api_version = "v3.1"
 
@@ -336,7 +336,7 @@ module Mailjet
             content: "hello world"
           }
 
-          expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::ApiError)
+          expect { APIMailer.new.deliver!(message) }.to raise_error(Mailjet::BadRequest)
         end
       end
     end
