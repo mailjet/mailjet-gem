@@ -34,7 +34,7 @@ module Mailjet
 
       message = "error #{code} while sending #{request.inspect} to #{url} with #{params.inspect}"
       error_details = body.inspect
-      hint = "Please see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers."
+      hint = "Please see https://dev.mailjet.com/email/reference/overview/errors/ for more informations on error numbers."
 
       super("#{message}\n\n#{error_details}\n\n#{hint}\n\n")
     end

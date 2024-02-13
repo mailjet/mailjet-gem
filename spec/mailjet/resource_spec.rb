@@ -51,9 +51,39 @@ RSpec.describe Mailjet::Resource do
       instance = subject.first
       expect(instance.test).to eq "Value"
     end
-  end
 
-  it ".first returns collection"
+    context 'when response is 400' do
+      let(:params) { { "Limit" => 1 } }
+      let(:api_error) do
+        Mailjet::ApiError.new(
+          '400',
+          'body',
+          connection,
+          "REST/test",
+          params
+        )
+      end
+      before do
+        allow(connection).to receive(:get).with(
+          {
+            :accept => :json,
+            :accept_encoding => :deflate,
+            :content_type => :json,
+            :params => params,
+            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          }
+        ).and_raise(api_error)
+      end
+
+      it 'reraises api error with expected message' do
+        subject.first
+      rescue Mailjet::ApiError => err
+        expect(err.message).to include('error 400 while sending')
+      else
+        fail
+      end
+    end
+  end
 
   describe ".all" do
     before  do
@@ -78,6 +108,38 @@ RSpec.describe Mailjet::Resource do
 
       expect(instances[0].test).to eq "Value1"
       expect(instances[1].test).to eq "Value2"
+    end
+
+    context 'when response is 400' do
+      let(:params) { {} }
+      let(:api_error) do
+        Mailjet::ApiError.new(
+          '400',
+          'body',
+          connection,
+          "REST/test",
+          params
+        )
+      end
+      before do
+        allow(connection).to receive(:get).with(
+          {
+            :accept => :json,
+            :accept_encoding => :deflate,
+            :content_type => :json,
+            :params => {},
+            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          }
+        ).and_raise(api_error)
+      end
+
+      it 'reraises api error with expected message' do
+        subject.all
+      rescue Mailjet::ApiError => err
+        expect(err.message).to include('error 400 while sending')
+      else
+        fail
+      end
     end
   end
 
@@ -106,6 +168,115 @@ RSpec.describe Mailjet::Resource do
 
       expect(instance.id).to eq id
       expect(instance.test).to eq "Value1"
+    end
+
+    context 'when response is 400' do
+      let(:params) { {} }
+      let(:api_error) do
+        Mailjet::ApiError.new(
+          '400',
+          'body',
+          connection,
+          "REST/test",
+          params
+        )
+      end
+      before do
+        allow(connection).to receive(:[]).with(id).and_return(connection)
+        allow(connection).to receive(:get).with(
+          {
+            :accept => :json,
+            :accept_encoding => :deflate,
+            :content_type => :json,
+            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          }
+        ).and_raise(api_error)
+      end
+
+      it 'reraises api error with expected message' do
+        subject.find(id)
+      rescue Mailjet::ApiError => err
+        expect(err.message).to include('error 400 while sending')
+      else
+        fail
+      end
+    end
+  end
+
+  describe '.delete' do
+    let(:id) { 1 }
+    let(:resource_object) { "{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}" }
+    let(:delete_response) do
+      instance_double(RestClient::Response,
+        code: 204
+      )
+    end
+
+    before do
+      allow(connection).to receive(:[]).with(id).and_return(connection)
+      allow(connection).to receive(:get).with(
+        {
+          :accept => :json,
+          :accept_encoding => :deflate,
+          :content_type => :json,
+          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+        }
+      ).and_return(resource_object)
+      allow(connection).to receive(:delete).with(
+        {
+          :accept => :json,
+          :accept_encoding => :deflate,
+          :content_type => :json,
+          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+        }
+      ).and_return(delete_response)
+    end
+
+    it "returns 204 response" do
+      resource = subject.find(id)
+      response = resource.delete
+      expect(response.code).to eq(204)
+    end
+
+    context 'when response is 400' do
+      let(:params) { {} }
+      let(:api_error) do
+        Mailjet::ApiError.new(
+          '400',
+          'body',
+          connection,
+          "REST/test",
+          params
+        )
+      end
+      before do
+        allow(connection).to receive(:[]).with(id).and_return(connection)
+        allow(connection).to receive(:get).with(
+          {
+            :accept => :json,
+            :accept_encoding => :deflate,
+            :content_type => :json,
+            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          }
+        ).and_return(resource_object)
+        allow(connection).to receive(:delete).with(
+          {
+            :accept => :json,
+            :accept_encoding => :deflate,
+            :content_type => :json,
+            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          }
+        ).and_raise(api_error)
+      end
+
+      it 'reraises api error with expected message' do
+        resource = subject.find(id)
+        response = resource.delete
+      rescue Mailjet::ApiError => err
+        expect(err.message).to include('error 400 while sending')
+      else
+        fail
+      end
     end
   end
 

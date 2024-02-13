@@ -61,6 +61,8 @@ module Mailjet
     module ClassMethods
       def first(params = {}, options = {})
         all(params.merge!(limit: 1), options).first
+      rescue Mailjet::ApiError => error
+        raise error
       end
 
       def all(params = {}, options = {})
@@ -69,6 +71,8 @@ module Mailjet
         response = connection(opts).get(default_headers.merge!(params: params))
         attribute_array = parse_api_json(response)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
+      rescue Mailjet::ApiError => error
+        raise error
       end
 
       def count(options = {})
@@ -76,6 +80,8 @@ module Mailjet
         response_json = connection(opts).get(default_headers.merge!(params: {limit: 1, countrecords: 1}))
         response_hash = JSON.parse(response_json)
         response_hash['Total']
+      rescue Mailjet::ApiError => error
+        raise error
       end
 
       def find(id, job_id = nil, options = {})
@@ -126,6 +132,8 @@ module Mailjet
          opts = define_options(options)
          self.resource_path = create_action_resource_path(id) if self.action
          connection(opts)[id].delete(default_headers)
+      rescue Mailjet::ApiError => error
+        raise error
       end
 
       def send_data(id, binary_data = nil, options = {})

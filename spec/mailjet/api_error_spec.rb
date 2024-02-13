@@ -20,7 +20,7 @@ error 404 while sending "request details" to example.com/resource with {}
 
 "{\\"ErrorInfo\\": \\"\\", \\"ErrorMessage\\": \\"Object not found\\", \\"StatusCode\\": 404}"
 
-Please see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers.
+Please see https://dev.mailjet.com/email/reference/overview/errors/ for more informations on error numbers.
 
 MESSAGE
     end
@@ -55,7 +55,7 @@ error 404 while sending "request details" to example.com/resource with {}
 
 "<html>\\n<head><title>404 Not Found</title></head>\\n<body bgcolor=\\"white\\">\\n<center><h1>404 Not Found</h1></center>\\n<hr><center>nginx</center>\\n</body>\\n</html>"
 
-Please see https://dev.mailjet.com/guides/#status-codes for more informations on error numbers.
+Please see https://dev.mailjet.com/email/reference/overview/errors/for more informations on error numbers.
 
 MESSAGE
     end
