@@ -1,5 +1,5 @@
 require 'rest_client'
-require 'yajl/json_gem'
+require 'yajl'
 
 module Mailjet
   class Connection
@@ -69,7 +69,7 @@ module Mailjet
     private
 
     def handle_api_call(method, additional_headers = {}, payload = {}, &block)
-      formatted_payload = (additional_headers[:content_type] == :json) ? payload.to_json : payload
+      formatted_payload = (additional_headers[:content_type] == :json) ? Yajl::Encoder.encode(payload) : payload
       raise Mailjet::MethodNotAllowed unless method_allowed(method)
 
       if self.perform_api_call
@@ -79,7 +79,7 @@ module Mailjet
           @adapter.send(method, formatted_payload, additional_headers, &block)
         end
       else
-        return {'Count' => 0, 'Data' => [mock_api_call: true], 'Total' => 0}.to_json
+        return Yajl::Encoder.encode({'Count' => 0, 'Data' => [mock_api_call: true], 'Total' => 0})
       end
     rescue RestClient::Exception => e
       handle_exception(e, additional_headers, formatted_payload)
@@ -94,7 +94,7 @@ module Mailjet
       return e.http_body if e.http_headers[:content_type].include?("text/plain")
 
       params = additional_headers[:params] || {}
-      formatted_payload = (additional_headers[:content_type] == :json) ? JSON.parse(payload) : payload
+      formatted_payload = (additional_headers[:content_type] == :json) ? Yajl::Parser.parse(payload) : payload
       params = params.merge!(formatted_payload) if formatted_payload.is_a?(Hash)
 
       http_body = if e.http_headers[:content_type].include?("application/json")
@@ -128,7 +128,7 @@ module Mailjet
       return false unless url.include?('v3.1/send')
       return unless error_http_body
 
-      parsed_body = JSON.parse(error_http_body)
+      parsed_body = Yajl::Parser.parse(error_http_body)
       error_message = parsed_body.dig('Messages')&.first&.dig('Errors')&.first&.dig('ErrorMessage') || []
       error_message.include?('is an invalid email address.')
     rescue
