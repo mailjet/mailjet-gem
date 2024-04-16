@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "mailjet"
 require "dotenv"
+require 'yajl'
 require "vcr"
 Bundler.setup
 
@@ -27,7 +28,7 @@ VCR.configure do |c|
 
   c.filter_sensitive_data("<PUBLIC_KEY>") do |interaction|
     begin
-      body = JSON.parse(interaction.response.body)
+      body = Yajl::Parser.parse(interaction.response.body)
       data = body.fetch("Data", []).first || {}
 
       data["APIKey"]
@@ -38,7 +39,7 @@ VCR.configure do |c|
 
   c.filter_sensitive_data("<PRIVATE_KEY>") do |interaction|
     begin
-      body = JSON.parse(interaction.response.body)
+      body = Yajl::Parser.parse(interaction.response.body)
       data = body.fetch("Data", []).first || {}
 
       data["SecretKey"]

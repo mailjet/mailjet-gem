@@ -1,5 +1,3 @@
-require 'yajl/json_gem'
-
 module Mailjet
   class Error < StandardError
     attr_reader :object
@@ -54,7 +52,7 @@ module Mailjet
               end
 
       api_message = begin
-        JSON.parse(response.body)['ErrorMessage']
+        Yajl::Parser.parse(response.body)['ErrorMessage']
       rescue Yajl::ParseError
         response.body
       rescue NoMethodError

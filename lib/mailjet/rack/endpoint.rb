@@ -1,5 +1,5 @@
 require 'rack/request'
-require 'yajl/json_gem'
+require 'yajl'
 
 module Mailjet
   module Rack
@@ -12,7 +12,7 @@ module Mailjet
 
       def call(env)
         if env['PATH_INFO'] == @path && (content = env['rack.input'].read)
-          @block.call(JSON.parse(content))
+          @block.call(Yajl::Parser.parse(content))
           [200, { 'Content-Type' => 'text/html', 'Content-Length' => '0' }, []]
         else
           @app.call(env)

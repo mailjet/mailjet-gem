@@ -1,5 +1,5 @@
 require 'mailjet/connection'
-require 'yajl/json_gem'
+require 'yajl'
 require 'active_support'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash/indifferent_access'
@@ -78,7 +78,7 @@ module Mailjet
       def count(options = {})
         opts = define_options(options)
         response_json = connection(opts).get(default_headers.merge!(params: {limit: 1, countrecords: 1}))
-        response_hash = JSON.parse(response_json)
+        response_hash = Yajl::Parser.parse(response_json)
         response_hash['Total']
       rescue Mailjet::ApiError => error
         raise error
@@ -140,7 +140,7 @@ module Mailjet
         opts = define_options(options)
         self.resource_path = create_action_resource_path(id) if self.action
 
-        response_hash = JSON.parse(connection(opts).post(binary_data, default_headers))
+        response_hash = Yajl::Parser.parse(connection(opts).post(binary_data, default_headers))
         response_hash['ID'] ? response_hash['ID'] : response_hash
       end
 
@@ -157,7 +157,7 @@ module Mailjet
       end
 
       def parse_api_json(response_json)
-        response_hash = JSON.parse(response_json)
+        response_hash = Yajl::Parser.parse(response_json)
 
         #Take the response from the API and put it through a method -- taken from the ActiveSupport library -- which converts
         #the date-time from "2014-05-19T15:31:09Z" to "Mon, 19 May 2014 15:31:09 +0000" format.
@@ -284,7 +284,7 @@ module Mailjet
       if opts[:perform_api_call] && !persisted?
         # get attributes only for entity creation
         self.attributes = if self.resource_path == 'send'
-          JSON.parse(response)
+          Yajl::Parser.parse(response)
         else
           parse_api_json(response).first
         end
