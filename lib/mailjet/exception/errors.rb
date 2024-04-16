@@ -1,3 +1,6 @@
+require 'yajl'
+require 'json'
+
 module Mailjet
   class Error < StandardError
     attr_reader :object
