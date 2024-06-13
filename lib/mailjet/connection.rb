@@ -11,6 +11,8 @@ module Mailjet
       broken_url = url.split("/")
       if broken_url.include?("contactslist") && broken_url.include?("managemanycontacts") && broken_url.last.to_i > 0
         self.class.new(url, options[:user], options[:password], options)
+      elsif broken_url.include?("detailcontent")
+        self.class.new(url, options[:user], options[:password], options)
       else
         self.class.new(concat_urls(url, suburl), options[:user], options[:password], options)
       end
