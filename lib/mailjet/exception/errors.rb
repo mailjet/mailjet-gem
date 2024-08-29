@@ -51,13 +51,13 @@ module Mailjet
       @code = if response.nil?
                 NOCODE
               else
-                response.code
+                response.response_status
               end
 
       api_message = begin
-        Yajl::Parser.parse(response.body)['ErrorMessage']
+        Yajl::Parser.parse(response.response_body)['ErrorMessage']
       rescue Yajl::ParseError
-        response.body
+        response.response_body
       rescue NoMethodError
         "Unknown API error"
       rescue

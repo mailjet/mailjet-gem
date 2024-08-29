@@ -12,7 +12,7 @@ module Mailjet
 
       opts = define_options(options)
       response = connection(opts).get(default_headers)
-      attributes = parse_api_json(response).first
+      attributes = parse_api_json(response.body).first
 
       instanciate_from_api(attributes)
     rescue Mailjet::CommunicationError => e

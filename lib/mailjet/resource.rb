@@ -15,7 +15,7 @@ require 'active_support/core_ext/hash/indifferent_access'
 module Mailjet
   module Resource
     # define here available options for filtering
-    OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key, :read_timeout, :open_timeout]
+    OPTIONS = [:version, :url, :perform_api_call, :api_key, :secret_key]
 
     NON_JSON_URLS = ['v3/send/message'] # urls that don't accept JSON input
     DATA_URLS = ['plain', 'csv'] # url for send binary data , 'CSVError/text:csv'
@@ -39,21 +39,20 @@ module Mailjet
             options[:secret_key] || Mailjet.config.secret_key,
             public_operations: public_operations,
             read_only: read_only,
-            perform_api_call: options[:perform_api_call],
-            open_timeout: options[:open_timeout],
-            read_timeout: options[:read_timeout])
+            perform_api_call: options[:perform_api_call])
         end
 
         def self.default_headers
           if NON_JSON_URLS.include?(self.resource_path) # don't use JSON if Send API
-            default_headers = { accept: :json, accept_encoding: :deflate }
-          elsif DATA_URLS.any? { |data_type| default_headers = { content_type: "text/#{data_type}" } if
-                                                                                self.resource_path.include?(data_type)
-                               }
+            default_headers = { 'Accept' =>'application/json', 'Accept-Encoding' => 'deflate' }
+          elsif DATA_URLS.any? do |data_type|
+            default_headers = { 'Content-Type' => "text/#{data_type}" } if self.resource_path.include?(data_type)
+            end
           else
-            default_headers = { accept: :json, accept_encoding: :deflate, content_type: :json } #use JSON if *not* Send API
+            # use JSON if *not* Send API
+            default_headers = {'Content-Type' =>'application/json', 'Accept' =>'application/json', 'Accept-Encoding' => 'deflate'}
           end
-          return default_headers.merge!(user_agent: "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
+          return default_headers.merge!('User-Agent' => "mailjet-api-v3-ruby/#{Gem.loaded_specs["mailjet"].version}")
         end
       end
     end
@@ -69,7 +68,7 @@ module Mailjet
         opts = define_options(options)
         params = format_params(params)
         response = connection(opts).get(default_headers.merge!(params: params))
-        attribute_array = parse_api_json(response)
+        attribute_array = parse_api_json(response.body)
         attribute_array.map{ |attributes| instanciate_from_api(attributes) }
       rescue Mailjet::ApiError => error
         raise error
@@ -78,7 +77,7 @@ module Mailjet
       def count(options = {})
         opts = define_options(options)
         response_json = connection(opts).get(default_headers.merge!(params: {limit: 1, countrecords: 1}))
-        response_hash = Yajl::Parser.parse(response_json)
+        response_hash = Yajl::Parser.parse(response_json.body)
         response_hash['Total']
       rescue Mailjet::ApiError => error
         raise error
@@ -95,7 +94,7 @@ module Mailjet
         opts = define_options(options)
         self.resource_path = create_action_resource_path(normalized_id, job_id) if self.action
 
-        attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers)).first
+        attributes = parse_api_json(connection(opts)[normalized_id].get(default_headers).body).first
         instanciate_from_api(attributes)
 
       rescue Mailjet::CommunicationError => e
@@ -104,6 +103,14 @@ module Mailjet
         else
           raise e
         end
+      end
+
+
+      def find_by_id(id, options = {})
+        # if action method, ammend url to appropriate id
+        opts = define_options(options)
+        self.resource_path = create_action_resource_path(id) if self.action
+        connection(opts).get(default_headers)
       end
 
       def create(attributes = {}, options = {})
@@ -139,17 +146,10 @@ module Mailjet
       def send_data(id, binary_data = nil, options = {})
         opts = define_options(options)
         self.resource_path = create_action_resource_path(id) if self.action
+        response = connection(opts).post(binary_data, default_headers.merge({'Content-Length' => "#{binary_data.size}", 'Transfer-Encoding' => 'chunked'}))
 
-        response_hash = Yajl::Parser.parse(connection(opts).post(binary_data, default_headers))
+        response_hash = response.respond_to?(:body) ? Yajl::Parser.parse(response.body) : Yajl::Parser.parse(response)
         response_hash['ID'] ? response_hash['ID'] : response_hash
-      end
-
-      def find_by_id(id, options = {})
-        # if action method, ammend url to appropriate id
-        opts = define_options(options)
-        self.resource_path = create_action_resource_path(id) if self.action
-
-        connection(opts).get(default_headers)
       end
 
       def instanciate_from_api(attributes = {})
@@ -284,9 +284,9 @@ module Mailjet
       if opts[:perform_api_call] && !persisted?
         # get attributes only for entity creation
         self.attributes = if self.resource_path == 'send'
-          Yajl::Parser.parse(response)
+          Yajl::Parser.parse(response.body)
         else
-          parse_api_json(response).first
+          parse_api_json(response.body).first
         end
       end
 

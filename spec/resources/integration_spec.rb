@@ -50,7 +50,7 @@ describe "Mailjet API Resource" do
     end
 
     it "raises an error", :vcr do
-      expect { subject.all(limit: 0) }.to raise_error Mailjet::CommunicationError, /500 Internal Server Error/
+      expect { subject.all(limit: 0) }.to raise_error Mailjet::CommunicationError, /the server responded with status 500/
     end
   end
 
@@ -58,7 +58,7 @@ describe "Mailjet API Resource" do
     before { Mailjet.config.api_version = "v3.1" }
 
     it "raises an error", :vcr do
-      expect { subject.all }.to raise_error Mailjet::CommunicationError, /404 Not Found/
+      expect { subject.all }.to raise_error Mailjet::CommunicationError,  /the server responded with status 404/
     end
   end
 end
