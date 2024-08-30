@@ -21,7 +21,3 @@ class Mailer < ActionMailer::Base
          :template_name => 'test_email.html.erb')
   end
 end
-
-email = Mailer.test_email
-puts email
-# email.deliver

@@ -3,7 +3,8 @@ require "mailjet_spec_helper"
 RSpec.describe Mailjet::Resource do
   before { Mailjet.config.api_version = "v3" }
 
-  let(:connection) { double("Connection") }
+  let(:connection) { instance_double("Connection") }
+  let(:adapter) { instance_double(Faraday::Response, body: "") }
 
   subject do
     class TestResource
@@ -31,15 +32,16 @@ RSpec.describe Mailjet::Resource do
 
   describe ".first" do
     before  do
+      allow(adapter).to receive(:body).and_return("{ \"Count\" : 1, \"Data\" : [{ \"Test\" : \"Value\" }], \"Total\" : 1 }")
       allow(connection).to receive(:get).with(
         {
-          :accept => :json,
-          :accept_encoding => :deflate,
-          :content_type => :json,
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"deflate",
+          "Content-Type"=>"application/json",
           :params => { "Limit" => 1 },
-          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
         }
-      ).and_return('{"Data" : [{ "Test" : "Value" }]}')
+      ).and_return(adapter)
     end
 
     it "creates a new TestResource object" do
@@ -66,11 +68,11 @@ RSpec.describe Mailjet::Resource do
       before do
         allow(connection).to receive(:get).with(
           {
-            :accept => :json,
-            :accept_encoding => :deflate,
-            :content_type => :json,
+            "Accept"=>"application/json",
+            "Accept-Encoding"=>"deflate",
+            "Content-Type"=>"application/json",
             :params => params,
-            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+            "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
           }
         ).and_raise(api_error)
       end
@@ -87,15 +89,16 @@ RSpec.describe Mailjet::Resource do
 
   describe ".all" do
     before  do
+      allow(adapter).to receive(:body).and_return("{ \"Count\" : 1, \"Data\" : [{ \"Test\" : \"Value1\" }, { \"Test\" : \"Value2\" }], \"Total\" : 1 }")
       allow(connection).to receive(:get).with(
         {
-          :accept => :json,
-          :accept_encoding => :deflate,
-          :content_type => :json,
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"deflate",
+          "Content-Type"=>"application/json",
           :params => {},
-          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
         }
-      ).and_return('{"Data" : [{ "Test" : "Value1" }, { "Test" : "Value2" }]}')
+      ).and_return(adapter)
     end
 
     it "creates an array of TestResource objects" do
@@ -124,11 +127,11 @@ RSpec.describe Mailjet::Resource do
       before do
         allow(connection).to receive(:get).with(
           {
-            :accept => :json,
-            :accept_encoding => :deflate,
-            :content_type => :json,
+            "Accept"=>"application/json",
+            "Accept-Encoding"=>"deflate",
+            "Content-Type"=>"application/json",
             :params => {},
-            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+            "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
           }
         ).and_raise(api_error)
       end
@@ -145,15 +148,16 @@ RSpec.describe Mailjet::Resource do
 
   describe ".find" do
     before do
+      allow(adapter).to receive(:body).and_return("{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}")
       allow(connection).to receive(:[]).with(id).and_return(connection)
       allow(connection).to receive(:get).with(
         {
-          :accept => :json,
-          :accept_encoding => :deflate,
-          :content_type => :json,
-          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"deflate",
+          "Content-Type"=>"application/json",
+          "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
         }
-      ).and_return("{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}")
+      ).and_return(adapter)
     end
 
     let(:id) { 1 }
@@ -166,7 +170,7 @@ RSpec.describe Mailjet::Resource do
     it "populates object with attributes returned by the API" do
       instance = subject.find(id)
 
-      expect(instance.id).to eq id
+      expect(instance.id).to eq id.to_i
       expect(instance.test).to eq "Value1"
     end
 
@@ -185,10 +189,10 @@ RSpec.describe Mailjet::Resource do
         allow(connection).to receive(:[]).with(id).and_return(connection)
         allow(connection).to receive(:get).with(
           {
-            :accept => :json,
-            :accept_encoding => :deflate,
-            :content_type => :json,
-            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+            "Accept"=>"application/json",
+            "Accept-Encoding"=>"deflate",
+            "Content-Type"=>"application/json",
+            "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
           }
         ).and_raise(api_error)
       end
@@ -205,29 +209,30 @@ RSpec.describe Mailjet::Resource do
 
   describe '.delete' do
     let(:id) { 1 }
-    let(:resource_object) { "{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}" }
+    let(:respond_data) { "{\"Data\" : [{ \"ID\" : #{id}, \"Test\" : \"Value1\" }]}" }
     let(:delete_response) do
-      instance_double(RestClient::Response,
-        code: 204
+      instance_double(Faraday::Response,
+        status: 204
       )
     end
 
     before do
+      allow(adapter).to receive(:body).and_return(respond_data)
       allow(connection).to receive(:[]).with(id).and_return(connection)
       allow(connection).to receive(:get).with(
         {
-          :accept => :json,
-          :accept_encoding => :deflate,
-          :content_type => :json,
-          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"deflate",
+          "Content-Type"=>"application/json",
+          "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
         }
-      ).and_return(resource_object)
+      ).and_return(adapter)
       allow(connection).to receive(:delete).with(
         {
-          :accept => :json,
-          :accept_encoding => :deflate,
-          :content_type => :json,
-          :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"deflate",
+          "Content-Type"=>"application/json",
+          "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
         }
       ).and_return(delete_response)
     end
@@ -235,7 +240,7 @@ RSpec.describe Mailjet::Resource do
     it "returns 204 response" do
       resource = subject.find(id)
       response = resource.delete
-      expect(response.code).to eq(204)
+      expect(response.status).to eq(204)
     end
 
     context 'when response is 400' do
@@ -250,21 +255,22 @@ RSpec.describe Mailjet::Resource do
         )
       end
       before do
-        allow(connection).to receive(:[]).with(id).and_return(connection)
+        allow(adapter).to receive(:body).and_return(respond_data)
+        allow(connection).to receive(:[]).with("#{id}").and_return(connection)
         allow(connection).to receive(:get).with(
           {
-            :accept => :json,
-            :accept_encoding => :deflate,
-            :content_type => :json,
-            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+            "Accept"=>"application/json",
+            "Accept-Encoding"=>"deflate",
+            "Content-Type"=>"application/json",
+            "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
           }
-        ).and_return(resource_object)
+        ).and_return(adapter)
         allow(connection).to receive(:delete).with(
           {
-            :accept => :json,
-            :accept_encoding => :deflate,
-            :content_type => :json,
-            :user_agent => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
+            "Accept"=>"application/json",
+            "Accept-Encoding"=>"deflate",
+            "Content-Type"=>"application/json",
+            "User-Agent" => "mailjet-api-v3-ruby/#{Mailjet::VERSION}"
           }
         ).and_raise(api_error)
       end

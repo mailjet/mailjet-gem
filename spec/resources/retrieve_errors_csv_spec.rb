@@ -7,6 +7,6 @@ RSpec.describe Mailjet::RetrieveErrosCsv, :vcr do
   end
 
   it "retruns error response" do
-    expect { Mailjet::RetrieveErrosCsv.find_by_id(99999) }.to raise_error Mailjet::CommunicationError, /404 Not Found/
+    expect { Mailjet::RetrieveErrosCsv.find_by_id(99999) }.to raise_error Mailjet::CommunicationError, /the server responded with status 404/
   end
 end

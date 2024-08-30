@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "activesupport", ">= 5.0.0"
   s.add_dependency "rack", ">= 1.4.0"
-  s.add_dependency "rest-client", ">= 2.1.0"
+  s.add_dependency 'faraday', "~> 2.1"
   s.add_dependency "yajl-ruby"
   s.add_development_dependency "actionmailer", ">= 5.0.0"
   s.add_development_dependency "rake"
