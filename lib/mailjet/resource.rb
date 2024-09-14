@@ -385,5 +385,10 @@ module Mailjet
 
       super
     end
+
+    def respond_to_missing?(method_name, include_private = false)
+      method_name_str = method_name.to_s.gsub(/[=?]$/, '')
+      attributes.include?(method_name_str) || super
+    end
   end
 end
