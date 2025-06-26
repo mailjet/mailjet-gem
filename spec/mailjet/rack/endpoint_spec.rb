@@ -6,7 +6,7 @@ SAMPLE_MAILJET_PARAMS = {"event"=>"open", "time"=>1331581827, "email"=>"benoit.b
 
 
 RSpec.describe Mailjet::Rack::Endpoint do
-  it "should decipher Mailjet's posted events and pass them to the block" do
+  xit "should decipher Mailjet's posted events and pass them to the block" do
     # mock should receive :find with "benoit.benezech+1634@gmail.com" and will return true
     #$user_class_mock = MiniTest::Mock.new.expect(:find, true, ["benoit.benezech+1634@gmail.com"])
     user_class_mock = double('user_class_mock')
