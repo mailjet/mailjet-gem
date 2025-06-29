@@ -1,8 +1,0 @@
-language: ruby
-rvm:
-- 2.2.5
-script:
-- bundle exec rake spec
-notifications:
-  slack:
-    secure: ieql5jZpe5aNhDcP81V/vUBnREfn0Kvzjsa7mtIgalS9eF/zmNAITz84quNYcEIpkdEOqU+jpGD2mstLsunZf3S3RPOFYa0tmEDZkfvbzBc4E/VsW3OA1R972ncorZKJbZdVRXmA/gwcnv0vPcO8VHgxkSV4y4Gpy/g/TW4Isfs=

@@ -2,8 +2,8 @@
 
 # Official Mailjet Ruby wrapper
 
-[![Build Status](https://travis-ci.org/mailjet/mailjet-gem.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-gem)
-
+[![CI](https://github.com/mailjet/mailjet-gem/actions/workflows/ci.yml/badge.svg)](https://github.com/mailjet/mailjet-gem/actions/workflows/ci.yml)
+[![Gem Version](https://badge.fury.io/rb/mailjet.svg)](https://badge.fury.io/rb/mailjet)
 <!--
 
 [![Build Status](https://secure.travis-ci.org/jbescoyez/mailjet.png?branch=master)][travis]
