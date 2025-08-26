@@ -71,4 +71,32 @@ RSpec.describe Mailjet::Send do
       expect{ described_class.create(message, version: 'v3.1') }.to raise_error(Mailjet::Unauthorized, /Visit API keys management section to check your keys/)
     end
   end
+
+  it 'returns error if email is incorrect for API v3.1' do
+    VCR.use_cassette("resource/send_v31_incorrect_email") do
+      recipient = {
+        'Email' => "passenger@example..com",
+        'Name' => 'test'
+      }
+
+      message = described_class.create({
+        messages: [{
+          'From' => {
+            'Email' => "pilot@example.com",
+            'Name' => 'Mailjet Ruby Wrapper CI'
+          },
+          'To' => [
+            recipient
+          ],
+            'Subject' => 'Mailjet Ruby Wrapper CI Send API v3.1 spec',
+            'TextPart' => 'Mailjet Ruby Wrapper CI content',
+            'HTMLPart' => 'HTML Mailjet Ruby Wrapper CI content'
+          }]
+        },
+        version: 'v3.1'
+      )
+
+      expect(message.attributes['Messages'].first['Errors'].first['ErrorMessage']).to eq "\"passenger@example..com\" is an invalid email address."
+    end
+  end
 end

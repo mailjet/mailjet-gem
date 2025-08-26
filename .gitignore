@@ -29,3 +29,5 @@ pkg
 gd_bundle-g2.crt
 
 Gemfile.lock
+
+.idea
