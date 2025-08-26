@@ -58,14 +58,14 @@ module Mailjet
         if response.response_body.present?
           Yajl::Parser.parse(response.response_body)['ErrorMessage']
         else
-          ''
+          'Unauthorized'
         end
       rescue Yajl::ParseError
         response.response_body
       rescue NoMethodError
-        "Unknown API error 1"
+        "Unknown API error"
       rescue
-        'Unknown API error 2'
+        'Unknown API error'
       end
 
       message ||=  ''
@@ -83,6 +83,7 @@ module Mailjet
     CODE = 401
 
     def initialize(error_message, response)
+      binding.pry
       error_message = error_message + ' - Invalid Domain or API key'
       super(error_message, response)
     end
