@@ -55,8 +55,11 @@ module Mailjet
               end
 
       api_message = begin
-        pp response
-        Yajl::Parser.parse(response.response_body)['ErrorMessage']
+        if response.response_body.present?
+          Yajl::Parser.parse(response.response_body)['ErrorMessage']
+        else
+          ''
+        end
       rescue Yajl::ParseError
         response.response_body
       rescue NoMethodError
