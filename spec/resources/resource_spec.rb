@@ -1,5 +1,4 @@
 require "mailjet_spec_helper"
-require 'pry'
 
 RSpec.describe Mailjet::Resource, :vcr do
   context '/invalid_credentials' do
