@@ -68,7 +68,7 @@ RSpec.describe Mailjet::Send do
           }]
         }
 
-      expect{ described_class.create(message, version: 'v3.1') }.to raise_error(Mailjet::Unauthorized, /the server responded with status 401 - Invalid Domain or API key/)
+      expect{ described_class.create(message, version: 'v3.1') }.to raise_error(Mailjet::Unauthorized, /Visit API keys management section to check your keys/)
     end
   end
 end
