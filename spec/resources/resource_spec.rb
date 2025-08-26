@@ -1,10 +1,10 @@
 require "mailjet_spec_helper"
+require 'pry'
 
 RSpec.describe Mailjet::Resource, :vcr do
   context '/invalid_credentials' do
     it 'should raise api connection error' do
-      call = Mailjet::Apikey.first
-      expect{ call }.to_not be_nil
+      expect{ Mailjet::Apikey.first }.to raise_error(Mailjet::Unauthorized, /the server responded with status 401 - Invalid Domain or API key/)
     end
   end
 
