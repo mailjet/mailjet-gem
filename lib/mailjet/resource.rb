@@ -284,7 +284,7 @@ module Mailjet
       if opts[:perform_api_call] && !persisted?
         # get attributes only for entity creation
         self.attributes = if self.resource_path == 'send'
-          Yajl::Parser.parse(response.body)
+          response.respond_to?(:body) ? Yajl::Parser.parse(response.body) : Yajl::Parser.parse(response)
         else
           parse_api_json(response.body).first
         end

@@ -1,0 +1,41 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailjet.com/v3.1/send
+    body:
+      encoding: UTF-8
+      string: '{"Messages":[{"From":{"Email":"pilot@example.com","Name":"Mailjet Ruby
+        Wrapper CI"},"To":[{"Email":"passenger@example..com","Name":"test"}],"Subject":"Mailjet
+        Ruby Wrapper CI Send API v3.1 spec","TextPart":"Mailjet Ruby Wrapper CI content","HTMLPart":"HTML
+        Mailjet Ruby Wrapper CI content"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - mailjet-api-v3-ruby/1.8.2
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - deflate
+      Authorization:
+      - "<BASIC>"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Content-Length:
+      - '248'
+      Content-Type:
+      - application/json; charset=UTF-8
+      X-Mj-Request-Guid:
+      - a9c2a2bc-53ab-4b0b-be22-164c8c3cdf3e
+      Date:
+      - Tue, 26 Aug 2025 14:48:22 GMT
+    body:
+      encoding: UTF-8
+      string: '{"Messages":[{"Status":"error","Errors":[{"ErrorIdentifier":"154364af-36e6-4177-a771-82ac1dc32d54","ErrorCode":"mj-0013","StatusCode":400,"ErrorMessage":"\"passenger@example..com\"
+        is an invalid email address.","ErrorRelatedTo":["To[0].Email"]}]}]}'
+  recorded_at: Tue, 26 Aug 2025 14:48:22 GMT
+recorded_with: VCR 6.3.1
