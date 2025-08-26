@@ -41,7 +41,7 @@ This repository contains the official Ruby wrapper for the Mailjet API, bootstra
 
 Check out all the resources and Ruby code examples in the [Offical Documentation](https://dev.mailjet.com/guides/?ruby#getting-started).
 
-
+test
 ## Table of contents
 
 - [Compatibility](#compatibility)
