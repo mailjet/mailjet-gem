@@ -83,7 +83,6 @@ module Mailjet
     CODE = 401
 
     def initialize(error_message, response)
-      binding.pry
       error_message = error_message + ' - Invalid Domain or API key'
       super(error_message, response)
     end
