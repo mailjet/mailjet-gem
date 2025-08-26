@@ -60,9 +60,9 @@ module Mailjet
       rescue Yajl::ParseError
         response.response_body
       rescue NoMethodError
-        "Unknown API error"
+        "Unknown API error 1"
       rescue
-        'Unknown API error'
+        'Unknown API error 2'
       end
 
       message ||=  ''
