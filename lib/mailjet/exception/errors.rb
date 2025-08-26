@@ -55,7 +55,7 @@ module Mailjet
               end
 
       api_message = begin
-        pp Yajl::Parser.parse(response.response_body)['ErrorMessage']
+        pp Yajl::Parser.parse(response.response_body)
         Yajl::Parser.parse(response.response_body)['ErrorMessage']
       rescue Yajl::ParseError
         response.response_body
