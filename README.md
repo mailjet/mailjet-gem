@@ -498,7 +498,7 @@ Mailjet::ContactPii.delete(contact_ID)
 
 You can setup your Rack application in order to receive feedback on emails you sent (clicks, etc.)
 
-First notify Mailjet of your desired endpoint (say: 'http://www.my_domain.com/mailjet/callback') at https://www.mailjet.com/account/triggers
+First notify Mailjet of your desired endpoint (say: 'http://www.my_domain.com/mailjet/callback') at https://app.mailjet.com/account/triggers
 
 Then configure Mailjet's Rack application to catch these callbacks.
 
