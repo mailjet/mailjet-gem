@@ -80,13 +80,14 @@ module Mailjet
     end
 
     def handle_exception(e, additional_headers, payload = {})
-      return e.response_body if e.response_headers[:content_type].include?("text/plain")
+      response_content_type = e.response_headers&.[](:content_type) || ''
+      return e.response_body if response_content_type.include?("text/plain")
 
       params = additional_headers[:params] || {}
       formatted_payload = (additional_headers[:content_type] == :json) ? Yajl::Parser.parse(payload) : payload
       params = params.merge!(formatted_payload) if formatted_payload.is_a?(Hash)
 
-      response_body = if e.response_headers[:content_type].include?("application/json")
+      response_body = if response_content_type.include?("application/json")
         e.response_body
       else
         "{}"
