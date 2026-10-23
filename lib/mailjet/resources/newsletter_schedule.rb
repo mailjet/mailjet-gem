@@ -4,6 +4,7 @@ module Mailjet
     self.action = "schedule"
     self.resource_path = "REST/newsletter/id/#{self.action}"
     self.public_operations = [:get, :post, :delete]
+    self.replaced_by = 'Mailjet::Campaigndraft_schedule'
     self.filters = []
     self.resourceprop = [:date]
 
