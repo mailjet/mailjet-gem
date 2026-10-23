@@ -241,6 +241,8 @@ module Mailjet
               'Html-part'
             elsif key == "inline_attachments"
               'Inline_attachments'
+            elsif method == :camelcase && key.to_s == "esp_name"
+              'ESP_Name'
             else
               key.to_s.send(method)
             end

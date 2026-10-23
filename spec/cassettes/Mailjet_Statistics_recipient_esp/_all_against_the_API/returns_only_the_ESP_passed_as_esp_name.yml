@@ -1,0 +1,37 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/statistics/recipient-esp?CampaignId=7759404292&ESP_Name=microsoft
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.8.1
+      Authorization:
+      - "<BASIC>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '459'
+      Content-Type:
+      - application/json; charset=UTF-8
+      X-Mj-Request-Guid:
+      - e09aa6e2-714a-4926-8a2e-f0104676aac6
+      Date:
+      - Fri, 23 Oct 2026 10:13:39 GMT
+    body:
+      encoding: UTF-8
+      string: '{"Count":1,"Data":[{"ESPName":"microsoft","DeliveredMessagesCount":1,"AttemptedMessagesCount":1,"OpenedMessagesCount":0,"ClickedMessagesCount":0,"DeferredMessagesCount":0,"SoftBouncedMessagesCount":0,"HardBouncedMessagesCount":0,"UnsubscribedMessagesCount":0,"SpamReportsCount":0,"OpenRate":0.0000,"ClickThroughRate":0.0000,"SoftBouncedRate":0.0000,"HardBouncedRate":0.0000,"UnsubscribedRate":0.0000,"SpamReportsRate":0.0000,"DeferredRate":0.0000}],"Total":1}'
+  recorded_at: Fri, 23 Oct 2026 10:13:39 GMT
+recorded_with: VCR 6.1.0
