@@ -50,3 +50,11 @@ VCR.configure do |c|
 
   c.configure_rspec_metadata!
 end
+
+RSpec.configure do |config|
+  # keep deprecation warnings from deprecated resources out of the suite output
+  config.before do
+    allow(Kernel).to receive(:warn).and_call_original
+    allow(Kernel).to receive(:warn).with(/\A\[mailjet\] .+ is deprecated/)
+  end
+end

@@ -3,6 +3,7 @@ module Mailjet
     include Mailjet::Resource
     self.resource_path = 'REST/senderstatistics'
     self.public_operations = [:get]
+    self.replaced_by = 'Mailjet::Statcounters with counter_source: "Sender"'
     self.filters = [:domain, :email, :sender]
     self.resourceprop = [:blocked_count, :bounced_count, :clicked_count, :delivered_count, :last_activity_at, :opened_count, :processed_count, :queued_count, :sender, :spam_complaint_count, :unsubscribed_count]
 

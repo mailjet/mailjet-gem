@@ -24,12 +24,13 @@ module Mailjet
     def self.included(base)
       base.extend ClassMethods
       base.class_eval do
-        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version
+        cattr_accessor :resource_path, :public_operations, :read_only, :filters, :resourceprop, :read_only_attributes, :action, :non_json_urls, :version, :replaced_by
         cattr_writer :connection
 
         self.read_only_attributes = []
 
         def self.connection(options = {})
+          warn_if_deprecated
           class_variable_get(:@@connection) || default_connection(options)
         end
 
@@ -259,6 +260,14 @@ module Mailjet
           perform_api_call: Mailjet.config.perform_api_call
         }
         .merge(options.symbolize_keys.slice(*OPTIONS))
+      end
+
+      # deprecated resources set replaced_by and warn once, on first use
+      def warn_if_deprecated
+        return if replaced_by.nil? || @deprecation_warned
+
+        @deprecation_warned = true
+        Kernel.warn("[mailjet] #{name} is deprecated and will be removed in 2.0.0. Use #{replaced_by} instead.")
       end
 
     end
