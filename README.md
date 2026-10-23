@@ -208,7 +208,7 @@ You can find the list of all available resources for this library, as well as th
 ### Naming conventions
 
 - Class names' first letter is capitalized followed by the rest of the resource name in lowercase (e.g. `listrecipient` will be `Listrecipient` in ruby)
-- Ruby attribute names are the underscored versions of API attributes names (e.g. `IsActive` will be `is_active` in ruby)
+- Ruby attribute names are the underscored versions of API attributes names (e.g. `IsUnsubscribed` will be `is_unsubscribed` in ruby)
 
 ## Request examples
 
@@ -318,13 +318,13 @@ Here's an example of a PUT request:
 ```ruby
 > recipient = Mailjet::Listrecipient.first
 => #<Mailjet::Listrecipient>
-> recipient.is_active = false
-=> false
+> recipient.is_unsubscribed = true
+=> true
 > recipient.attributes
 => {...} # attributes hash
 > recipient.save
 => true
-> recipient.update_attributes(is_active: true)
+> recipient.update_attributes(is_unsubscribed: false)
 => true
 ```
 
