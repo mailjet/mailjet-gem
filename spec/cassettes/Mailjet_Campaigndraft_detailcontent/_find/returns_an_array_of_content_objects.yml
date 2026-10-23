@@ -1,0 +1,37 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/campaigndraft/15068571/detailcontent/15068571
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.8.1
+      Authorization:
+      - "<BASIC>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Oct 2026 10:29:56 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '197'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "Text-part" : "Test campaign sent to record
+        specs for the mailjet gem.", "Html-part" : "<p>Test campaign sent to record
+        specs for the mailjet gem.<\/p>" }], "Total" : 1 }'
+  recorded_at: Fri, 23 Oct 2026 10:29:56 GMT
+recorded_with: VCR 6.1.0
