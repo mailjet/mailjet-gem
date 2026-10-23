@@ -432,6 +432,11 @@ RSpec.describe Mailjet::Resource do
         "OtherKey" => "value4"
       })
     end
+
+    it "converts esp_name to ESP_Name for symbol and string keys" do
+      expect(subject.camelcase_keys(esp_name: "gmail")).to eq({ "ESP_Name" => "gmail" })
+      expect(subject.camelcase_keys("esp_name" => "gmail")).to eq({ "ESP_Name" => "gmail" })
+    end
   end
 
   describe ".underscore_keys" do
