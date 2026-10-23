@@ -67,6 +67,10 @@ Check out all the resources and Ruby code examples in the [Offical Documentation
     - [Retrieve the first object matching the query](retrieve-the-first-object-matching-the-query)
   - [PUT request](#put-request)
   - [DELETE request](#delete-request)
+- [Deprecated resources](#deprecated-resources)
+  - [Newsletters to campaign drafts](#newsletters-to-campaign-drafts)
+  - [Legacy statistics to statcounters](#legacy-statistics-to-statcounters)
+  - [Domain statistics to recipient ESP statistics](#domain-statistics-to-recipient-esp-statistics)
 - [Send emails with ActionMailer](#send-emails-with-actionmailer)
 - [Track email delivery](#track-email-delivery)
 - [Testing](#testing)
@@ -337,6 +341,98 @@ Here's an example of a `DELETE` request:
 ```
 
 Upon a successful `DELETE` request the response will not include a response body, but only a `204 No Content` response code.
+
+## Deprecated resources
+
+Mailjet has [deprecated some Email API endpoints](https://dev.mailjet.com/openapi/openapi-mailjet/deprecated-endpoints) and plans to shut them down. Since 1.9.0, the classes that wrap them print a warning the first time they are used, naming the replacement; run Ruby with `-W0` to silence it. They will be removed in 2.0.0, once Mailjet shuts the endpoints down.
+
+| Deprecated class | Replacement |
+| --- | --- |
+| `Newsletter` | `Campaigndraft` |
+| `Newsletter_detailcontent` | `Campaigndraft_detailcontent` |
+| `Newsletter_schedule` | `Campaigndraft_schedule` |
+| `Newsletter_send` | `Campaigndraft_send` |
+| `Newsletter_status` | `Campaigndraft_status` |
+| `Newsletter_test` | `Campaigndraft_test` |
+| `Apikeytotals` | `Statcounters` with `counter_source: "APIKey"` |
+| `Campaigngraphstatistics` | `Statcounters` with `counter_source: "Campaign"` |
+| `Campaignstatistics` | `Statcounters` with `counter_source: "Campaign"` |
+| `Graphstatistics` | `Statcounters` with `counter_resolution: "Day"` or `"Hour"` |
+| `Liststatistics` | `Statcounters` with `counter_source: "List"` |
+| `Messagestatistics` | `Statcounters` with `counter_timing: "Message"` |
+| `Openstatistics` | `Statcounters` with `counter_timing: "Message"` |
+| `Senderstatistics` | `Statcounters` with `counter_source: "Sender"` |
+| `Domainstatistics` | `Statistics_recipient_esp` |
+
+### Newsletters to campaign drafts
+
+The `Campaigndraft` classes take the same calls as the `Newsletter` ones. `Sender` is the ID of a validated sender (see `Mailjet::Sender`).
+
+```ruby
+draft = Mailjet::Campaigndraft.create(
+  "Locale" => "en_US",
+  "Title" => "October news",
+  "Subject" => "October news",
+  "Sender" => sender_id,
+  "SenderEmail" => "sender@example.com",
+  "ContactsListID" => contacts_list_id
+)
+Mailjet::Campaigndraft_detailcontent.create(id: draft.id, "Text-part" => "Hello", "Html-part" => "<p>Hello</p>")
+Mailjet::Campaigndraft_send.create(id: draft.id)
+```
+
+One call behaves differently: `Campaigndraft_detailcontent.find` returns an array, where `Newsletter_detailcontent.find` returned a single object.
+
+```ruby
+# Before
+content = Mailjet::Newsletter_detailcontent.find(newsletter_id)
+
+# After
+content = Mailjet::Campaigndraft_detailcontent.find(draft_id).first
+```
+
+### Legacy statistics to statcounters
+
+`Statcounters` takes a source, a timing and a resolution. The `Day` and `Hour` resolutions also need a `from_ts`/`to_ts` range; without one the API answers 400.
+
+```ruby
+# Before
+Mailjet::Campaignstatistics.find(campaign_id)
+
+# After
+Mailjet::Statcounters.all(
+  source_id: campaign_id,
+  counter_source: "Campaign",
+  counter_timing: "Message",
+  counter_resolution: "Lifetime"
+)
+
+# Totals for your API key, replacing Apikeytotals
+Mailjet::Statcounters.all(counter_source: "APIKey", counter_timing: "Message", counter_resolution: "Lifetime")
+
+# Daily counts, replacing the graph statistics
+Mailjet::Statcounters.all(
+  source_id: campaign_id,
+  counter_source: "Campaign",
+  counter_timing: "Message",
+  counter_resolution: "Day",
+  from_ts: Time.utc(2026, 10, 1).to_i,
+  to_ts: Time.utc(2026, 11, 1).to_i
+)
+```
+
+### Domain statistics to recipient ESP statistics
+
+`Statistics_recipient_esp` groups a campaign's statistics by recipient email service provider (Gmail, Microsoft and so on) rather than by domain, and it needs a campaign ID.
+
+```ruby
+# Before
+Mailjet::Domainstatistics.all
+
+# After
+Mailjet::Statistics_recipient_esp.all(campaign_id: campaign_id)
+Mailjet::Statistics_recipient_esp.all(campaign_id: campaign_id, esp_name: "gmail")
+```
 
 ## Send emails with ActionMailer
 
