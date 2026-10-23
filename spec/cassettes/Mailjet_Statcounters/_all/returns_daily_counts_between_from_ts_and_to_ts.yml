@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mailjet.com/v3/REST/statcounters?CounterResolution=Day&CounterSource=Campaign&CounterTiming=Message&FromTs=1792713600&SourceId=7759404292&ToTs=1792800000
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v2.8.1
+      Authorization:
+      - "<BASIC>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 23 Oct 2026 10:24:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '629'
+    body:
+      encoding: UTF-8
+      string: '{ "Count" : 1, "Data" : [{ "APIKeyID" : 3211136, "EventClickDelay"
+        : 0, "EventClickedCount" : 0, "EventOpenDelay" : 0, "EventOpenedCount" : 0,
+        "EventSpamCount" : 0, "EventUnsubscribedCount" : 0, "EventWorkflowExitedCount"
+        : 0, "MessageBlockedCount" : 0, "MessageClickedCount" : 0, "MessageDeferredCount"
+        : 0, "MessageHardBouncedCount" : 0, "MessageOpenedCount" : 0, "MessageQueuedCount"
+        : 0, "MessageSentCount" : 1, "MessageSoftBouncedCount" : 0, "MessageSpamCount"
+        : 0, "MessageUnsubscribedCount" : 0, "MessageWorkFlowExitedCount" : 0, "SourceID"
+        : 7759404292, "Timeslice" : "2026-10-23T00:00:00Z", "Total" : 1 }], "Total"
+        : 1 }'
+  recorded_at: Fri, 23 Oct 2026 10:24:23 GMT
+recorded_with: VCR 6.1.0

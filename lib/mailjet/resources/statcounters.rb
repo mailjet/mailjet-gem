@@ -3,7 +3,7 @@ module Mailjet
     include Mailjet::Resource
     self.resource_path = 'REST/statcounters'
     self.public_operations = [:get]
-    self.filters = [:source_id, :counter_resolution, :counter_source, :counter_timing]
+    self.filters = [:source_id, :counter_resolution, :counter_source, :counter_timing, :from_ts, :to_ts]
     self.resourceprop = [
       :api_key_id,
       :event_click_delay,
