@@ -22,7 +22,7 @@ module Mailjet
       self.secret_key = secret_key
       self.public_operations = options[:public_operations] || []
       self.read_only = options[:read_only]
-      self.adapter = Faraday.new(end_point, ssl: { verify: false }) do |conn|
+      self.adapter = Faraday.new(end_point) do |conn|
         conn.response :raise_error, include_request: true
         conn.request :authorization, :basic, api_key, secret_key
         conn.headers['Content-Type'] = 'application/json'
